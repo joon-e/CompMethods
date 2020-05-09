@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>8 Daten laden, modifizieren und speichern | Computational Methods in der politischen Kommunikationsforschung</title>
+  <meta name="description" content="8 Daten laden, modifizieren und speichern | Computational Methods in der politischen Kommunikationsforschung" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="8 Daten laden, modifizieren und speichern | Computational Methods in der politischen Kommunikationsforschung" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="8 Daten laden, modifizieren und speichern | Computational Methods in der politischen Kommunikationsforschung" />
+  
+  
+  
+
+<meta name="author" content="Julian Unkel" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="datahandling-intro.html"/>
+<link rel="next" href="der-pipe-operator.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Methodische Vertiefung: Computational Methods</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Einführung</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#seminarinformationen"><i class="fa fa-check"></i>Seminarinformationen</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#ablauf-des-kurses"><i class="fa fa-check"></i>Ablauf des Kurses</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#motivation-und-ziele-des-seminars"><i class="fa fa-check"></i>Motivation und Ziele des Seminars</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#warum-also-eine-programmiersprache-für-datenanalyse-lernen"><i class="fa fa-check"></i>Warum also eine Programmiersprache für Datenanalyse lernen?</a></li>
+<li><a href="index.html#warum-r-lernen">Warum <em>R</em> lernen?</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#hinweise-zur-nutzung-des-online-kurses"><i class="fa fa-check"></i>Hinweise zur Nutzung des Online-Kurses</a></li>
+</ul></li>
+<li class="part"><span><b>I Eine kurze Einführung in R</b></span></li>
+<li class="chapter" data-level="1" data-path="firststeps.html"><a href="firststeps.html"><i class="fa fa-check"></i><b>1</b> Installation und erste Schritte</a><ul>
+<li class="chapter" data-level="1.1" data-path="firststeps.html"><a href="firststeps.html#rinstallieren"><i class="fa fa-check"></i><b>1.1</b> R installieren</a></li>
+<li class="chapter" data-level="1.2" data-path="firststeps.html"><a href="firststeps.html#rstudioinstallieren"><i class="fa fa-check"></i><b>1.2</b> RStudio installieren</a></li>
+<li class="chapter" data-level="1.3" data-path="firststeps.html"><a href="firststeps.html#oberflaeche"><i class="fa fa-check"></i><b>1.3</b> Die Benutzeroberfläche von RStudio</a><ul>
+<li class="chapter" data-level="1.3.1" data-path="firststeps.html"><a href="firststeps.html#konsole"><i class="fa fa-check"></i><b>1.3.1</b> Konsole</a></li>
+<li class="chapter" data-level="1.3.2" data-path="firststeps.html"><a href="firststeps.html#r-skripte"><i class="fa fa-check"></i><b>1.3.2</b> R-Skripte</a></li>
+<li class="chapter" data-level="1.3.3" data-path="firststeps.html"><a href="firststeps.html#environment"><i class="fa fa-check"></i><b>1.3.3</b> Environment</a></li>
+<li class="chapter" data-level="1.3.4" data-path="firststeps.html"><a href="firststeps.html#files"><i class="fa fa-check"></i><b>1.3.4</b> Files</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="firststeps.html"><a href="firststeps.html#anpassen"><i class="fa fa-check"></i><b>1.4</b> RStudio anpassen</a></li>
+<li class="chapter" data-level="1.5" data-path="firststeps.html"><a href="firststeps.html#übungsaufgaben"><i class="fa fa-check"></i><b>1.5</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html"><i class="fa fa-check"></i><b>2</b> Objekte und Datenstrukturen</a><ul>
+<li class="chapter" data-level="2.1" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#objektnamen"><i class="fa fa-check"></i><b>2.1</b> Objektnamen</a></li>
+<li class="chapter" data-level="2.2" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#objekttypen"><i class="fa fa-check"></i><b>2.2</b> Objekttypen</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#numerische-objekte"><i class="fa fa-check"></i><b>2.2.1</b> Numerische Objekte</a></li>
+<li class="chapter" data-level="2.2.2" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#textobjekte"><i class="fa fa-check"></i><b>2.2.2</b> Textobjekte</a></li>
+<li class="chapter" data-level="2.2.3" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#logicals"><i class="fa fa-check"></i><b>2.2.3</b> Logicals (logische Objekte)</a></li>
+<li class="chapter" data-level="2.2.4" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#weitere-objekttypen"><i class="fa fa-check"></i><b>2.2.4</b> Weitere Objekttypen</a></li>
+<li class="chapter" data-level="2.2.5" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#missingvals"><i class="fa fa-check"></i><b>2.2.5</b> Fehlende Werte</a></li>
+<li class="chapter" data-level="2.2.6" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#coercion"><i class="fa fa-check"></i><b>2.2.6</b> Objekttypen ändern</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#datenstrukturen"><i class="fa fa-check"></i><b>2.3</b> Datenstrukturen</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#vectors"><i class="fa fa-check"></i><b>2.3.1</b> Vektoren</a></li>
+<li class="chapter" data-level="2.3.2" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#listen"><i class="fa fa-check"></i><b>2.3.2</b> Listen</a></li>
+<li class="chapter" data-level="2.3.3" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#matrizen"><i class="fa fa-check"></i><b>2.3.3</b> Matrizen</a></li>
+<li class="chapter" data-level="2.3.4" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#dataframes"><i class="fa fa-check"></i><b>2.3.4</b> Dataframes</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#übungsaufgaben-1"><i class="fa fa-check"></i><b>2.4</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="funktionen.html"><a href="funktionen.html"><i class="fa fa-check"></i><b>3</b> Funktionen</a><ul>
+<li class="chapter" data-level="3.1" data-path="funktionen.html"><a href="funktionen.html#funktionen-aufrufen"><i class="fa fa-check"></i><b>3.1</b> Funktionen aufrufen</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="funktionen.html"><a href="funktionen.html#funktionsargumente"><i class="fa fa-check"></i><b>3.1.1</b> Funktionsargumente</a></li>
+<li class="chapter" data-level="3.1.2" data-path="funktionen.html"><a href="funktionen.html#hilfestellungen-zu-funktionen"><i class="fa fa-check"></i><b>3.1.2</b> Hilfestellungen zu Funktionen</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="funktionen.html"><a href="funktionen.html#eigene-funktionen-erstellen"><i class="fa fa-check"></i><b>3.2</b> Eigene Funktionen erstellen</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="funktionen.html"><a href="funktionen.html#funktionen-erstellen-wann-und-warum"><i class="fa fa-check"></i><b>3.2.1</b> Funktionen erstellen: wann und warum?</a></li>
+<li class="chapter" data-level="3.2.2" data-path="funktionen.html"><a href="funktionen.html#aufbau-und-erstellung-von-funktionen"><i class="fa fa-check"></i><b>3.2.2</b> Aufbau und Erstellung von Funktionen</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="funktionen.html"><a href="funktionen.html#übungsaufgaben-2"><i class="fa fa-check"></i><b>3.3</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html"><i class="fa fa-check"></i><b>4</b> Kontrollstrukturen</a><ul>
+<li class="chapter" data-level="4.1" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#conditions"><i class="fa fa-check"></i><b>4.1</b> Bedingungen</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#if-bedingungen"><i class="fa fa-check"></i><b>4.1.1</b> <code>if</code>-Bedingungen</a></li>
+<li class="chapter" data-level="4.1.2" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#if-else-bedingungen"><i class="fa fa-check"></i><b>4.1.2</b> <code>if</code>-<code>else</code>-Bedingungen</a></li>
+<li class="chapter" data-level="4.1.3" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#bedingungen-verketten"><i class="fa fa-check"></i><b>4.1.3</b> Bedingungen verketten</a></li>
+<li class="chapter" data-level="4.1.4" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#mehrere-bedingungen"><i class="fa fa-check"></i><b>4.1.4</b> Mehrere Bedingungen</a></li>
+<li class="chapter" data-level="4.1.5" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#mehrere-prüfwerte"><i class="fa fa-check"></i><b>4.1.5</b> Mehrere Prüfwerte</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#iterationen"><i class="fa fa-check"></i><b>4.2</b> Iterationen</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#vektorisierte-funktionen"><i class="fa fa-check"></i><b>4.2.1</b> Vektorisierte Funktionen</a></li>
+<li class="chapter" data-level="4.2.2" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#forloops"><i class="fa fa-check"></i><b>4.2.2</b> <code>for</code>-Loops</a></li>
+<li class="chapter" data-level="4.2.3" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#while-loops"><i class="fa fa-check"></i><b>4.2.3</b> <code>while</code>-Loops</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#übungsaufgaben-3"><i class="fa fa-check"></i><b>4.3</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="packages.html"><a href="packages.html"><i class="fa fa-check"></i><b>5</b> Packages</a><ul>
+<li class="chapter" data-level="5.1" data-path="packages.html"><a href="packages.html#packages-installieren"><i class="fa fa-check"></i><b>5.1</b> Packages installieren</a></li>
+<li class="chapter" data-level="5.2" data-path="packages.html"><a href="packages.html#usepackages"><i class="fa fa-check"></i><b>5.2</b> Packages nutzen</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="workflow.html"><a href="workflow.html"><i class="fa fa-check"></i><b>6</b> Workflow</a><ul>
+<li class="chapter" data-level="6.1" data-path="workflow.html"><a href="workflow.html#arbeitsverzeichnisse"><i class="fa fa-check"></i><b>6.1</b> Arbeitsverzeichnisse</a></li>
+<li class="chapter" data-level="6.2" data-path="workflow.html"><a href="workflow.html#rprojects"><i class="fa fa-check"></i><b>6.2</b> Projekte und Ordnerstrukturen</a></li>
+<li class="chapter" data-level="6.3" data-path="workflow.html"><a href="workflow.html#r-markdown"><i class="fa fa-check"></i><b>6.3</b> R Markdown</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="workflow.html"><a href="workflow.html#yaml-header"><i class="fa fa-check"></i><b>6.3.1</b> YAML-Header</a></li>
+<li class="chapter" data-level="6.3.2" data-path="workflow.html"><a href="workflow.html#freitext-in-markdown"><i class="fa fa-check"></i><b>6.3.2</b> Freitext in Markdown</a></li>
+<li class="chapter" data-level="6.3.3" data-path="workflow.html"><a href="workflow.html#code-chunks"><i class="fa fa-check"></i><b>6.3.3</b> Code Chunks</a></li>
+<li class="chapter" data-level="6.3.4" data-path="workflow.html"><a href="workflow.html#ausgabedateien-erzeugen"><i class="fa fa-check"></i><b>6.3.4</b> Ausgabedateien erzeugen</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="workflow.html"><a href="workflow.html#r-aktuell-halten"><i class="fa fa-check"></i><b>6.4</b> R aktuell halten</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="workflow.html"><a href="workflow.html#packages-aktualisieren"><i class="fa fa-check"></i><b>6.4.1</b> Packages aktualisieren</a></li>
+<li class="chapter" data-level="6.4.2" data-path="workflow.html"><a href="workflow.html#rstudio-aktualisieren"><i class="fa fa-check"></i><b>6.4.2</b> RStudio aktualisieren</a></li>
+<li class="chapter" data-level="6.4.3" data-path="workflow.html"><a href="workflow.html#r-aktualisieren"><i class="fa fa-check"></i><b>6.4.3</b> R aktualisieren</a></li>
+</ul></li>
+</ul></li>
+<li class="part"><span><b>II Datenhandling in R</b></span></li>
+<li class="chapter" data-level="7" data-path="datahandling-intro.html"><a href="datahandling-intro.html"><i class="fa fa-check"></i><b>7</b> Einführung in das Datenhandling</a><ul>
+<li class="chapter" data-level="7.1" data-path="datahandling-intro.html"><a href="datahandling-intro.html#daten--und-dateiformate-tabellarischer-daten"><i class="fa fa-check"></i><b>7.1</b> Daten- und Dateiformate tabellarischer Daten</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="datahandling-intro.html"><a href="datahandling-intro.html#tidy-data"><i class="fa fa-check"></i><b>7.1.1</b> Tidy data</a></li>
+<li class="chapter" data-level="7.1.2" data-path="datahandling-intro.html"><a href="datahandling-intro.html#dateiformate"><i class="fa fa-check"></i><b>7.1.2</b> Dateiformate</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="datahandling-intro.html"><a href="datahandling-intro.html#willkommen-im-tidyverse"><i class="fa fa-check"></i><b>7.2</b> Willkommen im Tidyverse</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="workingwithdata.html"><a href="workingwithdata.html"><i class="fa fa-check"></i><b>8</b> Daten laden, modifizieren und speichern</a><ul>
+<li class="chapter" data-level="8.1" data-path="workingwithdata.html"><a href="workingwithdata.html#daten-laden"><i class="fa fa-check"></i><b>8.1</b> Daten laden</a><ul>
+<li class="chapter" data-level="8.1.1" data-path="workingwithdata.html"><a href="workingwithdata.html#csv-dateien-einlesen"><i class="fa fa-check"></i><b>8.1.1</b> CSV-Dateien einlesen</a></li>
+<li class="chapter" data-level="8.1.2" data-path="workingwithdata.html"><a href="workingwithdata.html#andere-dateiformate"><i class="fa fa-check"></i><b>8.1.2</b> Andere Dateiformate</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="workingwithdata.html"><a href="workingwithdata.html#daten-modifizieren"><i class="fa fa-check"></i><b>8.2</b> Daten modifizieren</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="workingwithdata.html"><a href="workingwithdata.html#variablen-spaltenweise-auswählen-mit-select"><i class="fa fa-check"></i><b>8.2.1</b> Variablen spaltenweise auswählen mit <code>select()</code></a></li>
+<li class="chapter" data-level="8.2.2" data-path="workingwithdata.html"><a href="workingwithdata.html#variablen-zeilenweise-filtern-mit-filter"><i class="fa fa-check"></i><b>8.2.2</b> Variablen zeilenweise filtern mit <code>filter()</code></a></li>
+<li class="chapter" data-level="8.2.3" data-path="workingwithdata.html"><a href="workingwithdata.html#daten-sortieren-mit-arrange"><i class="fa fa-check"></i><b>8.2.3</b> Daten sortieren mit <code>arrange()</code></a></li>
+<li class="chapter" data-level="8.2.4" data-path="workingwithdata.html"><a href="workingwithdata.html#neue-variablen-hinzufügen-mit-mutate"><i class="fa fa-check"></i><b>8.2.4</b> Neue Variablen hinzufügen mit <code>mutate()</code></a></li>
+<li class="chapter" data-level="8.2.5" data-path="workingwithdata.html"><a href="workingwithdata.html#variablen-zusammenfassen-mit-summarize"><i class="fa fa-check"></i><b>8.2.5</b> Variablen zusammenfassen mit <code>summarize()</code></a></li>
+<li class="chapter" data-level="8.2.6" data-path="workingwithdata.html"><a href="workingwithdata.html#variablen-gruppieren-mit-group_by"><i class="fa fa-check"></i><b>8.2.6</b> Variablen gruppieren mit <code>group_by()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="workingwithdata.html"><a href="workingwithdata.html#daten-speichern"><i class="fa fa-check"></i><b>8.3</b> Daten speichern</a><ul>
+<li class="chapter" data-level="8.3.1" data-path="workingwithdata.html"><a href="workingwithdata.html#tabellarische-daten-exportieren"><i class="fa fa-check"></i><b>8.3.1</b> Tabellarische Daten exportieren</a></li>
+<li class="chapter" data-level="8.3.2" data-path="workingwithdata.html"><a href="workingwithdata.html#r-objekte-exportieren"><i class="fa fa-check"></i><b>8.3.2</b> R-Objekte exportieren</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="workingwithdata.html"><a href="workingwithdata.html#übungsaufgaben-4"><i class="fa fa-check"></i><b>8.4</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html"><i class="fa fa-check"></i><b>9</b> Der Pipe-Operator <code>%&gt;%</code></a><ul>
+<li class="chapter" data-level="9.1" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#lesbarkeit-verschachtelter-funktionen"><i class="fa fa-check"></i><b>9.1</b> Lesbarkeit verschachtelter Funktionen</a></li>
+<li class="chapter" data-level="9.2" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#ein-beispiel-in-pseudo-code"><i class="fa fa-check"></i><b>9.2</b> Ein Beispiel in Pseudo-Code</a></li>
+<li class="chapter" data-level="9.3" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#formale-definition"><i class="fa fa-check"></i><b>9.3</b> Formale Definition</a></li>
+<li class="chapter" data-level="9.4" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#einsatz-von-pipes-im-tidyverse"><i class="fa fa-check"></i><b>9.4</b> Einsatz von Pipes im Tidyverse</a></li>
+<li class="chapter" data-level="9.5" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#übungsaufgaben-5"><i class="fa fa-check"></i><b>9.5</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="appendix"><span><b>Anhang</b></span></li>
+<li class="chapter" data-level="A" data-path="loesungen.html"><a href="loesungen.html"><i class="fa fa-check"></i><b>A</b> Lösungen der Übungsaufgaben</a><ul>
+<li class="chapter" data-level="" data-path="loesungen.html"><a href="loesungen.html#kapitel-2-objekte-und-datenstrukturen"><i class="fa fa-check"></i>Kapitel 2: Objekte und Datenstrukturen</a></li>
+<li class="chapter" data-level="" data-path="loesungen.html"><a href="loesungen.html#kapitel-3-funktionen"><i class="fa fa-check"></i>Kapitel 3: Funktionen</a></li>
+<li class="chapter" data-level="" data-path="loesungen.html"><a href="loesungen.html#kapitel-4-kontrollstrukturen"><i class="fa fa-check"></i>Kapitel 4: Kontrollstrukturen</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Computational Methods in der politischen Kommunikationsforschung</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="workingwithdata" class="section level1">
+<h1><span class="header-section-number">8</span> Daten laden, modifizieren und speichern</h1>
+<p>In diesem Kapitel sehen wir uns grundlegende Arbeitsschritte und Funktionen des Datenhandlings: das Einlesen von Daten, einfaches Modifizieren von Datensätzen und das Abspeichern der Ergebnisse. Für all diese Schritte arbeiten wir mit Funktionen aus dem Tidyverse – falls noch nicht geschehen, sollten Sie das Package jetzt also installieren.</p>
+<div class="sourceCode" id="cb217"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb217-1" title="1"><span class="kw">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>)</a></code></pre></div>
+<p>Und dann laden wir das Package zu Beginn unseres Auswertungsskripts:</p>
+<div class="sourceCode" id="cb218"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb218-1" title="1"><span class="kw">library</span>(tidyverse)</a></code></pre></div>
+<div id="daten-laden" class="section level2">
+<h2><span class="header-section-number">8.1</span> Daten laden</h2>
+<p>Wir sprechen von <em>lokalen</em> Daten, wenn wir diese in Form einer Datei auf unserer Festplatte gespeichert haben. <em>Externe</em> Daten liegen beispielsweise auf Webservern oder sind in Packages enthalten. Zunächst laden wir nur lokale Daten.</p>
+<div id="csv-dateien-einlesen" class="section level3">
+<h3><span class="header-section-number">8.1.1</span> CSV-Dateien einlesen</h3>
+<p>Wenn Sie den Schritten in Kapitel <a href="workflow.html#rprojects">6.2</a> gefolgt sind, haben Sie ein R-Projektverzeichnis auf des Festplatte. Auf Moodle finden Sie den Datensatz <code>facebook_europawahl.csv</code>, der Informatationen zu Facebook-Posts der deutschen Parteien im Vorfeld der Europawahl 2019 enthält.<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a> Speichern Sie diesen Datensatz in Ihrem Projektverzeichnis ab – im Beispiel liegt der Datensatz im Unterordner <code>data</code>.</p>
+<p>Funktionen zum Einlesen von Daten folgen im Tidyverse dem Namensschema <code>read_</code>, wobei nach dem Unterstrich der Dateityp folgt. Für CSV-Dateien sind zwei Funktionen relevant:</p>
+<ul>
+<li><code>read_csv()</code> liest CSV-Dateien, die ein Komma <code>,</code> als Spalten- und einen Punkt <code>.</code> als Dezimaltrennzeichen verwenden</li>
+<li><code>read_csv2()</code> liest CSV-Dateien, die ein Semikolon <code>;</code> als Spalten- und das Komma <code>,</code> als Dezimaltrennzeichen verwenden</li>
+</ul>
+<p>Bei beiden Funktionen handelt es sich um spezifische Varianten der Funktion <code>read_delim()</code>, bei der Trennzeichen etc. einzeln definiert werden können. In der Regel sollten aber die beiden oben genannten Funktionen ausreichen. Im Zweifelsfall können CSV-Dateien durch anklicken im <em>Files</em>-Bereich in RStudio geöffnet werden, sodass ersichtlich wird, wie diese aufgebaut sind und welches Trennzeichen verwendet wird.</p>
+<p>Alle Funktionen aus der <code>read_</code>-Familie benötigen als erstes (und oft auch einziges) Argument den Dateipfad (relativ zum Arbeitsverzeichnis) als Textobjekt. Da unser Datensatz im Unterordner <code>data</code> liegt, lautet der gesamte Dateipfad also <code>"data/facebook_europawahl.csv"</code>. Natürlich sollten wir das Resultat der Funktion einem treffend benannten Objekt zuweisen.<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a></p>
+<div class="sourceCode" id="cb219"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb219-1" title="1">df_fb_eu &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;data/facebook_europawahl.csv&quot;</span>)</a></code></pre></div>
+<pre><code>## Parsed with column specification:
+## cols(
+##   id = col_double(),
+##   URL = col_character(),
+##   party = col_character(),
+##   timestamp = col_datetime(format = &quot;&quot;),
+##   type = col_character(),
+##   message = col_character(),
+##   link = col_character(),
+##   comments_count = col_double(),
+##   shares_count = col_double(),
+##   reactions_count = col_double(),
+##   like_count = col_double(),
+##   love_count = col_double(),
+##   wow_count = col_double(),
+##   haha_count = col_double(),
+##   sad_count = col_double(),
+##   angry_count = col_double()
+## )</code></pre>
+<p>Die Funktion teilt uns direkt mit, welche Objekttypen für welche Variable verwendet wurden, sodass wir hier auch direkt sehen können, ob z. B. eine numerische Variable als Text eingelesen wurde. Zudem ist der eingelesene Datensatz direkt ein <em>Tibble</em>, wir müssen also nicht mehr durch <code>as_tibble()</code> konvertieren.<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a></p>
+<p>Schauen wir uns unseren gerade geladenen Datensatz einmal an – da unser Datensatz als Tibble vorliegt, erhalten wir die wichtigsten Informationen zu Struktur und einen Einblick in die Daten direkt in Konsole, wenn wir das Datensatz-Objekt aufrufen:</p>
+<div class="sourceCode" id="cb221"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb221-1" title="1">df_fb_eu</a></code></pre></div>
+<pre><code>## # A tibble: 902 x 16
+##       id URL   party timestamp           type  message link  comments_count
+##    &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+##  1     1 http~ oedp~ 2019-04-28 09:00:00 video &quot;Guido~ http~              0
+##  2     2 http~ tier~ 2019-04-28 13:57:00 photo &quot;Aus u~ http~             17
+##  3     3 http~ B90D~ 2019-04-28 06:00:01 video &quot;Beim ~ http~             70
+##  4     4 http~ FDP   2019-04-28 11:49:59 photo &quot;Unser~ http~             16
+##  5     5 http~ tier~ 2019-04-28 08:24:15 link  &quot;Eine ~ http~              6
+##  6     6 http~ CDU   2019-04-28 09:12:19 video &quot;Freih~ http~            239
+##  7     7 http~ SPD   2019-04-28 13:06:09 photo &quot;Katar~ http~            180
+##  8     8 http~ Pira~ 2019-04-28 17:36:30 video &quot;Unser~ http~              0
+##  9     9 http~ DieP~ 2019-04-28 07:44:28 link  &quot;Der a~ http~             35
+## 10    10 http~ CSU   2019-04-28 08:21:00 photo &quot;#Klar~ http~            174
+## # ... with 892 more rows, and 8 more variables: shares_count &lt;dbl&gt;,
+## #   reactions_count &lt;dbl&gt;, like_count &lt;dbl&gt;, love_count &lt;dbl&gt;, wow_count &lt;dbl&gt;,
+## #   haha_count &lt;dbl&gt;, sad_count &lt;dbl&gt;, angry_count &lt;dbl&gt;</code></pre>
+<p>Wir haben also einen Datensatz mit 902 Zeilen bzw. Fällen – im diesen Falle also Facebook-Posts – und 16 Spalten bzw. Variablen. Darunter sind:</p>
+<ul>
+<li>eine numerische <code>id</code>, die <code>URL</code> und ein Zeitstempel (<code>timestamp</code>) des Posts</li>
+<li>Die Parteiseite <code>party</code> von der der Post abgesetzt wurde</li>
+<li>Der Typ (<code>type</code>) des Posts (Video, Photo, Link oder Status)</li>
+<li>Der Text (<code>message</code>) des Posts und ein etwaiger enthaltener <code>link</code></li>
+<li>Die Anzahl verschiedener Facebook-Metriken, darunter Kommentare, Shares sowie Reactions gesamt und getrennt in einzelne Typen, allesamt auf <code>_count</code> endend</li>
+</ul>
+</div>
+<div id="andere-dateiformate" class="section level3">
+<h3><span class="header-section-number">8.1.2</span> Andere Dateiformate</h3>
+<p>Andere Dateiformate funktionieren analog – in der Regel reicht es, die korrekte Funktion zu verwenden und den Dateipfad anzugeben. Allerdings müssen für proprietäre Dateiformate erst die – mit dem Tidyverse bereits installierten – Packages geladen werden:</p>
+<ul>
+<li>das Paket <code>readxl</code> bietet Funktionen zum Import von Excel-Dateien, z. B. <code>readxl::read_xlsx()</code></li>
+<li>das Paket <code>haven</code> deckt den Import von Datensätzen aus anderer Statistiksoftware (SAS, Stata, SPSS) ab, z. B. <code>haven::read_sav()</code> für SPSS-Datensätze</li>
+</ul>
+</div>
+</div>
+<div id="daten-modifizieren" class="section level2">
+<h2><span class="header-section-number">8.2</span> Daten modifizieren</h2>
+<p>Zur Datenmodifikation betrachten wir sechs zentrale Funktionen (+ einige zugehörige Hilfsfunktionen bzw. Variationen davon), die das Tidyverse – genauer gesagt das Teilpaket <code>dplyr</code><a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a> – zur Verfügung stellt:</p>
+<ul>
+<li><code>select()</code> zum Auswählen von Variablen (spaltenweise)</li>
+<li><code>filter()</code> zum Filtern von Variablen (zeilenweise)</li>
+<li><code>arrange()</code> zum Sortieren des Datensatzes</li>
+<li><code>mutate()</code> zum Erzeugen neuer Variablen</li>
+<li><code>summarize()</code> zum Zusammenfassen von Variablen</li>
+<li><code>group_by</code> zum Gruppieren von Variablen</li>
+</ul>
+<p>Alle Funktionen haben dabei gemeinsam (und das trifft auf nahezu alle Funktionen des Tidyverse zu), dass das erste Argument der Datensatz selbst (als Tibble) ist und auch das Resultat der Funktion wiederum ein Tibble ist.</p>
+<div class="figure">
+<img src="img/horst/dplyr_wrangling.png" alt="Illustration von @allison_horst: https://twitter.com/allison_horst" />
+<p class="caption">Illustration von @allison_horst: <a href="https://twitter.com/allison_horst" class="uri">https://twitter.com/allison_horst</a></p>
+</div>
+<div id="variablen-spaltenweise-auswählen-mit-select" class="section level3">
+<h3><span class="header-section-number">8.2.1</span> Variablen spaltenweise auswählen mit <code>select()</code></h3>
+<p>Mit <code>select()</code> können wir bestimmte Spalten eines Datensatzes auswählen. Hierzu übergeben wir nach dem Datensatz einfach alle Variablen, die wir benötigen, direkt als Objektnamen – in unserem Beispiel <code>id</code>, <code>URL</code>, <code>party</code> usw. – ohne Anführungszeichen durch Kommas getrennt:<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a></p>
+<div class="sourceCode" id="cb223"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb223-1" title="1"><span class="co"># Wähle nur die Variablen id, party und timestamp aus</span></a>
+<a class="sourceLine" id="cb223-2" title="2"><span class="kw">select</span>(df_fb_eu, id, party, timestamp) </a></code></pre></div>
+<pre><code>## # A tibble: 902 x 3
+##       id party            timestamp          
+##    &lt;dbl&gt; &lt;chr&gt;            &lt;dttm&gt;             
+##  1     1 oedp.de          2019-04-28 09:00:00
+##  2     2 tierschutzpartei 2019-04-28 13:57:00
+##  3     3 B90DieGruenen    2019-04-28 06:00:01
+##  4     4 FDP              2019-04-28 11:49:59
+##  5     5 tierschutzpartei 2019-04-28 08:24:15
+##  6     6 CDU              2019-04-28 09:12:19
+##  7     7 SPD              2019-04-28 13:06:09
+##  8     8 Piratenpartei    2019-04-28 17:36:30
+##  9     9 DiePARTEI        2019-04-28 07:44:28
+## 10    10 CSU              2019-04-28 08:21:00
+## # ... with 892 more rows</code></pre>
+<p>Durch ein vorangstelltes <code>-</code> werden Variablen ausgeschlossen:</p>
+<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb225-1" title="1"><span class="co"># Entferne die id und die URL-Variable</span></a>
+<a class="sourceLine" id="cb225-2" title="2"><span class="kw">select</span>(df_fb_eu, <span class="op">-</span>id, <span class="op">-</span>URL)</a></code></pre></div>
+<pre><code>## # A tibble: 902 x 14
+##    party timestamp           type  message link  comments_count shares_count
+##    &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;        &lt;dbl&gt;
+##  1 oedp~ 2019-04-28 09:00:00 video &quot;Guido~ http~              0            4
+##  2 tier~ 2019-04-28 13:57:00 photo &quot;Aus u~ http~             17          130
+##  3 B90D~ 2019-04-28 06:00:01 video &quot;Beim ~ http~             70           28
+##  4 FDP   2019-04-28 11:49:59 photo &quot;Unser~ http~             16            9
+##  5 tier~ 2019-04-28 08:24:15 link  &quot;Eine ~ http~              6           46
+##  6 CDU   2019-04-28 09:12:19 video &quot;Freih~ http~            239          136
+##  7 SPD   2019-04-28 13:06:09 photo &quot;Katar~ http~            180           54
+##  8 Pira~ 2019-04-28 17:36:30 video &quot;Unser~ http~              0           NA
+##  9 DieP~ 2019-04-28 07:44:28 link  &quot;Der a~ http~             35           76
+## 10 CSU   2019-04-28 08:21:00 photo &quot;#Klar~ http~            174           61
+## # ... with 892 more rows, and 7 more variables: reactions_count &lt;dbl&gt;,
+## #   like_count &lt;dbl&gt;, love_count &lt;dbl&gt;, wow_count &lt;dbl&gt;, haha_count &lt;dbl&gt;,
+## #   sad_count &lt;dbl&gt;, angry_count &lt;dbl&gt;</code></pre>
+<p>Durch ein vorangestelltes <code>neuer_objektname =</code> können wir Variablen beim Auswählen auch direkt umbenennen:</p>
+<div class="sourceCode" id="cb227"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb227-1" title="1"><span class="co"># Benenne party und message beim Auswählen um in partei respektive inhalt</span></a>
+<a class="sourceLine" id="cb227-2" title="2"><span class="kw">select</span>(df_fb_eu, <span class="dt">partei =</span> party, <span class="dt">inhalt =</span> message)</a></code></pre></div>
+<pre><code>## # A tibble: 902 x 2
+##    partei          inhalt                                                              
+##    &lt;chr&gt;           &lt;chr&gt;                                                               
+##  1 oedp.de         &quot;Guido #Klamt aus #Ludwigsburg, Listenplatz 5 auf der Kandidatenlis~
+##  2 tierschutzpart~ &quot;Aus unserem Europawahlprogramm, Kapitel 7: Gesundheits- und Sozial~
+##  3 B90DieGruenen   &quot;Beim Wahlkampf-Camp in Berlin waren gestern hunderte Freiwillige, ~
+##  4 FDP             &quot;Unser neuer Bundesvorstand \U0001f389\U0001f38a\U0001f388 #Chancen~
+##  5 tierschutzpart~ &quot;Eine neue Studie der Universität Oxford zeigt, dass eine vegane Er~
+##  6 CDU             &quot;Freiheit ist nicht selbstverständlich. #UnserEuropa steht für frei~
+##  7 SPD             &quot;Katarina Barley sagt: Eine weitere Koalition mit der #EVP will ich~
+##  8 Piratenpartei   &quot;Unser Spitzenkandidat Patrick Breyer mit einem Update zum EU19 Wor~
+##  9 DiePARTEI       &quot;Der absolut härteste „Martin-Sonneborn-Moment“ kommt für Watson.de~
+## 10 CSU             &quot;#Klartext von Bayerns Ministerpräsident und CSU-Chef Markus Söder ~
+## # ... with 892 more rows</code></pre>
+<p>Um Variablen basierend auf Namensbestandteilen auszuwählen, sind einige Hilfsfunktionen - z. B. <code>starts_with()</code>, <code>ends_with()</code> und <code>contains()</code> - verfügbar. Da in unserem Beispiel alle Facebook-Metriken auf <code>_count</code> enden, können wir diese gesammelt mit <code>ends_with("count")</code> auswählen:</p>
+<div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb229-1" title="1"><span class="co"># Wähle party und alle Facebook-Metriken aus</span></a>
+<a class="sourceLine" id="cb229-2" title="2"><span class="kw">select</span>(df_fb_eu, party, <span class="kw">ends_with</span>(<span class="st">&quot;count&quot;</span>))</a></code></pre></div>
+<pre><code>## # A tibble: 902 x 10
+##    party comments_count shares_count reactions_count like_count love_count wow_count
+##    &lt;chr&gt;          &lt;dbl&gt;        &lt;dbl&gt;           &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;
+##  1 oedp~              0            4               9          9          0         0
+##  2 tier~             17          130             395        354         23         3
+##  3 B90D~             70           28             215        174         14         3
+##  4 FDP               16            9             262        254          7         0
+##  5 tier~              6           46             145        129         14         2
+##  6 CDU              239          136             398        292          8         0
+##  7 SPD              180           54             699        576         34         4
+##  8 Pira~              0           NA               7          6          0         1
+##  9 DieP~             35           76             612        509         49         0
+## 10 CSU              174           61             458        334          3         5
+## # ... with 892 more rows, and 3 more variables: haha_count &lt;dbl&gt;, sad_count &lt;dbl&gt;,
+## #   angry_count &lt;dbl&gt;</code></pre>
+<p>Schließlich kann die Hilfsfunktion <code>everything()</code> (ohne Argumente) genutzt werden, um sämtliche nicht zuvor angegebenen Variablen auswählen – das ist hilfreich, wenn nur bestimmte Variablen z. B. umbenannt oder an den Anfang des Datensatzes gestellt werden sollen, aber man nicht alle anderen Variablen von Hand tippen möchte:</p>
+<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb231-1" title="1"><span class="co"># Stelle party umbenannt in Partei an den Anfang und hänge alle verbleibenden Variablen an</span></a>
+<a class="sourceLine" id="cb231-2" title="2"><span class="kw">select</span>(df_fb_eu, <span class="dt">Partei =</span> party, <span class="kw">everything</span>())</a></code></pre></div>
+<pre><code>## # A tibble: 902 x 16
+##    Partei    id URL   timestamp           type  message link  comments_count
+##    &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+##  1 oedp.~     1 http~ 2019-04-28 09:00:00 video &quot;Guido~ http~              0
+##  2 tiers~     2 http~ 2019-04-28 13:57:00 photo &quot;Aus u~ http~             17
+##  3 B90Di~     3 http~ 2019-04-28 06:00:01 video &quot;Beim ~ http~             70
+##  4 FDP        4 http~ 2019-04-28 11:49:59 photo &quot;Unser~ http~             16
+##  5 tiers~     5 http~ 2019-04-28 08:24:15 link  &quot;Eine ~ http~              6
+##  6 CDU        6 http~ 2019-04-28 09:12:19 video &quot;Freih~ http~            239
+##  7 SPD        7 http~ 2019-04-28 13:06:09 photo &quot;Katar~ http~            180
+##  8 Pirat~     8 http~ 2019-04-28 17:36:30 video &quot;Unser~ http~              0
+##  9 DiePA~     9 http~ 2019-04-28 07:44:28 link  &quot;Der a~ http~             35
+## 10 CSU       10 http~ 2019-04-28 08:21:00 photo &quot;#Klar~ http~            174
+## # ... with 892 more rows, and 8 more variables: shares_count &lt;dbl&gt;,
+## #   reactions_count &lt;dbl&gt;, like_count &lt;dbl&gt;, love_count &lt;dbl&gt;, wow_count &lt;dbl&gt;,
+## #   haha_count &lt;dbl&gt;, sad_count &lt;dbl&gt;, angry_count &lt;dbl&gt;</code></pre>
+</div>
+<div id="variablen-zeilenweise-filtern-mit-filter" class="section level3">
+<h3><span class="header-section-number">8.2.2</span> Variablen zeilenweise filtern mit <code>filter()</code></h3>
+<p>Um nur bestimmte Zeilen auswählen, können wir mittels <code>filter()</code> eine oder mehrere Bedingungen übergeben, die analog zu den <code>if</code>-Bedingungen in Kapitel <a href="kontrollstrukturen.html#conditions">4.1</a> angegeben werden. Zuerst wird erneut der Datensatz übergeben:</p>
+<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb233-1" title="1"><span class="co"># Wähle alle Facebookposts mit mindestens einem Kommentar</span></a>
+<a class="sourceLine" id="cb233-2" title="2"><span class="kw">filter</span>(df_fb_eu, comments_count <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb233-3" title="3"><span class="co"># Achten Sie in der Ausgabe auf die veränderte Zeilenanzahl</span></a></code></pre></div>
+<pre><code>## # A tibble: 832 x 16
+##       id URL   party timestamp           type  message link  comments_count
+##    &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+##  1     2 http~ tier~ 2019-04-28 13:57:00 photo &quot;Aus u~ http~             17
+##  2     3 http~ B90D~ 2019-04-28 06:00:01 video &quot;Beim ~ http~             70
+##  3     4 http~ FDP   2019-04-28 11:49:59 photo &quot;Unser~ http~             16
+##  4     5 http~ tier~ 2019-04-28 08:24:15 link  &quot;Eine ~ http~              6
+##  5     6 http~ CDU   2019-04-28 09:12:19 video &quot;Freih~ http~            239
+##  6     7 http~ SPD   2019-04-28 13:06:09 photo &quot;Katar~ http~            180
+##  7     9 http~ DieP~ 2019-04-28 07:44:28 link  &quot;Der a~ http~             35
+##  8    10 http~ CSU   2019-04-28 08:21:00 photo &quot;#Klar~ http~            174
+##  9    11 http~ DieP~ 2019-04-28 08:11:28 video &quot;Anste~ http~             61
+## 10    12 http~ alte~ 2019-04-28 14:55:00 link  &quot;++ Ha~ http~           1163
+## # ... with 822 more rows, and 8 more variables: shares_count &lt;dbl&gt;,
+## #   reactions_count &lt;dbl&gt;, like_count &lt;dbl&gt;, love_count &lt;dbl&gt;, wow_count &lt;dbl&gt;,
+## #   haha_count &lt;dbl&gt;, sad_count &lt;dbl&gt;, angry_count &lt;dbl&gt;</code></pre>
+<p>Natürlich können auch Boolesche Operatoren (<code>!</code> für <code>NICHT</code>, <code>&amp;</code> für <code>UND</code>, <code>|</code> für <code>ODER</code>) verwendet werden. Mehrere Bedingungen können auch per <code>,</code> getrennt werden (<code>UND</code>-Verknüpfung):</p>
+<div class="sourceCode" id="cb235"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb235-1" title="1"><span class="co"># Wähle nur Video-Posts der großen Koalition, die keine fehlenden Werte bei den Shares haben</span></a>
+<a class="sourceLine" id="cb235-2" title="2"><span class="kw">filter</span>(df_fb_eu, party <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;CDU&quot;</span>, <span class="st">&quot;CSU&quot;</span>, <span class="st">&quot;SPD&quot;</span>), type <span class="op">==</span><span class="st"> &quot;video&quot;</span>, <span class="op">!</span><span class="kw">is.na</span>(shares_count))</a></code></pre></div>
+<pre><code>## # A tibble: 62 x 16
+##       id URL   party timestamp           type  message link  comments_count
+##    &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+##  1     6 http~ CDU   2019-04-28 09:12:19 video &quot;Freih~ http~            239
+##  2    18 http~ CDU   2019-04-29 11:38:01 video &quot;Live:~ http~            140
+##  3    26 http~ SPD   2019-04-29 09:02:51 video &quot;Press~ http~            174
+##  4    31 http~ CDU   2019-04-29 09:58:45 video &quot;Da st~ http~            274
+##  5    93 http~ CDU   2019-05-01 09:00:47 video &quot;Heute~ http~            305
+##  6   122 http~ CDU   2019-05-02 18:00:01 video &quot;Heute~ http~            122
+##  7   141 http~ CDU   2019-05-03 14:06:29 video &quot;Anneg~ http~            158
+##  8   152 http~ SPD   2019-05-03 14:00:10 video &quot;Jetzt~ http~            515
+##  9   178 http~ CSU   2019-05-05 08:30:00 video &quot;Die E~ http~            153
+## 10   197 http~ CSU   2019-05-06 11:04:28 video &quot;Press~ http~             98
+## # ... with 52 more rows, and 8 more variables: shares_count &lt;dbl&gt;,
+## #   reactions_count &lt;dbl&gt;, like_count &lt;dbl&gt;, love_count &lt;dbl&gt;, wow_count &lt;dbl&gt;,
+## #   haha_count &lt;dbl&gt;, sad_count &lt;dbl&gt;, angry_count &lt;dbl&gt;</code></pre>
+</div>
+<div id="daten-sortieren-mit-arrange" class="section level3">
+<h3><span class="header-section-number">8.2.3</span> Daten sortieren mit <code>arrange()</code></h3>
+<p>Um den Datensatz für die Ansicht umzusortieren, wird die Funktion <code>arrange()</code> genutzt, die aufsteigend nach den angegebenen Variablen sortiert:</p>
+<div class="sourceCode" id="cb237"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb237-1" title="1"><span class="co"># Sortiere aufsteigend nach Datum</span></a>
+<a class="sourceLine" id="cb237-2" title="2"><span class="kw">arrange</span>(df_fb_eu, timestamp)</a></code></pre></div>
+<pre><code>## # A tibble: 902 x 16
+##       id URL   party timestamp           type  message link  comments_count
+##    &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+##  1     3 http~ B90D~ 2019-04-28 06:00:01 video &quot;Beim ~ http~             70
+##  2    13 http~ FDP   2019-04-28 06:18:18 photo &quot;Wir w~ http~             47
+##  3     9 http~ DieP~ 2019-04-28 07:44:28 link  &quot;Der a~ http~             35
+##  4    11 http~ DieP~ 2019-04-28 08:11:28 video &quot;Anste~ http~             61
+##  5    10 http~ CSU   2019-04-28 08:21:00 photo &quot;#Klar~ http~            174
+##  6     5 http~ tier~ 2019-04-28 08:24:15 link  &quot;Eine ~ http~              6
+##  7     1 http~ oedp~ 2019-04-28 09:00:00 video &quot;Guido~ http~              0
+##  8     6 http~ CDU   2019-04-28 09:12:19 video &quot;Freih~ http~            239
+##  9    15 http~ FDP   2019-04-28 10:40:57 photo &quot;Weil ~ http~             14
+## 10     4 http~ FDP   2019-04-28 11:49:59 photo &quot;Unser~ http~             16
+## # ... with 892 more rows, and 8 more variables: shares_count &lt;dbl&gt;,
+## #   reactions_count &lt;dbl&gt;, like_count &lt;dbl&gt;, love_count &lt;dbl&gt;, wow_count &lt;dbl&gt;,
+## #   haha_count &lt;dbl&gt;, sad_count &lt;dbl&gt;, angry_count &lt;dbl&gt;</code></pre>
+<p>Werden mehrere Variablen angegeben, wird zunächst nach der ersten Variablen, dann innerhalb der ersten Variablen nach der zweiten Variablen usw. sortiert. Soll eine Variable stattdessen absteigend sortiert werden, wird der Variablenname in die Hilfsfunktion <code>desc()</code> gepackt:</p>
+<div class="sourceCode" id="cb239"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb239-1" title="1"><span class="co"># Sortiere alphabetisch aufsteigend nach Partei</span></a>
+<a class="sourceLine" id="cb239-2" title="2"><span class="co"># und innerhalb von Parteien absteigend nach Kommentaranzahl</span></a>
+<a class="sourceLine" id="cb239-3" title="3"><span class="kw">arrange</span>(df_fb_eu, party, <span class="kw">desc</span>(comments_count))</a></code></pre></div>
+<pre><code>## # A tibble: 902 x 16
+##       id URL   party timestamp           type  message link  comments_count
+##    &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+##  1   870 http~ alte~ 2019-05-26 15:50:19 video &quot;+++ H~ http~           4829
+##  2   752 http~ alte~ 2019-05-23 17:24:43 video &quot;+++ E~ http~           3294
+##  3   616 http~ alte~ 2019-05-20 09:49:00 photo &quot;++ Me~ http~           3100
+##  4   802 http~ alte~ 2019-05-24 17:01:12 video &quot;+++ S~ http~           2874
+##  5    44 http~ alte~ 2019-04-30 19:02:07 video &quot;2. Te~ http~           2862
+##  6   335 http~ alte~ 2019-05-10 17:27:58 video &quot;+++ H~ http~           2425
+##  7   343 http~ alte~ 2019-05-11 13:12:00 photo &quot;++ Di~ http~           2363
+##  8    50 http~ alte~ 2019-04-30 17:18:13 video &quot;+++ H~ http~           2246
+##  9   198 http~ alte~ 2019-05-06 09:15:00 photo &quot;++ Tä~ http~           1947
+## 10   868 http~ alte~ 2019-05-26 11:19:19 photo &quot;++ Wi~ http~           1744
+## # ... with 892 more rows, and 8 more variables: shares_count &lt;dbl&gt;,
+## #   reactions_count &lt;dbl&gt;, like_count &lt;dbl&gt;, love_count &lt;dbl&gt;, wow_count &lt;dbl&gt;,
+## #   haha_count &lt;dbl&gt;, sad_count &lt;dbl&gt;, angry_count &lt;dbl&gt;</code></pre>
+</div>
+<div id="neue-variablen-hinzufügen-mit-mutate" class="section level3">
+<h3><span class="header-section-number">8.2.4</span> Neue Variablen hinzufügen mit <code>mutate()</code></h3>
+<p>Mit <code>mutate()</code>, dem vielleicht einzigen nicht selbsterklärenden Funktionsnamen der sechs diskutierten Funktionen, können wir Datensätzen neue Variablen hinzufügen (oder alte überschreiben). Hierzu geben wir den neuen Variablennamen an, gefolgt von einem <code>=</code> und der Berechnung bzw. Konstruktion der neuen Variablen. Wird als Variablenname ein schon im Datensatz bestehender Variablenname verwendet, so wird diese Variable überschrieben. Mit Kommas getrennt können auch mehrere neue Variablen erstellt werden.</p>
+<div class="sourceCode" id="cb241"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb241-1" title="1"><span class="co"># Wir erstellen eine neue Variable comments_centered,</span></a>
+<a class="sourceLine" id="cb241-2" title="2"><span class="co"># die die Kommentarzahl am allgemeinen Mittelwert zentriert</span></a>
+<a class="sourceLine" id="cb241-3" title="3"><span class="co"># indem wir von jedem Wert den Mittelwert der Kommentarzahl abziehen</span></a>
+<a class="sourceLine" id="cb241-4" title="4"><span class="co"># und wandeln die bestehende Variable message in Kleinschreibung</span></a>
+<a class="sourceLine" id="cb241-5" title="5"><span class="co"># mittels der Funktion tolower() um.</span></a>
+<a class="sourceLine" id="cb241-6" title="6"><span class="co">#</span></a>
+<a class="sourceLine" id="cb241-7" title="7"><span class="co"># Zur Darstellung werden die beiden &#39;mutierten&#39; Variablen </span></a>
+<a class="sourceLine" id="cb241-8" title="8"><span class="co"># anschließend mit select() ausgewählt</span></a>
+<a class="sourceLine" id="cb241-9" title="9"></a>
+<a class="sourceLine" id="cb241-10" title="10">df_mutated &lt;-<span class="st"> </span><span class="kw">mutate</span>(df_fb_eu,</a>
+<a class="sourceLine" id="cb241-11" title="11">       <span class="dt">comments_centered =</span> comments_count <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(comments_count, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb241-12" title="12">       <span class="dt">message =</span> <span class="kw">tolower</span>(message))</a>
+<a class="sourceLine" id="cb241-13" title="13"></a>
+<a class="sourceLine" id="cb241-14" title="14"><span class="kw">select</span>(df_mutated, comments_centered, message)</a></code></pre></div>
+<pre><code>## # A tibble: 902 x 2
+##    comments_centered message                                                           
+##                &lt;dbl&gt; &lt;chr&gt;                                                             
+##  1            -159.  &quot;guido #klamt aus #ludwigsburg, listenplatz 5 auf der kandidatenl~
+##  2            -142.  &quot;aus unserem europawahlprogramm, kapitel 7: gesundheits- und sozi~
+##  3             -89.2 &quot;beim wahlkampf-camp in berlin waren gestern hunderte freiwillige~
+##  4            -143.  &quot;unser neuer bundesvorstand \U0001f389\U0001f38a\U0001f388 #chanc~
+##  5            -153.  &quot;eine neue studie der universität oxford zeigt, dass eine vegane ~
+##  6              79.8 &quot;freiheit ist nicht selbstverständlich. #unsereuropa steht für fr~
+##  7              20.8 &quot;katarina barley sagt: eine weitere koalition mit der #evp will i~
+##  8            -159.  &quot;unser spitzenkandidat patrick breyer mit einem update zum eu19 w~
+##  9            -124.  &quot;der absolut härteste „martin-sonneborn-moment“ kommt für watson.~
+## 10              14.8 &quot;#klartext von bayerns ministerpräsident und csu-chef markus söde~
+## # ... with 892 more rows</code></pre>
+</div>
+<div id="variablen-zusammenfassen-mit-summarize" class="section level3">
+<h3><span class="header-section-number">8.2.5</span> Variablen zusammenfassen mit <code>summarize()</code></h3>
+<p>Mit <code>summarize()</code><a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a> fassen wir Variablen zusammen, indem wir Funktionen auf eine Variable anwenden. Das Resultat ist ein neues Tibble, das die zusammengefassten Variablen als Spalten enthält. Die Funktionsweise ist ähnlich wie bei <code>mutate()</code>:</p>
+<div class="sourceCode" id="cb243"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb243-1" title="1"><span class="co"># Mittelwert der drei zentralen Facebook-Metriken berechen</span></a>
+<a class="sourceLine" id="cb243-2" title="2"><span class="kw">summarize</span>(df_fb_eu, </a>
+<a class="sourceLine" id="cb243-3" title="3">          <span class="dt">mean_comments =</span> <span class="kw">mean</span>(comments_count, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb243-4" title="4">          <span class="dt">mean_shares =</span> <span class="kw">mean</span>(shares_count, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb243-5" title="5">          <span class="dt">mean_reactions =</span> <span class="kw">mean</span>(reactions_count, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>))</a></code></pre></div>
+<pre><code>## # A tibble: 1 x 3
+##   mean_comments mean_shares mean_reactions
+##           &lt;dbl&gt;       &lt;dbl&gt;          &lt;dbl&gt;
+## 1          159.        249.           846.</code></pre>
+</div>
+<div id="variablen-gruppieren-mit-group_by" class="section level3">
+<h3><span class="header-section-number">8.2.6</span> Variablen gruppieren mit <code>group_by()</code></h3>
+<p>Mittels <code>group_by()</code> können wir unseren Datensatz nach einer oder mehrerer Variablen gruppieren. Das Resultat ist erstmal ein Tibble, das nicht weiter von unserem Ausgangs-Tibble unterscheidet. Die Gruppierung wird dann jedoch bei folgenden Funktionen wie <code>mutate()</code> oder <code>summarize()</code> berücksichtig.</p>
+<div class="sourceCode" id="cb245"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb245-1" title="1"><span class="co"># Wir berechnen erneut die zentralen Facebook-Metriken</span></a>
+<a class="sourceLine" id="cb245-2" title="2"><span class="co"># mit summarize(), gruppieren aber zuvor nach Partei</span></a>
+<a class="sourceLine" id="cb245-3" title="3"></a>
+<a class="sourceLine" id="cb245-4" title="4">grouped_df &lt;-<span class="st"> </span><span class="kw">group_by</span>(df_fb_eu, party)</a>
+<a class="sourceLine" id="cb245-5" title="5"></a>
+<a class="sourceLine" id="cb245-6" title="6"><span class="kw">summarize</span>(grouped_df, <span class="dt">mean_comments =</span> <span class="kw">mean</span>(comments_count, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb245-7" title="7">          <span class="dt">mean_shares =</span> <span class="kw">mean</span>(shares_count, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb245-8" title="8">          <span class="dt">mean_reactions =</span> <span class="kw">mean</span>(reactions_count, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>))</a></code></pre></div>
+<pre><code>## # A tibble: 14 x 4
+##    party                           mean_comments mean_shares mean_reactions
+##    &lt;chr&gt;                                   &lt;dbl&gt;       &lt;dbl&gt;          &lt;dbl&gt;
+##  1 alternativefuerde                     863.         1796.          4032. 
+##  2 B90DieGruenen                         106.          184.           660. 
+##  3 CDU                                   349.           87.1          628. 
+##  4 CSU                                   136.           57.1          499. 
+##  5 DiePARTEI                              60.4         160.          1343. 
+##  6 FamilienParteiDeutschlands              0.633        16.0           10.5
+##  7 FDP                                    70            67.3          447. 
+##  8 freie.waehler.bundesvereinigung        25.3          43.1          141. 
+##  9 linkspartei                           116.          218.           935. 
+## 10 oedp.de                                 6.58         29.5          110. 
+## 11 Piratenpartei                          11.4          42.5          124. 
+## 12 SPD                                   220.          149.           719. 
+## 13 tierschutzpartei                       67.4         391.           979. 
+## 14 VoltDeutschland                        15.6          39.8          230.</code></pre>
+<p>Analog wird auch bei <code>mutate()</code> die Gruppierung in den Berechnungen berücksichtigt. Wenden wir die oben durchgeführte Mittelwert-Zentrierung der Kommentaranzahl auf unseren gruppierten Datensatz an, wird durch die <code>mean()</code>-Funktion der Mittelwert <em>innerhalb</em> der Gruppen (hier also der Parteien) berechnet. Im Ergebnis bekommen wir also für jeden Facebook-Post einen Wert, wie dieser von der durchschnittlichen Kommentaranzahl auf dieser Parteienseite abweicht:</p>
+<div class="sourceCode" id="cb247"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb247-1" title="1">mutated_df &lt;-<span class="st"> </span><span class="kw">mutate</span>(grouped_df, </a>
+<a class="sourceLine" id="cb247-2" title="2">                     <span class="dt">comments_group_centered =</span> comments_count <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(comments_count, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>))</a>
+<a class="sourceLine" id="cb247-3" title="3"></a>
+<a class="sourceLine" id="cb247-4" title="4"><span class="kw">select</span>(mutated_df, party, comments_group_centered, comments_count)</a></code></pre></div>
+<pre><code>## # A tibble: 902 x 3
+## # Groups:   party [14]
+##    party            comments_group_centered comments_count
+##    &lt;chr&gt;                              &lt;dbl&gt;          &lt;dbl&gt;
+##  1 oedp.de                            -6.58              0
+##  2 tierschutzpartei                  -50.4              17
+##  3 B90DieGruenen                     -35.5              70
+##  4 FDP                               -54                16
+##  5 tierschutzpartei                  -61.4               6
+##  6 CDU                              -110.              239
+##  7 SPD                               -40.4             180
+##  8 Piratenpartei                     -11.4               0
+##  9 DiePARTEI                         -25.4              35
+## 10 CSU                                37.7             174
+## # ... with 892 more rows</code></pre>
+<p>Wir können auch nach mehreren Variablen gruppieren:</p>
+<div class="sourceCode" id="cb249"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb249-1" title="1"><span class="co"># Wir berechnen erneut die zentralen Facebook-Metriken</span></a>
+<a class="sourceLine" id="cb249-2" title="2"><span class="co"># mit summarize(), gruppieren aber zuvor nach Partei UND Post-Typ</span></a>
+<a class="sourceLine" id="cb249-3" title="3"></a>
+<a class="sourceLine" id="cb249-4" title="4">grouped_df &lt;-<span class="st"> </span><span class="kw">group_by</span>(df_fb_eu, party, type)</a>
+<a class="sourceLine" id="cb249-5" title="5"></a>
+<a class="sourceLine" id="cb249-6" title="6"><span class="kw">summarize</span>(grouped_df, <span class="dt">mean_comments =</span> <span class="kw">mean</span>(comments_count, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb249-7" title="7">          <span class="dt">mean_shares =</span> <span class="kw">mean</span>(shares_count, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb249-8" title="8">          <span class="dt">mean_reactions =</span> <span class="kw">mean</span>(reactions_count, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>))</a></code></pre></div>
+<pre><code>## # A tibble: 46 x 5
+## # Groups:   party [14]
+##    party             type   mean_comments mean_shares mean_reactions
+##    &lt;chr&gt;             &lt;chr&gt;          &lt;dbl&gt;       &lt;dbl&gt;          &lt;dbl&gt;
+##  1 alternativefuerde link           826.       1341.           2953 
+##  2 alternativefuerde photo          860.       2466.           5269.
+##  3 alternativefuerde video          875.        847.           2340.
+##  4 B90DieGruenen     photo          134.        183.            902.
+##  5 B90DieGruenen     video           77.9       184.            425.
+##  6 CDU               photo          394.        114.            810.
+##  7 CDU               video          293.         53.0           400.
+##  8 CSU               link            25          11             132.
+##  9 CSU               photo          143.         63.8           566.
+## 10 CSU               status         416.        112.           1106 
+## # ... with 36 more rows</code></pre>
+<p>Wir sehen hier also, dass die AfD im Mittel 826.14 Kommentare auf Links bekommt, 860.49 auf Photos usw.</p>
+<p>Gruppierungen können (und sollten) im Anschluss mittels <code>ungroup()</code> wieder entfernt werden (auch hier wird der Datensatz als Argument übergeben), um Probleme bei der weiteren Datentransformation zu vermeiden.</p>
+<p>Eine besondere Variante von <code>group_by()</code> ist <code>rowwise()</code>, die den Datensatz zeilenweise gruppiert; dies ermöglicht zeilenweise Berechnungen mit Funktionen über mehrere Variablen hinweg, z. B. die Erstellung von Mittelwerts-Indizes:</p>
+<div class="sourceCode" id="cb251"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb251-1" title="1"><span class="co"># Gruppiere den Datensatz zeilenweise, um für jeden Post</span></a>
+<a class="sourceLine" id="cb251-2" title="2"><span class="co"># den Mittelwert der einzelnen Reactions (Like, Love etc.)</span></a>
+<a class="sourceLine" id="cb251-3" title="3"><span class="co"># zu berechnen</span></a>
+<a class="sourceLine" id="cb251-4" title="4"></a>
+<a class="sourceLine" id="cb251-5" title="5">rowwise_df &lt;-<span class="st"> </span><span class="kw">rowwise</span>(df_fb_eu)</a>
+<a class="sourceLine" id="cb251-6" title="6"></a>
+<a class="sourceLine" id="cb251-7" title="7">mutated_df &lt;-<span class="st"> </span><span class="kw">mutate</span>(rowwise_df, </a>
+<a class="sourceLine" id="cb251-8" title="8">                     <span class="dt">mean_reactions =</span> <span class="kw">mean</span>(<span class="kw">c</span>(like_count, love_count, wow_count, haha_count, sad_count, angry_count),</a>
+<a class="sourceLine" id="cb251-9" title="9">                                           <span class="dt">na.rm =</span> <span class="ot">TRUE</span>))</a>
+<a class="sourceLine" id="cb251-10" title="10"></a>
+<a class="sourceLine" id="cb251-11" title="11"><span class="kw">select</span>(mutated_df, mean_reactions)</a></code></pre></div>
+<pre><code>## Source: local data frame [902 x 1]
+## Groups: &lt;by row&gt;
+## 
+## # A tibble: 902 x 1
+##    mean_reactions
+##             &lt;dbl&gt;
+##  1           1.5 
+##  2          65.8 
+##  3          35.8 
+##  4          43.7 
+##  5          24.2 
+##  6          66.3 
+##  7         116.  
+##  8           1.17
+##  9         102   
+## 10          76.3 
+## # ... with 892 more rows</code></pre>
+<p>Eine Funktion, die einen häufigen Anwendungsfall von <code>group_by()</code>, <code>summarize()</code> und <code>ungroup()</code> kombiniert, ist <code>count()</code>, die die Fallzahl einer oder mehrerer Gruppierungsvariablen ausgibt. Mit dem Argument <code>sort = TRUE</code> kann die Ausgabe zudem direkt absteigend nach Anzahl sortiert werden:</p>
+<div class="sourceCode" id="cb253"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb253-1" title="1"><span class="co"># Zähle Posts pro Partei</span></a>
+<a class="sourceLine" id="cb253-2" title="2"><span class="kw">count</span>(df_fb_eu, party)</a></code></pre></div>
+<pre><code>## # A tibble: 14 x 2
+##    party                               n
+##    &lt;chr&gt;                           &lt;int&gt;
+##  1 alternativefuerde                  79
+##  2 B90DieGruenen                      67
+##  3 CDU                                64
+##  4 CSU                               103
+##  5 DiePARTEI                          96
+##  6 FamilienParteiDeutschlands         30
+##  7 FDP                                94
+##  8 freie.waehler.bundesvereinigung    30
+##  9 linkspartei                        38
+## 10 oedp.de                            71
+## 11 Piratenpartei                      73
+## 12 SPD                                49
+## 13 tierschutzpartei                   33
+## 14 VoltDeutschland                    75</code></pre>
+<div class="sourceCode" id="cb255"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb255-1" title="1"><span class="co"># Zähle Posts pro Partei und Post-Typ und sortiere absteigend nach Anzahl</span></a>
+<a class="sourceLine" id="cb255-2" title="2"><span class="kw">count</span>(df_fb_eu, party, type, <span class="dt">sort =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<pre><code>## # A tibble: 46 x 3
+##    party             type      n
+##    &lt;chr&gt;             &lt;chr&gt; &lt;int&gt;
+##  1 CSU               photo    76
+##  2 FDP               photo    67
+##  3 DiePARTEI         photo    53
+##  4 alternativefuerde photo    45
+##  5 oedp.de           photo    40
+##  6 Piratenpartei     photo    39
+##  7 B90DieGruenen     video    35
+##  8 CDU               photo    35
+##  9 VoltDeutschland   photo    35
+## 10 SPD               photo    33
+## # ... with 36 more rows</code></pre>
+</div>
+</div>
+<div id="daten-speichern" class="section level2">
+<h2><span class="header-section-number">8.3</span> Daten speichern</h2>
+<p>Wenn wir unsere Dateien modifiziert haben, möchten wir diese wohl auch speichern bzw. exportieren.</p>
+<div id="tabellarische-daten-exportieren" class="section level3">
+<h3><span class="header-section-number">8.3.1</span> Tabellarische Daten exportieren</h3>
+<p>Analog zu den <code>read_</code>-Funktionen stehen daher Exportfunktionen nach dem Schema <code>write_</code> zur Verfügung. Als Argumente werden dabei der Datensatz, der gespeichert werden soll, sowie der Dateipfad der zu speichernden Datei übergeben. Haben wir durch Modifikation beispielsweise das Tibble <code>df_modified</code> erstellt und möchten es in der Datei <code>datensatz_modifiziert.csv</code> im Unterordner <code>data</code> abspeichern, führen wir die <code>write_csv()</code>-Funktion aus:</p>
+<div class="sourceCode" id="cb257"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb257-1" title="1"><span class="kw">write_csv</span>(df_modified, <span class="st">&quot;data/datensatz_modifiziert.csv&quot;</span>)</a></code></pre></div>
+<p><code>write_csv()</code> nutzt dabei das Komma <code>,</code> als Spalten- und einen Punkt <code>.</code> als Dezimaltrennzeichen. Möchten wir stattdessen das in Deutschland gebräuchliche Format mit Semikolon <code>;</code> als Spalten- und Komma <code>,</code> als Dezimaltrennzeichen haben, verwenden wir analog zu <code>read_csv2()</code> <code>write_csv2()</code>.</p>
+<p>Da Excel öfters Probleme mit dem Einlesen von CSV-Dateien hat, können, soll die Datei danach in Excel betrachtet werden, auch die Funktionen <code>write_excel_csv()</code> bzw. <code>write_excel_csv2()</code> verwendet werden. Dies fügt ein spezielles Zeichen hinzu, das Excel den Datenimport erleichert.</p>
+</div>
+<div id="r-objekte-exportieren" class="section level3">
+<h3><span class="header-section-number">8.3.2</span> R-Objekte exportieren</h3>
+<p>Beim Export als CSV gehen unweigerlich auch Informationen verloren – bei unserem Datensatz beispielsweise die Objekttypen, die R den jeweiligen Variablen zugeordnet hat. Wollen wir R-Objekte daher für die zukünftige Verwendung in R abspeichern, lohnt es sich, direkt das jeweilige R-Objekt zu exportieren. Hierfür steht das Dateiformat <code>.rds</code> zur Verfügung, mit dem beliebige R-Objekte – neben Datensätzen also auch Vektoren, Listen, statistische Modelle etc. - gespeichert werden können.</p>
+<p>Die zugehörige Funktion lautet <code>saveRDS()</code> und wird analog zu den <code>write_</code>-Funktionen verwendet:</p>
+<div class="sourceCode" id="cb258"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb258-1" title="1"><span class="kw">saveRDS</span>(df_mutated, <span class="st">&quot;data/datensatz_modifiziert.rds&quot;</span>)</a></code></pre></div>
+<p>RDS-Dateien können dann jederzeit mit der Funktion <code>readRDS()</code> wieder geladen werden.</p>
+<p>Sollen mehrere R-Objekte exportiert werden – also beispielsweise ein Ausgangsdatensatz, ein modifizierter Arbeitsdatensatz und zugehörige statistische Modelle – kann das Dateiformat <code>.RData</code> und die Funktion <code>save()</code> verwendet werden. Dabei werden alle zu speichernden Objekte gefolgt von dem benannten Argument <code>file =</code>, das den Dateipfad angibt, in dem Funktionsaufruf genannt:</p>
+<div class="sourceCode" id="cb259"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb259-1" title="1"><span class="kw">save</span>(df_fb_eu, df_mutated, <span class="st">&quot;data/eu_file.RData&quot;</span>)</a></code></pre></div>
+<p>So exportiere Objekte können dann gesammelt über die <code>load()</code>-Funktion, die den Dateipfad als Argument benötigt, wieder geladen werden, was sehr praktisch ist, um direkt den gesamten Arbeitsstand wiederherzustellen.</p>
+</div>
+</div>
+<div id="übungsaufgaben-4" class="section level2">
+<h2><span class="header-section-number">8.4</span> Übungsaufgaben</h2>
+<p>Erstellen Sie für die folgenden Übungsaufgaben eine eigene Skriptdatei oder eine R-Markdown-Datei und speichern diese als <code>ue8_nachname.R</code> bzw. <code>ue8_nachname.Rmd</code> ab.</p>
+<hr />
+
+<div class="exercise">
+<span id="exr:ue8-1" class="exercise"><strong>Übungsaufgabe 8.1  </strong></span>Daten laden:
+</div>
+
+<p>Laden Sie die Datei <code>facebook_europawahl.csv</code> aus Moodle in Ihr Projektverzeichnis herunter und laden Sie den Datensatz.</p>
+<hr />
+
+<div class="exercise">
+<span id="exr:ue8-2" class="exercise"><strong>Übungsaufgabe 8.2  </strong></span>Daten modifizieren und speichern:
+</div>
+
+<p>Erstellen Sie einen Teildatensatz, der:</p>
+<ul>
+<li>nur Posts der aktuell im Bundestag vertretenen Parteien enthält (CDU, CSU, SPD, FDP, Linke, Grüne, AfD); Tipp: Betrachten Sie vorab die Schreibweise der Parteien (bzw. deren Facebook-Accounts)</li>
+<li>nur die Variablen <code>party</code>, <code>timestamp</code>, <code>type</code> sowie alle Facebook-Metriken enthält</li>
+<li>eine neue Variable <code>total_count</code> enthält, in der für jeden Post die Gesamtzahl der Kommentare, Shares und Reactions angegeben ist</li>
+</ul>
+<p>Speichern Sie diesen Teildatensatz sowohl als CSV- als auch als RDS-Datei.</p>
+<hr />
+
+<div class="exercise">
+<span id="exr:ue8-3" class="exercise"><strong>Übungsaufgabe 8.3  </strong></span>Daten modifizieren und zusammenfassen:
+</div>
+
+<p>Nutzen Sie die oben vorgestellten Funktionen, um pro Partei Mittelwert und Standardabweichung der drei Facebook-Metriken (Kommentare, Shares, Reactions) aller Posts zu berechnen, die in der Woche vor der Wahl (also nach dem 19.05.2019) erschienen sind.</p>
+<p>Tipp: Logische Operatoren funktionieren auch mit Datums- und Zeitvariablen; Text, der wie ein Datum aussieht, wir dabei automatisch in ein Datum bzw. eine Zeitangabe konvertiert.</p>
+
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="12">
+<li id="fn12"><p>Vielen Dank an den Kollegen Jörg Haßler!<a href="workingwithdata.html#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p>Häufig verwendete Objektnamen für Datensätze sind <code>df</code> und <code>data</code>, aber es schadet auch nicht, etwas spezifischere Namen zu vergeben, besonders wenn mit mehreren Datensätzen gearbeitet wird.<a href="workingwithdata.html#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p>Auch die Basisversion von R bietet Funktionen zum Einlesen von CSV-Dateien, die <code>read.csv()</code>, <code>read.csv2()</code> etc. heißen. Diese erzeugen einen Dataframe und sind weniger gut für große Dateien optimiert, sodass ich empfehle, immer direkt die Tidyverse-Funktionen zu nutzen. Generell erkennen Sie Tidyverse-Varianten von Funktionen der R-Basisversion daran, dass diese einen Unterstrich anstatt eines Punkts zur Worttrennung nutzen.<a href="workingwithdata.html#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn15"><p>Wobei umstritten ist, ob man das Paket <em>dee_plier</em> oder <em>deeply_ar</em> ausspricht.<a href="workingwithdata.html#fnref15" class="footnote-back">↩</a></p></li>
+<li id="fn16"><p>Und natürlich müssen wir das Resultat der Funktionen immer einem Objekt zuweisen, wenn wir damit weiterarbeiten wollen – zu Demonstrationszwecken reicht aber der reine Aufruf der Funktion.<a href="workingwithdata.html#fnref16" class="footnote-back">↩</a></p></li>
+<li id="fn17"><p>Wer <em>the King’s English</em> bevorzugt: <code>summarise()</code> funktioniert auch.<a href="workingwithdata.html#fnref17" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="datahandling-intro.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="der-pipe-operator.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["ComputationalMethods.pdf", "ComputationalMethods.epub"],
+"toc": {
+"collapse": "section",
+"depth": 3
+},
+"split_by": "chapter+number"
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

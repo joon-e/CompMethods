@@ -1,0 +1,352 @@
+# Kontrollstrukturen
+
+Mittels _Kontrollstrukturen_ können wir definieren, ob und wie oft Code ausgeführt wird; unterschieden wird hierbei vorrangig zwischen _Bedingungen_ -- d. h. Code, der nur ausgeführt wird, wenn eine bestimmte Bedingung erfüllt ist -- und _Iterationen_ (wiederholtes ausführen von Code, auch als _Schleifen_ bezeichnet).
+
+Bedingungen und Iterationen sind Konzepte, die ebenso wie Funktionen in quasi allen Programmiersprachen zu finden sind. Ziel dieses Kapitels ist es, ein Grundverständnis beider Konzepte zu erlangen; relevant werden diese spätestens, wenn wir über APIs oder Webscraping Daten erheben werden.
+
+## Bedingungen {#conditions}
+
+Bedingungen führen Code abhängig davon aus, ob eine definierte Bedingung `TRUE` oder `FALSE` ist.
+
+### `if`-Bedingungen
+
+Bedingungen werden in R -- ebenso wie in vielen anderen Programmiersprachen -- über das Schlüsselwort `if` umgesetzt, dem eine in runde Klammern `()` gesetzte, logische Bedingung folgt. Wie auch bei Funktionen wird der bedingt auszuführende Code in geschweifte Klammern gesetzt `{}`:
+
+```{r, eval=FALSE}
+if (bedingung) {
+  # Code der ausgeführt wird, wenn bedingung = TRUE ist
+}
+```
+
+Die `bedingung` muss dabei in dem Objekttypen `logical` (also `TRUE` oder `FALSE`, siehe Kapitel \@ref(logicals)) resultieren; in den meisten Fällen wird daher ein logischer Vergleich in den Klammern `()` durchgeführt:
+
+```{r}
+x <- 2
+aktion <- "verdoppeln"
+
+if (aktion == "verdoppeln") {
+  x <- x * 2
+}
+
+x
+```
+
+### `if`-`else`-Bedingungen
+
+Mit dem Schlüsselwort `else` können wir anschließend einen Codeblock definieren, der ausgeführt werden soll, wenn die Bedingung nicht zutrifft:
+
+```{r}
+punktzahl <- 45
+
+if (punktzahl > 50) {
+  status <- "bestanden"
+} else {
+  status <- "nicht bestanden"
+}
+
+status
+```
+
+### Bedingungen verketten
+
+Durch die Kombination von `else` und `if` können wir auch beliebig viele Bedingungen hintereinander prüfen:
+
+```{r}
+steak_temperatur <- 56
+
+if (steak_temperatur < 45) {
+  garstufe <- "raw"
+} else if (steak_temperatur < 53) {
+  garstufe <- "rare"
+} else if (steak_temperatur < 57) {
+  garstufe <- "medium rare"
+} else if (steak_temperatur < 63) {
+  garstufe <- "medium"
+} else {
+  garstufe <- "well done"
+}
+
+garstufe
+```
+
+### Mehrere Bedingungen
+
+Mittels [Boolescher Operatoren](https://de.wikipedia.org/wiki/Boolescher_Operator) können wir mehrere Bedingungen miteinander verknüpfen, um etwa zu prüfen ob alle Bedingungen zutreffen (`UND`-Verknüpfung), mindestens eine Bedinung zutrifft (`ODER`-Verknüpfung), oder das Gegenteil einer Bedingung zutrifft (`NICHT`-Verknüpfung). Die gebräuchlichsten Operatoren sind:
+
+Table: (\#tab:boolescheoperatoren) Boolesche Operatoren in R
+
+| Operator | Verknüpfung |                                          Beispiele                                         |
+|:--------:|:-----------:|:------------------------------------------------------------------------------------------:|
+|    `&`   |     und     |         `1 == 1 & 2 == 2` ergibt `TRUE`<br>`1 == 1 & 1 == 3` ergibt `FALSE`        |
+|    `|`   |     oder    |         `1 == 1 | 2 == 2` ergibt `TRUE`<br>`1 == 1 | 1 == 3` ergibt `TRUE`         |
+|    `!`   |    nicht    | `!(1 == 1)` ergibt `FALSE` (`!` wird der Bedingung vorangestellt)<br>`!(1 == 3)` ergibt `TRUE` |
+
+Als Beispiel verknüpfen wir die Bedingungen für ein Schaltjahr. Damit ein Jahr ein Schaltjahr ist, müssen folgende Bedingungen erfüllt sein:
+
+- Die Jahreszahl ist durch `400` teilbar `ODER`
+- Die Jahreszahl ist durch `4` teilbar `UND` ist gleichzeitig `NICHT` durch `100` teilbar.
+
+Ob eine Zahl durch eine andere Zahl teilbar ist, können wir mit dem Modulo-Operator `%%` prüfen, der den ganzzahligen Rest der Division ausgibt -- mit anderen Worten: wenn das Ergebnis der Modulo-Operation `0` ist, dann ist Zahl 1 durch Zahl 2 teilbar, ansonsten nicht.
+
+```{r, results='hold'}
+year <- 2020
+
+year %% 400 == 0 | (year %% 4 == 0 & !(year %% 100 == 0))
+# Natürlich könnten wir hinten auch prüfen, ob year %% 100 != 0 ist und
+# nur die UND-Verknüpfung nutzen, aber ich wollte alle drei Booleschen 
+# Operatoren in einer Prüfung unterbringen
+```
+
+Oder als Funktion verpackt:
+
+```{r}
+is_leap_year <- function(year) {
+  year %% 400 == 0 | (year %% 4 == 0 & !(year %% 100 == 0))
+}
+
+is_leap_year(c(1900, 2000, 2016, 2018, 2020))
+```
+
+### Mehrere Prüfwerte
+
+Oft wollen wir prüfen, ob ein Wert zu einer Reihe an Werten gehört -- beispielsweise wenn wir Werte kategorisieren möchten. Wir können dies mit einer `ODER`-Verknüpfung erreichen:
+
+```{r}
+food <- "Banane"
+
+if (food == "Apfel" | food == "Orange" | food == "Banane") {
+  food_category <- "Obst"
+}
+
+```
+
+Allerdings wird diese Verknüpfung schnell umständlich, wenn wir viele Prüfwerte haben, im Beispiel also nicht nur 3 Obstsorten, sondern 5, 10 oder 123. Hier hilft uns der Operator `%in%`, der testet, ob ein Wert in einem Vektor an Werten vorhanden ist:
+
+```{r}
+"Banane" %in% c("Apfel", "Orange", "Banane", "Zitrone", "Mango", "Kumquat")
+```
+
+Das funktioniert auch mit mehreren Werten auf der linken Seite der Prüfung:
+
+```{r}
+c("Banane", "Mango", "Leberkäse") %in% c("Apfel", "Orange", "Banane", "Zitrone", "Mango", "Kumquat")
+```
+
+Und natürlich können wir den Prüfvektor vorab zuweisen:
+
+```{r}
+obstsorten <- c("Apfel", "Orange", "Banane", "Zitrone", "Mango", "Kumquat")
+food <- "Kumquat"
+
+if (food %in% obstsorten) {
+  food_category <- "Obst"
+} else {
+  food_category <- "Kein Obst"
+}
+
+food_category
+```
+
+
+## Iterationen
+
+Mittels Iterationen führen wir ein Code-Fragment wiederholt für verschiedene Input-Objekte aus. R bietet viele unterschiedliche Möglichkeiten für Iterationen -- für den Anfang genügen wir uns mit vektorisierten Funktionen, `for`-Loops und `while`-Loops:
+
+### Vektorisierte Funktionen
+
+Tatsächlich haben wir unbewusst bereits mehrfach mit Iterationen gearbeitet, indem wir _vektorisierte_ Funktionen eingesetzt haben -- Funktionen, die automatisch auf jedes Element eines Vektors angewendet werden. Dazu zählen beispielsweise alle arithmetischen Operatoren und nahezu alle Funktionen in der Basis-Version von R:
+
+```{r, results='hold'}
+zahlen <- c(5, 10, 42)
+zahlen - 10
+zahlen * 3
+log(zahlen) # Berechnet den natürlichen Logarithmus
+tolower(c("Text 1", "TEXT 2", "TEXT DREI")) # wandelt Text in Kleinbuchstaben um
+```
+
+Wir haben außerdem in Kapitel \@ref(vectorarithmetics) gesehen, dass wir so auch mit zwei gleichlangen Vektoren effizient rechnen können:
+
+```{r}
+c(2, 3, 4) * c(2, 5, 10)
+```
+
+Was passiert, wenn beide Vektoren nicht gleichlang sind? Hier tritt eine Eigenschaft von R zu Tage, die sich _Recycling_ nennt: Ist der längere Vektor durch den kürzeren Vektor teilbar, wiederholt R den kürzeren Vektor einfach entsprechend oft:
+
+```{r}
+c(2, 4) * c(2, 3, 5, 10)
+```
+
+Ist das nicht der Fall, produziert R hingegen eine Fehlermeldung:
+
+```{r, error=TRUE}
+c(2, 4) * c(2, 3, 5)
+```
+
+### `for`-Loops {#forloops}
+
+`for`-Loops führen (beliebig viele Zeilen) Code für jedes Element eines Vektors durch. Die Grundform eines `for`-Loops sieht wie folgt aus:
+
+```{r, eval=FALSE}
+for (element in vektor) {
+  # Body: Code, der ausgeführt wird
+}
+```
+
+`element` ist hierbei ein Objekt, dem nach jeder Ausführung des Codes in den geschweiften Klammern `{}` das nächste Element aus dem angegebenen Vektor zugewiesen wird. Wir können dem Element einen beliebigen Objektnamen geben und es dann ähnlich wie in Funktionen als Platzhalter im Loop-Code verwenden. Für einfache Loops wird meistens der Objektname `i` verwendet:
+
+```{r}
+
+zahlen <- 1:5
+
+for (i in zahlen) {
+  neue_zahl <- i * i - 1
+  print(neue_zahl) # print() schreibt ein Objekt in den Konsolenoutput
+}
+
+```
+
+Nutzen wir ein etwas anwendungsbezogeneres Beispiel. Nehmen wir an, wir möchten den Mittelwert aller (numerischen) Variablen in einem Datensatz ausgeben. Wir könnten die `mean()`-Funktion natürlich einfach händisch für jede Variable anfordern:
+
+```{r, results='hold'}
+mean(iris$Sepal.Length)
+mean(iris$Sepal.Width)
+mean(iris$Petal.Length)
+# usw.
+```
+
+Im Falle von `iris` bei nur vier numerischen Variablen wäre das noch problemlos möglich, bei längeren Datensätzen hätten wir aber schnell sehr viel zu tun -- und in allen Fällen produzieren wir sehr viel redundanten Code. Eleganter lösen wir das mit einem `for`-Loop und einem Vektor, der alle uns interessierenden Variablennamen enthält:
+
+```{r}
+variablen <- c("Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width")
+
+mittelwerte <- c()
+
+for (variable in variablen) {
+ mittelwerte[variable] <- mean(iris[[variable]])
+}
+
+mittelwerte
+```
+
+Was passiert hier? 
+
+1. Wir erstellen einen Vektor mit den uns interessierenden Variablen `variablen` sowie einen leeren Vektor `mittelwerte`.
+2. Der `for`-Loop beginnt: `variable` bekommt das erste Element aus `variablen`, also `"Sepal.Length"` zugewiesen. Dann wird der Code in den geschweiften Klammern `{}` ausgeführt:
+    - `iris[[variable]]` extrahiert aus dem `iris`-Datensatz die Spalte mit dem Namen, der in `variable` gespeichert ist -- aktuell also `"Sepal.Length"`. (Wir kennen bisher nur einfache eckige Klammern `[]` zur Extraktion; dabei wird der Objekttyp `data.frame` beibehalten und wir können auch mehrere Variablen extrahieren. Mit den doppelten eckigen Klammern `[[]]` wird hingegen nur eine einzige Variable extrahiert und in den Objekttyp `vector` umgewandelt. Diesen Objekttypen benötigen wir für die `mean()`-Funktion.)
+    - Wir berechnen davon den Mittelwert mittels `mean()`.
+    - Der Vektor `mittelwerte` erhält ein Element mit dem Namen, der in `variable` gespeichert ist -- aktuell also ebenfalls `"Sepal.Length"`. Diesem Element weisen wir den berechneten Mittelwert zu.
+3. Der Loop ist nun einmal durchlaufen und beginnt von vorne. Dabei wird `variable` nun das zweite Element von `variablen`, "Sepal.Width", zugewiesen. Dann wird der Code in den geschweiften Klammern erneut ausgeführt.
+4. Diese Schritte werden so oft wiederholt, bis wir am Ende von `variablen` angekommen sind und jedes Element aus `variablen` einmal `variable` zugewiesen wurde.
+5. Als Resultat erhalten wir einen benannten Vektor `mittelwerte`, der alle Mittelwerte enthält.
+
+
+Mittels `for`-Loops können wir also sehr schnell Teile unseres Codes automatisieren und als Grundprinzip finden sich `for`-Loops in nahezu allen Programmiersprachen. Wir werden jedoch in Kürze noch Funktionen kennenlernen, die uns Iterationen nochmals deutlich komfortabler gestalten.
+
+### `while`-Loops
+
+Bei `for`-Loops wissen wir vorab, wie oft der Loop ausgeführt wird -- nämlich für jedes Element, das der Vektor, über den wir loopen, enthält. Manchmal ist es uns aber nicht vorab bewusst, wie oft ein Loop ausgeführt werden soll. In diesem Fall können wir `while`-Loops verwenden, die so lange ausgeführt werden, wie eine Bedingung als `TRUE` erfüllt ist:
+
+```{r, eval=FALSE}
+while (bedingung) {
+  # Body: Code, der ausgeführt wird
+}
+```
+
+Entsprechend benötigen wir eine Bedingung, die bei jeder Iteration wieder überprüft wird. Das Prüfkriterium sollten wir also im Body des Loops auch anpassen, da der Loop sonst unendlich läuft. 
+
+Als Beispiel schreiben wir einen Loop, der in 5er-Schritten von `50` bis `100` zählt:
+
+```{r}
+x <- 50
+
+while (x <= 100) {
+  print(x)
+  x <- x + 5
+}
+```
+
+Was passiert hier?
+
+1. Wir weisen `x` den Ausgangswert `50` zu.
+2. Der `while`-Loop beginnt. Wir prüfen zunächst ob `x` kleiner gleich `100`, was aktuell der Fall ist. Dann wird der Code ausgeführt:
+    - Wir schreiben zunächst den aktuellen Wert von `x` in die Konsole.
+    - Dann addieren wir `5` zu `x`. `x` ist nun `55`.
+3. Der Loop ist nun einmal durchlaufen und beginnt von vorne. Erneut wird geprüft, ob `x` kleiner gleich `100` ist. Dies ist weiterhin der Fall, der Code wird also erneut ausgeführt.
+4. Dies wird so lange wiederholt, bis die Bedingung nicht mehr erfüllt ist. Dies geschieht, nachdem `100` in die Konsole geschrieben wurde, da danach auf `x` nochmals `5` addiert werden und `x` am Ende des Loops folglich `105` ist. Die nächste Prüfung `105 <= 100` resultiert in `FALSE`, der Loop wird abgebrochen.
+
+Einen häufigen Anwendungsfall für `while`-Loops lernen wir kennen, sobald wir mit APIs arbeiten. Wollen wir etwa Tweets zu einem bestimmten Hashtag herunterladen, wissen wir vorab nicht, um wie viele Tweets es sich handelt. Mit einem `while`-Loop könnten wir daher festlegen, dass wir den Code zum Tweets-aus-der-API-ziehen ausführen, bis diese keine weiteren zurückgibt.
+
+Herzlichen Glückwunsch, Sie beherrschen nun die zentralen Grundlagen von R (und fast jeder anderen Programmiersprache) und könnten theoretisch alle weiteren Funktionen von Hand schreiben. In der Praxis wurde aber vermutlich so gut wie jedes Problem, das Ihnen im datenanalytischen Kontext begegnet, schon von jemand anderem gelöst. Wir schauen uns also als nächstes an, wie wir auf Funktionen von anderen in Form von Packages zugreifen können.
+
+## Übungsaufgaben
+
+Erstellen Sie für die folgenden Übungsaufgaben eine eigene Skriptdatei und speichern diese als `ue4_nachname.R` ab. Antworten auf Fragen können Sie direkt als Kommentare in das Skript einfügen.
+
+---
+
+```{exercise, label="ue4-1"}
+Bedingungen:
+```
+Wir haben in einer Studie das Nachrichtennutzungsverhalten erhoben und möchten dieses nun basierend auf zwei Variablen in einer neuen Variablen `news_category` kategorisieren:
+
+- Falls in der Variable `news_channel` nicht `"Internet"` angeben wurde, soll die neue Variable `news_category` den Wert `"Offline"` lauten.
+- Falls dort "`Internet`" angegeben wurde, steht eine weitere Unterteilung an:
+  - Falls in `news_website` die Werte `"Twitter"`, `"Facebook"` oder `"Instagram"` angegeben wurden, soll `news_category` den Wert `"Online: SNS"` haben.
+  - Bei allen anderen Werten von `news_website` soll `news_category` den Wert `"Online: Sonstige"` bekommen
+
+Bilden Sie im folgenden Codebeispiel diesen Entscheidungsbaum mit Bedingungen nach:
+
+```{r, eval=FALSE}
+news_channel <- "Internet"
+news_website <- "Facebook"
+
+#       Ihr Code hier
+#
+#  _._     _,-'""`-._
+# (,-.`._,'(       |\`-/|
+#     `-.-' \ )-`( , o o)
+#           `-    \`_`"'-
+#
+# (Diese Katze sieht in R kopiert besser aus als hier in der Webansicht)
+
+news_category # Wenn alles geklappt hat, sollte "Online: SNS" herauskommen
+```
+
+---
+
+```{exercise, label="ue4-2"}
+Iterationen:
+```
+
+Vervollständigen Sie in der folgenden Funktion alle Platzhalter `___`, sodass diese für alle numerischen Variablen eines Datensatzes Mittelwert und Standardabweichung ausgibt:
+
+```{r, eval=FALSE}
+numeric_summary <- function(data) {
+  
+  # Alle Variablennamen in Vektor speichern
+  variables <- names(data)
+  
+  # Leere Liste für Ausgabe vorbereiten
+  summary_list <- list()
+  
+  # Über alle Variablen iterieren
+  ___ (___) { # Hier die ___ ersetzen
+    variable_vector <- data[[___]] # Und hier ebenfalls
+    
+    if (is.numeric(variable_vector)) { # Prüfen ob die Variable numerisch ist
+      
+      # Mittelwert und Standardabweichung dieser Variablen der summary_list hinzufügen
+      summary_list[[___]] <- c( # Hier wieder die ___ ersetzen
+        M = mean(variable_vector),   
+        SD = sd(variable_vector)
+      )
+    }
+    
+  }
+  
+  # Summary List ausgeben
+  return(summary_list)
+}
+```
+
+Testen Sie die fertige Version mit den `iris`- und `mtcars`-Datensätzen.

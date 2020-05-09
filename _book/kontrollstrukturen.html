@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>4 Kontrollstrukturen | Computational Methods in der politischen Kommunikationsforschung</title>
+  <meta name="description" content="4 Kontrollstrukturen | Computational Methods in der politischen Kommunikationsforschung" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="4 Kontrollstrukturen | Computational Methods in der politischen Kommunikationsforschung" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="4 Kontrollstrukturen | Computational Methods in der politischen Kommunikationsforschung" />
+  
+  
+  
+
+<meta name="author" content="Julian Unkel" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="funktionen.html"/>
+<link rel="next" href="packages.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Methodische Vertiefung: Computational Methods</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Einführung</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#seminarinformationen"><i class="fa fa-check"></i>Seminarinformationen</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#ablauf-des-kurses"><i class="fa fa-check"></i>Ablauf des Kurses</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#motivation-und-ziele-des-seminars"><i class="fa fa-check"></i>Motivation und Ziele des Seminars</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#warum-also-eine-programmiersprache-für-datenanalyse-lernen"><i class="fa fa-check"></i>Warum also eine Programmiersprache für Datenanalyse lernen?</a></li>
+<li><a href="index.html#warum-r-lernen">Warum <em>R</em> lernen?</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#hinweise-zur-nutzung-des-online-kurses"><i class="fa fa-check"></i>Hinweise zur Nutzung des Online-Kurses</a></li>
+</ul></li>
+<li class="part"><span><b>I Eine kurze Einführung in R</b></span></li>
+<li class="chapter" data-level="1" data-path="firststeps.html"><a href="firststeps.html"><i class="fa fa-check"></i><b>1</b> Installation und erste Schritte</a><ul>
+<li class="chapter" data-level="1.1" data-path="firststeps.html"><a href="firststeps.html#rinstallieren"><i class="fa fa-check"></i><b>1.1</b> R installieren</a></li>
+<li class="chapter" data-level="1.2" data-path="firststeps.html"><a href="firststeps.html#rstudioinstallieren"><i class="fa fa-check"></i><b>1.2</b> RStudio installieren</a></li>
+<li class="chapter" data-level="1.3" data-path="firststeps.html"><a href="firststeps.html#oberflaeche"><i class="fa fa-check"></i><b>1.3</b> Die Benutzeroberfläche von RStudio</a><ul>
+<li class="chapter" data-level="1.3.1" data-path="firststeps.html"><a href="firststeps.html#konsole"><i class="fa fa-check"></i><b>1.3.1</b> Konsole</a></li>
+<li class="chapter" data-level="1.3.2" data-path="firststeps.html"><a href="firststeps.html#r-skripte"><i class="fa fa-check"></i><b>1.3.2</b> R-Skripte</a></li>
+<li class="chapter" data-level="1.3.3" data-path="firststeps.html"><a href="firststeps.html#environment"><i class="fa fa-check"></i><b>1.3.3</b> Environment</a></li>
+<li class="chapter" data-level="1.3.4" data-path="firststeps.html"><a href="firststeps.html#files"><i class="fa fa-check"></i><b>1.3.4</b> Files</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="firststeps.html"><a href="firststeps.html#anpassen"><i class="fa fa-check"></i><b>1.4</b> RStudio anpassen</a></li>
+<li class="chapter" data-level="1.5" data-path="firststeps.html"><a href="firststeps.html#übungsaufgaben"><i class="fa fa-check"></i><b>1.5</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html"><i class="fa fa-check"></i><b>2</b> Objekte und Datenstrukturen</a><ul>
+<li class="chapter" data-level="2.1" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#objektnamen"><i class="fa fa-check"></i><b>2.1</b> Objektnamen</a></li>
+<li class="chapter" data-level="2.2" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#objekttypen"><i class="fa fa-check"></i><b>2.2</b> Objekttypen</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#numerische-objekte"><i class="fa fa-check"></i><b>2.2.1</b> Numerische Objekte</a></li>
+<li class="chapter" data-level="2.2.2" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#textobjekte"><i class="fa fa-check"></i><b>2.2.2</b> Textobjekte</a></li>
+<li class="chapter" data-level="2.2.3" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#logicals"><i class="fa fa-check"></i><b>2.2.3</b> Logicals (logische Objekte)</a></li>
+<li class="chapter" data-level="2.2.4" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#weitere-objekttypen"><i class="fa fa-check"></i><b>2.2.4</b> Weitere Objekttypen</a></li>
+<li class="chapter" data-level="2.2.5" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#missingvals"><i class="fa fa-check"></i><b>2.2.5</b> Fehlende Werte</a></li>
+<li class="chapter" data-level="2.2.6" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#coercion"><i class="fa fa-check"></i><b>2.2.6</b> Objekttypen ändern</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#datenstrukturen"><i class="fa fa-check"></i><b>2.3</b> Datenstrukturen</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#vectors"><i class="fa fa-check"></i><b>2.3.1</b> Vektoren</a></li>
+<li class="chapter" data-level="2.3.2" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#listen"><i class="fa fa-check"></i><b>2.3.2</b> Listen</a></li>
+<li class="chapter" data-level="2.3.3" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#matrizen"><i class="fa fa-check"></i><b>2.3.3</b> Matrizen</a></li>
+<li class="chapter" data-level="2.3.4" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#dataframes"><i class="fa fa-check"></i><b>2.3.4</b> Dataframes</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#übungsaufgaben-1"><i class="fa fa-check"></i><b>2.4</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="funktionen.html"><a href="funktionen.html"><i class="fa fa-check"></i><b>3</b> Funktionen</a><ul>
+<li class="chapter" data-level="3.1" data-path="funktionen.html"><a href="funktionen.html#funktionen-aufrufen"><i class="fa fa-check"></i><b>3.1</b> Funktionen aufrufen</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="funktionen.html"><a href="funktionen.html#funktionsargumente"><i class="fa fa-check"></i><b>3.1.1</b> Funktionsargumente</a></li>
+<li class="chapter" data-level="3.1.2" data-path="funktionen.html"><a href="funktionen.html#hilfestellungen-zu-funktionen"><i class="fa fa-check"></i><b>3.1.2</b> Hilfestellungen zu Funktionen</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="funktionen.html"><a href="funktionen.html#eigene-funktionen-erstellen"><i class="fa fa-check"></i><b>3.2</b> Eigene Funktionen erstellen</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="funktionen.html"><a href="funktionen.html#funktionen-erstellen-wann-und-warum"><i class="fa fa-check"></i><b>3.2.1</b> Funktionen erstellen: wann und warum?</a></li>
+<li class="chapter" data-level="3.2.2" data-path="funktionen.html"><a href="funktionen.html#aufbau-und-erstellung-von-funktionen"><i class="fa fa-check"></i><b>3.2.2</b> Aufbau und Erstellung von Funktionen</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="funktionen.html"><a href="funktionen.html#übungsaufgaben-2"><i class="fa fa-check"></i><b>3.3</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html"><i class="fa fa-check"></i><b>4</b> Kontrollstrukturen</a><ul>
+<li class="chapter" data-level="4.1" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#conditions"><i class="fa fa-check"></i><b>4.1</b> Bedingungen</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#if-bedingungen"><i class="fa fa-check"></i><b>4.1.1</b> <code>if</code>-Bedingungen</a></li>
+<li class="chapter" data-level="4.1.2" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#if-else-bedingungen"><i class="fa fa-check"></i><b>4.1.2</b> <code>if</code>-<code>else</code>-Bedingungen</a></li>
+<li class="chapter" data-level="4.1.3" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#bedingungen-verketten"><i class="fa fa-check"></i><b>4.1.3</b> Bedingungen verketten</a></li>
+<li class="chapter" data-level="4.1.4" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#mehrere-bedingungen"><i class="fa fa-check"></i><b>4.1.4</b> Mehrere Bedingungen</a></li>
+<li class="chapter" data-level="4.1.5" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#mehrere-prüfwerte"><i class="fa fa-check"></i><b>4.1.5</b> Mehrere Prüfwerte</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#iterationen"><i class="fa fa-check"></i><b>4.2</b> Iterationen</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#vektorisierte-funktionen"><i class="fa fa-check"></i><b>4.2.1</b> Vektorisierte Funktionen</a></li>
+<li class="chapter" data-level="4.2.2" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#forloops"><i class="fa fa-check"></i><b>4.2.2</b> <code>for</code>-Loops</a></li>
+<li class="chapter" data-level="4.2.3" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#while-loops"><i class="fa fa-check"></i><b>4.2.3</b> <code>while</code>-Loops</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#übungsaufgaben-3"><i class="fa fa-check"></i><b>4.3</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="packages.html"><a href="packages.html"><i class="fa fa-check"></i><b>5</b> Packages</a><ul>
+<li class="chapter" data-level="5.1" data-path="packages.html"><a href="packages.html#packages-installieren"><i class="fa fa-check"></i><b>5.1</b> Packages installieren</a></li>
+<li class="chapter" data-level="5.2" data-path="packages.html"><a href="packages.html#usepackages"><i class="fa fa-check"></i><b>5.2</b> Packages nutzen</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="workflow.html"><a href="workflow.html"><i class="fa fa-check"></i><b>6</b> Workflow</a><ul>
+<li class="chapter" data-level="6.1" data-path="workflow.html"><a href="workflow.html#arbeitsverzeichnisse"><i class="fa fa-check"></i><b>6.1</b> Arbeitsverzeichnisse</a></li>
+<li class="chapter" data-level="6.2" data-path="workflow.html"><a href="workflow.html#rprojects"><i class="fa fa-check"></i><b>6.2</b> Projekte und Ordnerstrukturen</a></li>
+<li class="chapter" data-level="6.3" data-path="workflow.html"><a href="workflow.html#r-markdown"><i class="fa fa-check"></i><b>6.3</b> R Markdown</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="workflow.html"><a href="workflow.html#yaml-header"><i class="fa fa-check"></i><b>6.3.1</b> YAML-Header</a></li>
+<li class="chapter" data-level="6.3.2" data-path="workflow.html"><a href="workflow.html#freitext-in-markdown"><i class="fa fa-check"></i><b>6.3.2</b> Freitext in Markdown</a></li>
+<li class="chapter" data-level="6.3.3" data-path="workflow.html"><a href="workflow.html#code-chunks"><i class="fa fa-check"></i><b>6.3.3</b> Code Chunks</a></li>
+<li class="chapter" data-level="6.3.4" data-path="workflow.html"><a href="workflow.html#ausgabedateien-erzeugen"><i class="fa fa-check"></i><b>6.3.4</b> Ausgabedateien erzeugen</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="workflow.html"><a href="workflow.html#r-aktuell-halten"><i class="fa fa-check"></i><b>6.4</b> R aktuell halten</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="workflow.html"><a href="workflow.html#packages-aktualisieren"><i class="fa fa-check"></i><b>6.4.1</b> Packages aktualisieren</a></li>
+<li class="chapter" data-level="6.4.2" data-path="workflow.html"><a href="workflow.html#rstudio-aktualisieren"><i class="fa fa-check"></i><b>6.4.2</b> RStudio aktualisieren</a></li>
+<li class="chapter" data-level="6.4.3" data-path="workflow.html"><a href="workflow.html#r-aktualisieren"><i class="fa fa-check"></i><b>6.4.3</b> R aktualisieren</a></li>
+</ul></li>
+</ul></li>
+<li class="part"><span><b>II Datenhandling in R</b></span></li>
+<li class="chapter" data-level="7" data-path="datahandling-intro.html"><a href="datahandling-intro.html"><i class="fa fa-check"></i><b>7</b> Einführung in das Datenhandling</a><ul>
+<li class="chapter" data-level="7.1" data-path="datahandling-intro.html"><a href="datahandling-intro.html#daten--und-dateiformate-tabellarischer-daten"><i class="fa fa-check"></i><b>7.1</b> Daten- und Dateiformate tabellarischer Daten</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="datahandling-intro.html"><a href="datahandling-intro.html#tidy-data"><i class="fa fa-check"></i><b>7.1.1</b> Tidy data</a></li>
+<li class="chapter" data-level="7.1.2" data-path="datahandling-intro.html"><a href="datahandling-intro.html#dateiformate"><i class="fa fa-check"></i><b>7.1.2</b> Dateiformate</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="datahandling-intro.html"><a href="datahandling-intro.html#willkommen-im-tidyverse"><i class="fa fa-check"></i><b>7.2</b> Willkommen im Tidyverse</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="workingwithdata.html"><a href="workingwithdata.html"><i class="fa fa-check"></i><b>8</b> Daten laden, modifizieren und speichern</a><ul>
+<li class="chapter" data-level="8.1" data-path="workingwithdata.html"><a href="workingwithdata.html#daten-laden"><i class="fa fa-check"></i><b>8.1</b> Daten laden</a><ul>
+<li class="chapter" data-level="8.1.1" data-path="workingwithdata.html"><a href="workingwithdata.html#csv-dateien-einlesen"><i class="fa fa-check"></i><b>8.1.1</b> CSV-Dateien einlesen</a></li>
+<li class="chapter" data-level="8.1.2" data-path="workingwithdata.html"><a href="workingwithdata.html#andere-dateiformate"><i class="fa fa-check"></i><b>8.1.2</b> Andere Dateiformate</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="workingwithdata.html"><a href="workingwithdata.html#daten-modifizieren"><i class="fa fa-check"></i><b>8.2</b> Daten modifizieren</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="workingwithdata.html"><a href="workingwithdata.html#variablen-spaltenweise-auswählen-mit-select"><i class="fa fa-check"></i><b>8.2.1</b> Variablen spaltenweise auswählen mit <code>select()</code></a></li>
+<li class="chapter" data-level="8.2.2" data-path="workingwithdata.html"><a href="workingwithdata.html#variablen-zeilenweise-filtern-mit-filter"><i class="fa fa-check"></i><b>8.2.2</b> Variablen zeilenweise filtern mit <code>filter()</code></a></li>
+<li class="chapter" data-level="8.2.3" data-path="workingwithdata.html"><a href="workingwithdata.html#daten-sortieren-mit-arrange"><i class="fa fa-check"></i><b>8.2.3</b> Daten sortieren mit <code>arrange()</code></a></li>
+<li class="chapter" data-level="8.2.4" data-path="workingwithdata.html"><a href="workingwithdata.html#neue-variablen-hinzufügen-mit-mutate"><i class="fa fa-check"></i><b>8.2.4</b> Neue Variablen hinzufügen mit <code>mutate()</code></a></li>
+<li class="chapter" data-level="8.2.5" data-path="workingwithdata.html"><a href="workingwithdata.html#variablen-zusammenfassen-mit-summarize"><i class="fa fa-check"></i><b>8.2.5</b> Variablen zusammenfassen mit <code>summarize()</code></a></li>
+<li class="chapter" data-level="8.2.6" data-path="workingwithdata.html"><a href="workingwithdata.html#variablen-gruppieren-mit-group_by"><i class="fa fa-check"></i><b>8.2.6</b> Variablen gruppieren mit <code>group_by()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="workingwithdata.html"><a href="workingwithdata.html#daten-speichern"><i class="fa fa-check"></i><b>8.3</b> Daten speichern</a><ul>
+<li class="chapter" data-level="8.3.1" data-path="workingwithdata.html"><a href="workingwithdata.html#tabellarische-daten-exportieren"><i class="fa fa-check"></i><b>8.3.1</b> Tabellarische Daten exportieren</a></li>
+<li class="chapter" data-level="8.3.2" data-path="workingwithdata.html"><a href="workingwithdata.html#r-objekte-exportieren"><i class="fa fa-check"></i><b>8.3.2</b> R-Objekte exportieren</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="workingwithdata.html"><a href="workingwithdata.html#übungsaufgaben-4"><i class="fa fa-check"></i><b>8.4</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html"><i class="fa fa-check"></i><b>9</b> Der Pipe-Operator <code>%&gt;%</code></a><ul>
+<li class="chapter" data-level="9.1" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#lesbarkeit-verschachtelter-funktionen"><i class="fa fa-check"></i><b>9.1</b> Lesbarkeit verschachtelter Funktionen</a></li>
+<li class="chapter" data-level="9.2" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#ein-beispiel-in-pseudo-code"><i class="fa fa-check"></i><b>9.2</b> Ein Beispiel in Pseudo-Code</a></li>
+<li class="chapter" data-level="9.3" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#formale-definition"><i class="fa fa-check"></i><b>9.3</b> Formale Definition</a></li>
+<li class="chapter" data-level="9.4" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#einsatz-von-pipes-im-tidyverse"><i class="fa fa-check"></i><b>9.4</b> Einsatz von Pipes im Tidyverse</a></li>
+<li class="chapter" data-level="9.5" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#übungsaufgaben-5"><i class="fa fa-check"></i><b>9.5</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="appendix"><span><b>Anhang</b></span></li>
+<li class="chapter" data-level="A" data-path="loesungen.html"><a href="loesungen.html"><i class="fa fa-check"></i><b>A</b> Lösungen der Übungsaufgaben</a><ul>
+<li class="chapter" data-level="" data-path="loesungen.html"><a href="loesungen.html#kapitel-2-objekte-und-datenstrukturen"><i class="fa fa-check"></i>Kapitel 2: Objekte und Datenstrukturen</a></li>
+<li class="chapter" data-level="" data-path="loesungen.html"><a href="loesungen.html#kapitel-3-funktionen"><i class="fa fa-check"></i>Kapitel 3: Funktionen</a></li>
+<li class="chapter" data-level="" data-path="loesungen.html"><a href="loesungen.html#kapitel-4-kontrollstrukturen"><i class="fa fa-check"></i>Kapitel 4: Kontrollstrukturen</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Computational Methods in der politischen Kommunikationsforschung</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="kontrollstrukturen" class="section level1">
+<h1><span class="header-section-number">4</span> Kontrollstrukturen</h1>
+<p>Mittels <em>Kontrollstrukturen</em> können wir definieren, ob und wie oft Code ausgeführt wird; unterschieden wird hierbei vorrangig zwischen <em>Bedingungen</em> – d. h. Code, der nur ausgeführt wird, wenn eine bestimmte Bedingung erfüllt ist – und <em>Iterationen</em> (wiederholtes ausführen von Code, auch als <em>Schleifen</em> bezeichnet).</p>
+<p>Bedingungen und Iterationen sind Konzepte, die ebenso wie Funktionen in quasi allen Programmiersprachen zu finden sind. Ziel dieses Kapitels ist es, ein Grundverständnis beider Konzepte zu erlangen; relevant werden diese spätestens, wenn wir über APIs oder Webscraping Daten erheben werden.</p>
+<div id="conditions" class="section level2">
+<h2><span class="header-section-number">4.1</span> Bedingungen</h2>
+<p>Bedingungen führen Code abhängig davon aus, ob eine definierte Bedingung <code>TRUE</code> oder <code>FALSE</code> ist.</p>
+<div id="if-bedingungen" class="section level3">
+<h3><span class="header-section-number">4.1.1</span> <code>if</code>-Bedingungen</h3>
+<p>Bedingungen werden in R – ebenso wie in vielen anderen Programmiersprachen – über das Schlüsselwort <code>if</code> umgesetzt, dem eine in runde Klammern <code>()</code> gesetzte, logische Bedingung folgt. Wie auch bei Funktionen wird der bedingt auszuführende Code in geschweifte Klammern gesetzt <code>{}</code>:</p>
+<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb159-1" title="1"><span class="cf">if</span> (bedingung) {</a>
+<a class="sourceLine" id="cb159-2" title="2">  <span class="co"># Code der ausgeführt wird, wenn bedingung = TRUE ist</span></a>
+<a class="sourceLine" id="cb159-3" title="3">}</a></code></pre></div>
+<p>Die <code>bedingung</code> muss dabei in dem Objekttypen <code>logical</code> (also <code>TRUE</code> oder <code>FALSE</code>, siehe Kapitel <a href="objekte-und-datenstrukturen.html#logicals">2.2.3</a>) resultieren; in den meisten Fällen wird daher ein logischer Vergleich in den Klammern <code>()</code> durchgeführt:</p>
+<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb160-1" title="1">x &lt;-<span class="st"> </span><span class="dv">2</span></a>
+<a class="sourceLine" id="cb160-2" title="2">aktion &lt;-<span class="st"> &quot;verdoppeln&quot;</span></a>
+<a class="sourceLine" id="cb160-3" title="3"></a>
+<a class="sourceLine" id="cb160-4" title="4"><span class="cf">if</span> (aktion <span class="op">==</span><span class="st"> &quot;verdoppeln&quot;</span>) {</a>
+<a class="sourceLine" id="cb160-5" title="5">  x &lt;-<span class="st"> </span>x <span class="op">*</span><span class="st"> </span><span class="dv">2</span></a>
+<a class="sourceLine" id="cb160-6" title="6">}</a>
+<a class="sourceLine" id="cb160-7" title="7"></a>
+<a class="sourceLine" id="cb160-8" title="8">x</a></code></pre></div>
+<pre><code>## [1] 4</code></pre>
+</div>
+<div id="if-else-bedingungen" class="section level3">
+<h3><span class="header-section-number">4.1.2</span> <code>if</code>-<code>else</code>-Bedingungen</h3>
+<p>Mit dem Schlüsselwort <code>else</code> können wir anschließend einen Codeblock definieren, der ausgeführt werden soll, wenn die Bedingung nicht zutrifft:</p>
+<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb162-1" title="1">punktzahl &lt;-<span class="st"> </span><span class="dv">45</span></a>
+<a class="sourceLine" id="cb162-2" title="2"></a>
+<a class="sourceLine" id="cb162-3" title="3"><span class="cf">if</span> (punktzahl <span class="op">&gt;</span><span class="st"> </span><span class="dv">50</span>) {</a>
+<a class="sourceLine" id="cb162-4" title="4">  status &lt;-<span class="st"> &quot;bestanden&quot;</span></a>
+<a class="sourceLine" id="cb162-5" title="5">} <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb162-6" title="6">  status &lt;-<span class="st"> &quot;nicht bestanden&quot;</span></a>
+<a class="sourceLine" id="cb162-7" title="7">}</a>
+<a class="sourceLine" id="cb162-8" title="8"></a>
+<a class="sourceLine" id="cb162-9" title="9">status</a></code></pre></div>
+<pre><code>## [1] &quot;nicht bestanden&quot;</code></pre>
+</div>
+<div id="bedingungen-verketten" class="section level3">
+<h3><span class="header-section-number">4.1.3</span> Bedingungen verketten</h3>
+<p>Durch die Kombination von <code>else</code> und <code>if</code> können wir auch beliebig viele Bedingungen hintereinander prüfen:</p>
+<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb164-1" title="1">steak_temperatur &lt;-<span class="st"> </span><span class="dv">56</span></a>
+<a class="sourceLine" id="cb164-2" title="2"></a>
+<a class="sourceLine" id="cb164-3" title="3"><span class="cf">if</span> (steak_temperatur <span class="op">&lt;</span><span class="st"> </span><span class="dv">45</span>) {</a>
+<a class="sourceLine" id="cb164-4" title="4">  garstufe &lt;-<span class="st"> &quot;raw&quot;</span></a>
+<a class="sourceLine" id="cb164-5" title="5">} <span class="cf">else</span> <span class="cf">if</span> (steak_temperatur <span class="op">&lt;</span><span class="st"> </span><span class="dv">53</span>) {</a>
+<a class="sourceLine" id="cb164-6" title="6">  garstufe &lt;-<span class="st"> &quot;rare&quot;</span></a>
+<a class="sourceLine" id="cb164-7" title="7">} <span class="cf">else</span> <span class="cf">if</span> (steak_temperatur <span class="op">&lt;</span><span class="st"> </span><span class="dv">57</span>) {</a>
+<a class="sourceLine" id="cb164-8" title="8">  garstufe &lt;-<span class="st"> &quot;medium rare&quot;</span></a>
+<a class="sourceLine" id="cb164-9" title="9">} <span class="cf">else</span> <span class="cf">if</span> (steak_temperatur <span class="op">&lt;</span><span class="st"> </span><span class="dv">63</span>) {</a>
+<a class="sourceLine" id="cb164-10" title="10">  garstufe &lt;-<span class="st"> &quot;medium&quot;</span></a>
+<a class="sourceLine" id="cb164-11" title="11">} <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb164-12" title="12">  garstufe &lt;-<span class="st"> &quot;well done&quot;</span></a>
+<a class="sourceLine" id="cb164-13" title="13">}</a>
+<a class="sourceLine" id="cb164-14" title="14"></a>
+<a class="sourceLine" id="cb164-15" title="15">garstufe</a></code></pre></div>
+<pre><code>## [1] &quot;medium rare&quot;</code></pre>
+</div>
+<div id="mehrere-bedingungen" class="section level3">
+<h3><span class="header-section-number">4.1.4</span> Mehrere Bedingungen</h3>
+<p>Mittels <a href="https://de.wikipedia.org/wiki/Boolescher_Operator">Boolescher Operatoren</a> können wir mehrere Bedingungen miteinander verknüpfen, um etwa zu prüfen ob alle Bedingungen zutreffen (<code>UND</code>-Verknüpfung), mindestens eine Bedinung zutrifft (<code>ODER</code>-Verknüpfung), oder das Gegenteil einer Bedingung zutrifft (<code>NICHT</code>-Verknüpfung). Die gebräuchlichsten Operatoren sind:</p>
+<table>
+<caption><span id="tab:boolescheoperatoren">Tabelle 4.1: </span> Boolesche Operatoren in R</caption>
+<colgroup>
+<col width="8%" />
+<col width="11%" />
+<col width="80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">Operator</th>
+<th align="center">Verknüpfung</th>
+<th align="center">Beispiele</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><code>&amp;</code></td>
+<td align="center">und</td>
+<td align="center"><code>1 == 1 &amp; 2 == 2</code> ergibt <code>TRUE</code><br><code>1 == 1 &amp; 1 == 3</code> ergibt <code>FALSE</code></td>
+</tr>
+<tr class="even">
+<td align="center"><code>|</code></td>
+<td align="center">oder</td>
+<td align="center"><code>1 == 1 | 2 == 2</code> ergibt <code>TRUE</code><br><code>1 == 1 | 1 == 3</code> ergibt <code>TRUE</code></td>
+</tr>
+<tr class="odd">
+<td align="center"><code>!</code></td>
+<td align="center">nicht</td>
+<td align="center"><code>!(1 == 1)</code> ergibt <code>FALSE</code> (<code>!</code> wird der Bedingung vorangestellt)<br><code>!(1 == 3)</code> ergibt <code>TRUE</code></td>
+</tr>
+</tbody>
+</table>
+<p>Als Beispiel verknüpfen wir die Bedingungen für ein Schaltjahr. Damit ein Jahr ein Schaltjahr ist, müssen folgende Bedingungen erfüllt sein:</p>
+<ul>
+<li>Die Jahreszahl ist durch <code>400</code> teilbar <code>ODER</code></li>
+<li>Die Jahreszahl ist durch <code>4</code> teilbar <code>UND</code> ist gleichzeitig <code>NICHT</code> durch <code>100</code> teilbar.</li>
+</ul>
+<p>Ob eine Zahl durch eine andere Zahl teilbar ist, können wir mit dem Modulo-Operator <code>%%</code> prüfen, der den ganzzahligen Rest der Division ausgibt – mit anderen Worten: wenn das Ergebnis der Modulo-Operation <code>0</code> ist, dann ist Zahl 1 durch Zahl 2 teilbar, ansonsten nicht.</p>
+<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb166-1" title="1">year &lt;-<span class="st"> </span><span class="dv">2020</span></a>
+<a class="sourceLine" id="cb166-2" title="2"></a>
+<a class="sourceLine" id="cb166-3" title="3">year <span class="op">%%</span><span class="st"> </span><span class="dv">400</span> <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">|</span><span class="st"> </span>(year <span class="op">%%</span><span class="st"> </span><span class="dv">4</span> <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span>(year <span class="op">%%</span><span class="st"> </span><span class="dv">100</span> <span class="op">==</span><span class="st"> </span><span class="dv">0</span>))</a>
+<a class="sourceLine" id="cb166-4" title="4"><span class="co"># Natürlich könnten wir hinten auch prüfen, ob year %% 100 != 0 ist und</span></a>
+<a class="sourceLine" id="cb166-5" title="5"><span class="co"># nur die UND-Verknüpfung nutzen, aber ich wollte alle drei Booleschen </span></a>
+<a class="sourceLine" id="cb166-6" title="6"><span class="co"># Operatoren in einer Prüfung unterbringen</span></a></code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<p>Oder als Funktion verpackt:</p>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb168-1" title="1">is_leap_year &lt;-<span class="st"> </span><span class="cf">function</span>(year) {</a>
+<a class="sourceLine" id="cb168-2" title="2">  year <span class="op">%%</span><span class="st"> </span><span class="dv">400</span> <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">|</span><span class="st"> </span>(year <span class="op">%%</span><span class="st"> </span><span class="dv">4</span> <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span>(year <span class="op">%%</span><span class="st"> </span><span class="dv">100</span> <span class="op">==</span><span class="st"> </span><span class="dv">0</span>))</a>
+<a class="sourceLine" id="cb168-3" title="3">}</a>
+<a class="sourceLine" id="cb168-4" title="4"></a>
+<a class="sourceLine" id="cb168-5" title="5"><span class="kw">is_leap_year</span>(<span class="kw">c</span>(<span class="dv">1900</span>, <span class="dv">2000</span>, <span class="dv">2016</span>, <span class="dv">2018</span>, <span class="dv">2020</span>))</a></code></pre></div>
+<pre><code>## [1] FALSE  TRUE  TRUE FALSE  TRUE</code></pre>
+</div>
+<div id="mehrere-prüfwerte" class="section level3">
+<h3><span class="header-section-number">4.1.5</span> Mehrere Prüfwerte</h3>
+<p>Oft wollen wir prüfen, ob ein Wert zu einer Reihe an Werten gehört – beispielsweise wenn wir Werte kategorisieren möchten. Wir können dies mit einer <code>ODER</code>-Verknüpfung erreichen:</p>
+<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb170-1" title="1">food &lt;-<span class="st"> &quot;Banane&quot;</span></a>
+<a class="sourceLine" id="cb170-2" title="2"></a>
+<a class="sourceLine" id="cb170-3" title="3"><span class="cf">if</span> (food <span class="op">==</span><span class="st"> &quot;Apfel&quot;</span> <span class="op">|</span><span class="st"> </span>food <span class="op">==</span><span class="st"> &quot;Orange&quot;</span> <span class="op">|</span><span class="st"> </span>food <span class="op">==</span><span class="st"> &quot;Banane&quot;</span>) {</a>
+<a class="sourceLine" id="cb170-4" title="4">  food_category &lt;-<span class="st"> &quot;Obst&quot;</span></a>
+<a class="sourceLine" id="cb170-5" title="5">}</a></code></pre></div>
+<p>Allerdings wird diese Verknüpfung schnell umständlich, wenn wir viele Prüfwerte haben, im Beispiel also nicht nur 3 Obstsorten, sondern 5, 10 oder 123. Hier hilft uns der Operator <code>%in%</code>, der testet, ob ein Wert in einem Vektor an Werten vorhanden ist:</p>
+<div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb171-1" title="1"><span class="st">&quot;Banane&quot;</span> <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Apfel&quot;</span>, <span class="st">&quot;Orange&quot;</span>, <span class="st">&quot;Banane&quot;</span>, <span class="st">&quot;Zitrone&quot;</span>, <span class="st">&quot;Mango&quot;</span>, <span class="st">&quot;Kumquat&quot;</span>)</a></code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<p>Das funktioniert auch mit mehreren Werten auf der linken Seite der Prüfung:</p>
+<div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb173-1" title="1"><span class="kw">c</span>(<span class="st">&quot;Banane&quot;</span>, <span class="st">&quot;Mango&quot;</span>, <span class="st">&quot;Leberkäse&quot;</span>) <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Apfel&quot;</span>, <span class="st">&quot;Orange&quot;</span>, <span class="st">&quot;Banane&quot;</span>, <span class="st">&quot;Zitrone&quot;</span>, <span class="st">&quot;Mango&quot;</span>, <span class="st">&quot;Kumquat&quot;</span>)</a></code></pre></div>
+<pre><code>## [1]  TRUE  TRUE FALSE</code></pre>
+<p>Und natürlich können wir den Prüfvektor vorab zuweisen:</p>
+<div class="sourceCode" id="cb175"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb175-1" title="1">obstsorten &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Apfel&quot;</span>, <span class="st">&quot;Orange&quot;</span>, <span class="st">&quot;Banane&quot;</span>, <span class="st">&quot;Zitrone&quot;</span>, <span class="st">&quot;Mango&quot;</span>, <span class="st">&quot;Kumquat&quot;</span>)</a>
+<a class="sourceLine" id="cb175-2" title="2">food &lt;-<span class="st"> &quot;Kumquat&quot;</span></a>
+<a class="sourceLine" id="cb175-3" title="3"></a>
+<a class="sourceLine" id="cb175-4" title="4"><span class="cf">if</span> (food <span class="op">%in%</span><span class="st"> </span>obstsorten) {</a>
+<a class="sourceLine" id="cb175-5" title="5">  food_category &lt;-<span class="st"> &quot;Obst&quot;</span></a>
+<a class="sourceLine" id="cb175-6" title="6">} <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb175-7" title="7">  food_category &lt;-<span class="st"> &quot;Kein Obst&quot;</span></a>
+<a class="sourceLine" id="cb175-8" title="8">}</a>
+<a class="sourceLine" id="cb175-9" title="9"></a>
+<a class="sourceLine" id="cb175-10" title="10">food_category</a></code></pre></div>
+<pre><code>## [1] &quot;Obst&quot;</code></pre>
+</div>
+</div>
+<div id="iterationen" class="section level2">
+<h2><span class="header-section-number">4.2</span> Iterationen</h2>
+<p>Mittels Iterationen führen wir ein Code-Fragment wiederholt für verschiedene Input-Objekte aus. R bietet viele unterschiedliche Möglichkeiten für Iterationen – für den Anfang genügen wir uns mit vektorisierten Funktionen, <code>for</code>-Loops und <code>while</code>-Loops:</p>
+<div id="vektorisierte-funktionen" class="section level3">
+<h3><span class="header-section-number">4.2.1</span> Vektorisierte Funktionen</h3>
+<p>Tatsächlich haben wir unbewusst bereits mehrfach mit Iterationen gearbeitet, indem wir <em>vektorisierte</em> Funktionen eingesetzt haben – Funktionen, die automatisch auf jedes Element eines Vektors angewendet werden. Dazu zählen beispielsweise alle arithmetischen Operatoren und nahezu alle Funktionen in der Basis-Version von R:</p>
+<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb177-1" title="1">zahlen &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">42</span>)</a>
+<a class="sourceLine" id="cb177-2" title="2">zahlen <span class="op">-</span><span class="st"> </span><span class="dv">10</span></a>
+<a class="sourceLine" id="cb177-3" title="3">zahlen <span class="op">*</span><span class="st"> </span><span class="dv">3</span></a>
+<a class="sourceLine" id="cb177-4" title="4"><span class="kw">log</span>(zahlen) <span class="co"># Berechnet den natürlichen Logarithmus</span></a>
+<a class="sourceLine" id="cb177-5" title="5"><span class="kw">tolower</span>(<span class="kw">c</span>(<span class="st">&quot;Text 1&quot;</span>, <span class="st">&quot;TEXT 2&quot;</span>, <span class="st">&quot;TEXT DREI&quot;</span>)) <span class="co"># wandelt Text in Kleinbuchstaben um</span></a></code></pre></div>
+<pre><code>## [1] -5  0 32
+## [1]  15  30 126
+## [1] 1.609438 2.302585 3.737670
+## [1] &quot;text 1&quot;    &quot;text 2&quot;    &quot;text drei&quot;</code></pre>
+<p>Wir haben außerdem in Kapitel <a href="objekte-und-datenstrukturen.html#vectorarithmetics">2.3.1.3</a> gesehen, dass wir so auch mit zwei gleichlangen Vektoren effizient rechnen können:</p>
+<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb179-1" title="1"><span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>) <span class="op">*</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">10</span>)</a></code></pre></div>
+<pre><code>## [1]  4 15 40</code></pre>
+<p>Was passiert, wenn beide Vektoren nicht gleichlang sind? Hier tritt eine Eigenschaft von R zu Tage, die sich <em>Recycling</em> nennt: Ist der längere Vektor durch den kürzeren Vektor teilbar, wiederholt R den kürzeren Vektor einfach entsprechend oft:</p>
+<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb181-1" title="1"><span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">4</span>) <span class="op">*</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">10</span>)</a></code></pre></div>
+<pre><code>## [1]  4 12 10 40</code></pre>
+<p>Ist das nicht der Fall, produziert R hingegen eine Fehlermeldung:</p>
+<div class="sourceCode" id="cb183"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb183-1" title="1"><span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">4</span>) <span class="op">*</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>)</a></code></pre></div>
+<pre><code>## Warning in c(2, 4) * c(2, 3, 5): Länge des längeren Objektes
+##       ist kein Vielfaches der Länge des kürzeren Objektes</code></pre>
+<pre><code>## [1]  4 12 10</code></pre>
+</div>
+<div id="forloops" class="section level3">
+<h3><span class="header-section-number">4.2.2</span> <code>for</code>-Loops</h3>
+<p><code>for</code>-Loops führen (beliebig viele Zeilen) Code für jedes Element eines Vektors durch. Die Grundform eines <code>for</code>-Loops sieht wie folgt aus:</p>
+<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb186-1" title="1"><span class="cf">for</span> (element <span class="cf">in</span> vektor) {</a>
+<a class="sourceLine" id="cb186-2" title="2">  <span class="co"># Body: Code, der ausgeführt wird</span></a>
+<a class="sourceLine" id="cb186-3" title="3">}</a></code></pre></div>
+<p><code>element</code> ist hierbei ein Objekt, dem nach jeder Ausführung des Codes in den geschweiften Klammern <code>{}</code> das nächste Element aus dem angegebenen Vektor zugewiesen wird. Wir können dem Element einen beliebigen Objektnamen geben und es dann ähnlich wie in Funktionen als Platzhalter im Loop-Code verwenden. Für einfache Loops wird meistens der Objektname <code>i</code> verwendet:</p>
+<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb187-1" title="1">zahlen &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">5</span></a>
+<a class="sourceLine" id="cb187-2" title="2"></a>
+<a class="sourceLine" id="cb187-3" title="3"><span class="cf">for</span> (i <span class="cf">in</span> zahlen) {</a>
+<a class="sourceLine" id="cb187-4" title="4">  neue_zahl &lt;-<span class="st"> </span>i <span class="op">*</span><span class="st"> </span>i <span class="op">-</span><span class="st"> </span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb187-5" title="5">  <span class="kw">print</span>(neue_zahl) <span class="co"># print() schreibt ein Objekt in den Konsolenoutput</span></a>
+<a class="sourceLine" id="cb187-6" title="6">}</a></code></pre></div>
+<pre><code>## [1] 0
+## [1] 3
+## [1] 8
+## [1] 15
+## [1] 24</code></pre>
+<p>Nutzen wir ein etwas anwendungsbezogeneres Beispiel. Nehmen wir an, wir möchten den Mittelwert aller (numerischen) Variablen in einem Datensatz ausgeben. Wir könnten die <code>mean()</code>-Funktion natürlich einfach händisch für jede Variable anfordern:</p>
+<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb189-1" title="1"><span class="kw">mean</span>(iris<span class="op">$</span>Sepal.Length)</a>
+<a class="sourceLine" id="cb189-2" title="2"><span class="kw">mean</span>(iris<span class="op">$</span>Sepal.Width)</a>
+<a class="sourceLine" id="cb189-3" title="3"><span class="kw">mean</span>(iris<span class="op">$</span>Petal.Length)</a>
+<a class="sourceLine" id="cb189-4" title="4"><span class="co"># usw.</span></a></code></pre></div>
+<pre><code>## [1] 5.843333
+## [1] 3.057333
+## [1] 3.758</code></pre>
+<p>Im Falle von <code>iris</code> bei nur vier numerischen Variablen wäre das noch problemlos möglich, bei längeren Datensätzen hätten wir aber schnell sehr viel zu tun – und in allen Fällen produzieren wir sehr viel redundanten Code. Eleganter lösen wir das mit einem <code>for</code>-Loop und einem Vektor, der alle uns interessierenden Variablennamen enthält:</p>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb191-1" title="1">variablen &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Sepal.Length&quot;</span>, <span class="st">&quot;Sepal.Width&quot;</span>, <span class="st">&quot;Petal.Length&quot;</span>, <span class="st">&quot;Petal.Width&quot;</span>)</a>
+<a class="sourceLine" id="cb191-2" title="2"></a>
+<a class="sourceLine" id="cb191-3" title="3">mittelwerte &lt;-<span class="st"> </span><span class="kw">c</span>()</a>
+<a class="sourceLine" id="cb191-4" title="4"></a>
+<a class="sourceLine" id="cb191-5" title="5"><span class="cf">for</span> (variable <span class="cf">in</span> variablen) {</a>
+<a class="sourceLine" id="cb191-6" title="6"> mittelwerte[variable] &lt;-<span class="st"> </span><span class="kw">mean</span>(iris[[variable]])</a>
+<a class="sourceLine" id="cb191-7" title="7">}</a>
+<a class="sourceLine" id="cb191-8" title="8"></a>
+<a class="sourceLine" id="cb191-9" title="9">mittelwerte</a></code></pre></div>
+<pre><code>## Sepal.Length  Sepal.Width Petal.Length  Petal.Width 
+##     5.843333     3.057333     3.758000     1.199333</code></pre>
+<p>Was passiert hier?</p>
+<ol style="list-style-type: decimal">
+<li>Wir erstellen einen Vektor mit den uns interessierenden Variablen <code>variablen</code> sowie einen leeren Vektor <code>mittelwerte</code>.</li>
+<li>Der <code>for</code>-Loop beginnt: <code>variable</code> bekommt das erste Element aus <code>variablen</code>, also <code>"Sepal.Length"</code> zugewiesen. Dann wird der Code in den geschweiften Klammern <code>{}</code> ausgeführt:
+<ul>
+<li><code>iris[[variable]]</code> extrahiert aus dem <code>iris</code>-Datensatz die Spalte mit dem Namen, der in <code>variable</code> gespeichert ist – aktuell also <code>"Sepal.Length"</code>. (Wir kennen bisher nur einfache eckige Klammern <code>[]</code> zur Extraktion; dabei wird der Objekttyp <code>data.frame</code> beibehalten und wir können auch mehrere Variablen extrahieren. Mit den doppelten eckigen Klammern <code>[[]]</code> wird hingegen nur eine einzige Variable extrahiert und in den Objekttyp <code>vector</code> umgewandelt. Diesen Objekttypen benötigen wir für die <code>mean()</code>-Funktion.)</li>
+<li>Wir berechnen davon den Mittelwert mittels <code>mean()</code>.</li>
+<li>Der Vektor <code>mittelwerte</code> erhält ein Element mit dem Namen, der in <code>variable</code> gespeichert ist – aktuell also ebenfalls <code>"Sepal.Length"</code>. Diesem Element weisen wir den berechneten Mittelwert zu.</li>
+</ul></li>
+<li>Der Loop ist nun einmal durchlaufen und beginnt von vorne. Dabei wird <code>variable</code> nun das zweite Element von <code>variablen</code>, “Sepal.Width”, zugewiesen. Dann wird der Code in den geschweiften Klammern erneut ausgeführt.</li>
+<li>Diese Schritte werden so oft wiederholt, bis wir am Ende von <code>variablen</code> angekommen sind und jedes Element aus <code>variablen</code> einmal <code>variable</code> zugewiesen wurde.</li>
+<li>Als Resultat erhalten wir einen benannten Vektor <code>mittelwerte</code>, der alle Mittelwerte enthält.</li>
+</ol>
+<p>Mittels <code>for</code>-Loops können wir also sehr schnell Teile unseres Codes automatisieren und als Grundprinzip finden sich <code>for</code>-Loops in nahezu allen Programmiersprachen. Wir werden jedoch in Kürze noch Funktionen kennenlernen, die uns Iterationen nochmals deutlich komfortabler gestalten.</p>
+</div>
+<div id="while-loops" class="section level3">
+<h3><span class="header-section-number">4.2.3</span> <code>while</code>-Loops</h3>
+<p>Bei <code>for</code>-Loops wissen wir vorab, wie oft der Loop ausgeführt wird – nämlich für jedes Element, das der Vektor, über den wir loopen, enthält. Manchmal ist es uns aber nicht vorab bewusst, wie oft ein Loop ausgeführt werden soll. In diesem Fall können wir <code>while</code>-Loops verwenden, die so lange ausgeführt werden, wie eine Bedingung als <code>TRUE</code> erfüllt ist:</p>
+<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb193-1" title="1"><span class="cf">while</span> (bedingung) {</a>
+<a class="sourceLine" id="cb193-2" title="2">  <span class="co"># Body: Code, der ausgeführt wird</span></a>
+<a class="sourceLine" id="cb193-3" title="3">}</a></code></pre></div>
+<p>Entsprechend benötigen wir eine Bedingung, die bei jeder Iteration wieder überprüft wird. Das Prüfkriterium sollten wir also im Body des Loops auch anpassen, da der Loop sonst unendlich läuft.</p>
+<p>Als Beispiel schreiben wir einen Loop, der in 5er-Schritten von <code>50</code> bis <code>100</code> zählt:</p>
+<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb194-1" title="1">x &lt;-<span class="st"> </span><span class="dv">50</span></a>
+<a class="sourceLine" id="cb194-2" title="2"></a>
+<a class="sourceLine" id="cb194-3" title="3"><span class="cf">while</span> (x <span class="op">&lt;=</span><span class="st"> </span><span class="dv">100</span>) {</a>
+<a class="sourceLine" id="cb194-4" title="4">  <span class="kw">print</span>(x)</a>
+<a class="sourceLine" id="cb194-5" title="5">  x &lt;-<span class="st"> </span>x <span class="op">+</span><span class="st"> </span><span class="dv">5</span></a>
+<a class="sourceLine" id="cb194-6" title="6">}</a></code></pre></div>
+<pre><code>## [1] 50
+## [1] 55
+## [1] 60
+## [1] 65
+## [1] 70
+## [1] 75
+## [1] 80
+## [1] 85
+## [1] 90
+## [1] 95
+## [1] 100</code></pre>
+<p>Was passiert hier?</p>
+<ol style="list-style-type: decimal">
+<li>Wir weisen <code>x</code> den Ausgangswert <code>50</code> zu.</li>
+<li>Der <code>while</code>-Loop beginnt. Wir prüfen zunächst ob <code>x</code> kleiner gleich <code>100</code>, was aktuell der Fall ist. Dann wird der Code ausgeführt:
+<ul>
+<li>Wir schreiben zunächst den aktuellen Wert von <code>x</code> in die Konsole.</li>
+<li>Dann addieren wir <code>5</code> zu <code>x</code>. <code>x</code> ist nun <code>55</code>.</li>
+</ul></li>
+<li>Der Loop ist nun einmal durchlaufen und beginnt von vorne. Erneut wird geprüft, ob <code>x</code> kleiner gleich <code>100</code> ist. Dies ist weiterhin der Fall, der Code wird also erneut ausgeführt.</li>
+<li>Dies wird so lange wiederholt, bis die Bedingung nicht mehr erfüllt ist. Dies geschieht, nachdem <code>100</code> in die Konsole geschrieben wurde, da danach auf <code>x</code> nochmals <code>5</code> addiert werden und <code>x</code> am Ende des Loops folglich <code>105</code> ist. Die nächste Prüfung <code>105 &lt;= 100</code> resultiert in <code>FALSE</code>, der Loop wird abgebrochen.</li>
+</ol>
+<p>Einen häufigen Anwendungsfall für <code>while</code>-Loops lernen wir kennen, sobald wir mit APIs arbeiten. Wollen wir etwa Tweets zu einem bestimmten Hashtag herunterladen, wissen wir vorab nicht, um wie viele Tweets es sich handelt. Mit einem <code>while</code>-Loop könnten wir daher festlegen, dass wir den Code zum Tweets-aus-der-API-ziehen ausführen, bis diese keine weiteren zurückgibt.</p>
+<p>Herzlichen Glückwunsch, Sie beherrschen nun die zentralen Grundlagen von R (und fast jeder anderen Programmiersprache) und könnten theoretisch alle weiteren Funktionen von Hand schreiben. In der Praxis wurde aber vermutlich so gut wie jedes Problem, das Ihnen im datenanalytischen Kontext begegnet, schon von jemand anderem gelöst. Wir schauen uns also als nächstes an, wie wir auf Funktionen von anderen in Form von Packages zugreifen können.</p>
+</div>
+</div>
+<div id="übungsaufgaben-3" class="section level2">
+<h2><span class="header-section-number">4.3</span> Übungsaufgaben</h2>
+<p>Erstellen Sie für die folgenden Übungsaufgaben eine eigene Skriptdatei und speichern diese als <code>ue4_nachname.R</code> ab. Antworten auf Fragen können Sie direkt als Kommentare in das Skript einfügen.</p>
+<hr />
+
+<div class="exercise">
+<span id="exr:ue4-1" class="exercise"><strong>Übungsaufgabe 4.1  </strong></span>Bedingungen:
+</div>
+
+<p>Wir haben in einer Studie das Nachrichtennutzungsverhalten erhoben und möchten dieses nun basierend auf zwei Variablen in einer neuen Variablen <code>news_category</code> kategorisieren:</p>
+<ul>
+<li>Falls in der Variable <code>news_channel</code> nicht <code>"Internet"</code> angeben wurde, soll die neue Variable <code>news_category</code> den Wert <code>"Offline"</code> lauten.</li>
+<li>Falls dort “<code>Internet</code>” angegeben wurde, steht eine weitere Unterteilung an:
+<ul>
+<li>Falls in <code>news_website</code> die Werte <code>"Twitter"</code>, <code>"Facebook"</code> oder <code>"Instagram"</code> angegeben wurden, soll <code>news_category</code> den Wert <code>"Online: SNS"</code> haben.</li>
+<li>Bei allen anderen Werten von <code>news_website</code> soll <code>news_category</code> den Wert <code>"Online: Sonstige"</code> bekommen</li>
+</ul></li>
+</ul>
+<p>Bilden Sie im folgenden Codebeispiel diesen Entscheidungsbaum mit Bedingungen nach:</p>
+<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb196-1" title="1">news_channel &lt;-<span class="st"> &quot;Internet&quot;</span></a>
+<a class="sourceLine" id="cb196-2" title="2">news_website &lt;-<span class="st"> &quot;Facebook&quot;</span></a>
+<a class="sourceLine" id="cb196-3" title="3"></a>
+<a class="sourceLine" id="cb196-4" title="4"><span class="co">#       Ihr Code hier</span></a>
+<a class="sourceLine" id="cb196-5" title="5"><span class="co">#</span></a>
+<a class="sourceLine" id="cb196-6" title="6"><span class="co">#  _._     _,-&#39;&quot;&quot;`-._</span></a>
+<a class="sourceLine" id="cb196-7" title="7"><span class="co"># (,-.`._,&#39;(       |\`-/|</span></a>
+<a class="sourceLine" id="cb196-8" title="8"><span class="co">#     `-.-&#39; \ )-`( , o o)</span></a>
+<a class="sourceLine" id="cb196-9" title="9"><span class="co">#           `-    \`_`&quot;&#39;-</span></a>
+<a class="sourceLine" id="cb196-10" title="10"><span class="co">#</span></a>
+<a class="sourceLine" id="cb196-11" title="11"><span class="co"># (Diese Katze sieht in R kopiert besser aus als hier in der Webansicht)</span></a>
+<a class="sourceLine" id="cb196-12" title="12"></a>
+<a class="sourceLine" id="cb196-13" title="13">news_category <span class="co"># Wenn alles geklappt hat, sollte &quot;Online: SNS&quot; herauskommen</span></a></code></pre></div>
+<hr />
+
+<div class="exercise">
+<span id="exr:ue4-2" class="exercise"><strong>Übungsaufgabe 4.2  </strong></span>Iterationen:
+</div>
+
+<p>Vervollständigen Sie in der folgenden Funktion alle Platzhalter <code>___</code>, sodass diese für alle numerischen Variablen eines Datensatzes Mittelwert und Standardabweichung ausgibt:</p>
+<div class="sourceCode" id="cb197"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb197-1" title="1">numeric_summary &lt;-<span class="st"> </span><span class="cf">function</span>(data) {</a>
+<a class="sourceLine" id="cb197-2" title="2">  </a>
+<a class="sourceLine" id="cb197-3" title="3">  <span class="co"># Alle Variablennamen in Vektor speichern</span></a>
+<a class="sourceLine" id="cb197-4" title="4">  variables &lt;-<span class="st"> </span><span class="kw">names</span>(data)</a>
+<a class="sourceLine" id="cb197-5" title="5">  </a>
+<a class="sourceLine" id="cb197-6" title="6">  <span class="co"># Leere Liste für Ausgabe vorbereiten</span></a>
+<a class="sourceLine" id="cb197-7" title="7">  summary_list &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
+<a class="sourceLine" id="cb197-8" title="8">  </a>
+<a class="sourceLine" id="cb197-9" title="9">  <span class="co"># Über alle Variablen iterieren</span></a>
+<a class="sourceLine" id="cb197-10" title="10">  <span class="kw">___</span> (___) { <span class="co"># Hier die ___ ersetzen</span></a>
+<a class="sourceLine" id="cb197-11" title="11">    variable_vector &lt;-<span class="st"> </span>data[[___]] <span class="co"># Und hier ebenfalls</span></a>
+<a class="sourceLine" id="cb197-12" title="12">    </a>
+<a class="sourceLine" id="cb197-13" title="13">    <span class="cf">if</span> (<span class="kw">is.numeric</span>(variable_vector)) { <span class="co"># Prüfen ob die Variable numerisch ist</span></a>
+<a class="sourceLine" id="cb197-14" title="14">      </a>
+<a class="sourceLine" id="cb197-15" title="15">      <span class="co"># Mittelwert und Standardabweichung dieser Variablen der summary_list hinzufügen</span></a>
+<a class="sourceLine" id="cb197-16" title="16">      summary_list[[___]] &lt;-<span class="st"> </span><span class="kw">c</span>( <span class="co"># Hier wieder die ___ ersetzen</span></a>
+<a class="sourceLine" id="cb197-17" title="17">        <span class="dt">M =</span> <span class="kw">mean</span>(variable_vector),   </a>
+<a class="sourceLine" id="cb197-18" title="18">        <span class="dt">SD =</span> <span class="kw">sd</span>(variable_vector)</a>
+<a class="sourceLine" id="cb197-19" title="19">      )</a>
+<a class="sourceLine" id="cb197-20" title="20">    }</a>
+<a class="sourceLine" id="cb197-21" title="21">    </a>
+<a class="sourceLine" id="cb197-22" title="22">  }</a>
+<a class="sourceLine" id="cb197-23" title="23">  </a>
+<a class="sourceLine" id="cb197-24" title="24">  <span class="co"># Summary List ausgeben</span></a>
+<a class="sourceLine" id="cb197-25" title="25">  <span class="kw">return</span>(summary_list)</a>
+<a class="sourceLine" id="cb197-26" title="26">}</a></code></pre></div>
+<p>Testen Sie die fertige Version mit den <code>iris</code>- und <code>mtcars</code>-Datensätzen.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="funktionen.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="packages.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["ComputationalMethods.pdf", "ComputationalMethods.epub"],
+"toc": {
+"collapse": "section",
+"depth": 3
+},
+"split_by": "chapter+number"
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

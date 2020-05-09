@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>6 Workflow | Computational Methods in der politischen Kommunikationsforschung</title>
+  <meta name="description" content="6 Workflow | Computational Methods in der politischen Kommunikationsforschung" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="6 Workflow | Computational Methods in der politischen Kommunikationsforschung" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="6 Workflow | Computational Methods in der politischen Kommunikationsforschung" />
+  
+  
+  
+
+<meta name="author" content="Julian Unkel" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="packages.html"/>
+<link rel="next" href="datahandling-intro.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Methodische Vertiefung: Computational Methods</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Einführung</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#seminarinformationen"><i class="fa fa-check"></i>Seminarinformationen</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#ablauf-des-kurses"><i class="fa fa-check"></i>Ablauf des Kurses</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#motivation-und-ziele-des-seminars"><i class="fa fa-check"></i>Motivation und Ziele des Seminars</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#warum-also-eine-programmiersprache-für-datenanalyse-lernen"><i class="fa fa-check"></i>Warum also eine Programmiersprache für Datenanalyse lernen?</a></li>
+<li><a href="index.html#warum-r-lernen">Warum <em>R</em> lernen?</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#hinweise-zur-nutzung-des-online-kurses"><i class="fa fa-check"></i>Hinweise zur Nutzung des Online-Kurses</a></li>
+</ul></li>
+<li class="part"><span><b>I Eine kurze Einführung in R</b></span></li>
+<li class="chapter" data-level="1" data-path="firststeps.html"><a href="firststeps.html"><i class="fa fa-check"></i><b>1</b> Installation und erste Schritte</a><ul>
+<li class="chapter" data-level="1.1" data-path="firststeps.html"><a href="firststeps.html#rinstallieren"><i class="fa fa-check"></i><b>1.1</b> R installieren</a></li>
+<li class="chapter" data-level="1.2" data-path="firststeps.html"><a href="firststeps.html#rstudioinstallieren"><i class="fa fa-check"></i><b>1.2</b> RStudio installieren</a></li>
+<li class="chapter" data-level="1.3" data-path="firststeps.html"><a href="firststeps.html#oberflaeche"><i class="fa fa-check"></i><b>1.3</b> Die Benutzeroberfläche von RStudio</a><ul>
+<li class="chapter" data-level="1.3.1" data-path="firststeps.html"><a href="firststeps.html#konsole"><i class="fa fa-check"></i><b>1.3.1</b> Konsole</a></li>
+<li class="chapter" data-level="1.3.2" data-path="firststeps.html"><a href="firststeps.html#r-skripte"><i class="fa fa-check"></i><b>1.3.2</b> R-Skripte</a></li>
+<li class="chapter" data-level="1.3.3" data-path="firststeps.html"><a href="firststeps.html#environment"><i class="fa fa-check"></i><b>1.3.3</b> Environment</a></li>
+<li class="chapter" data-level="1.3.4" data-path="firststeps.html"><a href="firststeps.html#files"><i class="fa fa-check"></i><b>1.3.4</b> Files</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="firststeps.html"><a href="firststeps.html#anpassen"><i class="fa fa-check"></i><b>1.4</b> RStudio anpassen</a></li>
+<li class="chapter" data-level="1.5" data-path="firststeps.html"><a href="firststeps.html#übungsaufgaben"><i class="fa fa-check"></i><b>1.5</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html"><i class="fa fa-check"></i><b>2</b> Objekte und Datenstrukturen</a><ul>
+<li class="chapter" data-level="2.1" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#objektnamen"><i class="fa fa-check"></i><b>2.1</b> Objektnamen</a></li>
+<li class="chapter" data-level="2.2" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#objekttypen"><i class="fa fa-check"></i><b>2.2</b> Objekttypen</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#numerische-objekte"><i class="fa fa-check"></i><b>2.2.1</b> Numerische Objekte</a></li>
+<li class="chapter" data-level="2.2.2" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#textobjekte"><i class="fa fa-check"></i><b>2.2.2</b> Textobjekte</a></li>
+<li class="chapter" data-level="2.2.3" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#logicals"><i class="fa fa-check"></i><b>2.2.3</b> Logicals (logische Objekte)</a></li>
+<li class="chapter" data-level="2.2.4" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#weitere-objekttypen"><i class="fa fa-check"></i><b>2.2.4</b> Weitere Objekttypen</a></li>
+<li class="chapter" data-level="2.2.5" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#missingvals"><i class="fa fa-check"></i><b>2.2.5</b> Fehlende Werte</a></li>
+<li class="chapter" data-level="2.2.6" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#coercion"><i class="fa fa-check"></i><b>2.2.6</b> Objekttypen ändern</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#datenstrukturen"><i class="fa fa-check"></i><b>2.3</b> Datenstrukturen</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#vectors"><i class="fa fa-check"></i><b>2.3.1</b> Vektoren</a></li>
+<li class="chapter" data-level="2.3.2" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#listen"><i class="fa fa-check"></i><b>2.3.2</b> Listen</a></li>
+<li class="chapter" data-level="2.3.3" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#matrizen"><i class="fa fa-check"></i><b>2.3.3</b> Matrizen</a></li>
+<li class="chapter" data-level="2.3.4" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#dataframes"><i class="fa fa-check"></i><b>2.3.4</b> Dataframes</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#übungsaufgaben-1"><i class="fa fa-check"></i><b>2.4</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="funktionen.html"><a href="funktionen.html"><i class="fa fa-check"></i><b>3</b> Funktionen</a><ul>
+<li class="chapter" data-level="3.1" data-path="funktionen.html"><a href="funktionen.html#funktionen-aufrufen"><i class="fa fa-check"></i><b>3.1</b> Funktionen aufrufen</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="funktionen.html"><a href="funktionen.html#funktionsargumente"><i class="fa fa-check"></i><b>3.1.1</b> Funktionsargumente</a></li>
+<li class="chapter" data-level="3.1.2" data-path="funktionen.html"><a href="funktionen.html#hilfestellungen-zu-funktionen"><i class="fa fa-check"></i><b>3.1.2</b> Hilfestellungen zu Funktionen</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="funktionen.html"><a href="funktionen.html#eigene-funktionen-erstellen"><i class="fa fa-check"></i><b>3.2</b> Eigene Funktionen erstellen</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="funktionen.html"><a href="funktionen.html#funktionen-erstellen-wann-und-warum"><i class="fa fa-check"></i><b>3.2.1</b> Funktionen erstellen: wann und warum?</a></li>
+<li class="chapter" data-level="3.2.2" data-path="funktionen.html"><a href="funktionen.html#aufbau-und-erstellung-von-funktionen"><i class="fa fa-check"></i><b>3.2.2</b> Aufbau und Erstellung von Funktionen</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="funktionen.html"><a href="funktionen.html#übungsaufgaben-2"><i class="fa fa-check"></i><b>3.3</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html"><i class="fa fa-check"></i><b>4</b> Kontrollstrukturen</a><ul>
+<li class="chapter" data-level="4.1" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#conditions"><i class="fa fa-check"></i><b>4.1</b> Bedingungen</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#if-bedingungen"><i class="fa fa-check"></i><b>4.1.1</b> <code>if</code>-Bedingungen</a></li>
+<li class="chapter" data-level="4.1.2" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#if-else-bedingungen"><i class="fa fa-check"></i><b>4.1.2</b> <code>if</code>-<code>else</code>-Bedingungen</a></li>
+<li class="chapter" data-level="4.1.3" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#bedingungen-verketten"><i class="fa fa-check"></i><b>4.1.3</b> Bedingungen verketten</a></li>
+<li class="chapter" data-level="4.1.4" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#mehrere-bedingungen"><i class="fa fa-check"></i><b>4.1.4</b> Mehrere Bedingungen</a></li>
+<li class="chapter" data-level="4.1.5" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#mehrere-prüfwerte"><i class="fa fa-check"></i><b>4.1.5</b> Mehrere Prüfwerte</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#iterationen"><i class="fa fa-check"></i><b>4.2</b> Iterationen</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#vektorisierte-funktionen"><i class="fa fa-check"></i><b>4.2.1</b> Vektorisierte Funktionen</a></li>
+<li class="chapter" data-level="4.2.2" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#forloops"><i class="fa fa-check"></i><b>4.2.2</b> <code>for</code>-Loops</a></li>
+<li class="chapter" data-level="4.2.3" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#while-loops"><i class="fa fa-check"></i><b>4.2.3</b> <code>while</code>-Loops</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#übungsaufgaben-3"><i class="fa fa-check"></i><b>4.3</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="packages.html"><a href="packages.html"><i class="fa fa-check"></i><b>5</b> Packages</a><ul>
+<li class="chapter" data-level="5.1" data-path="packages.html"><a href="packages.html#packages-installieren"><i class="fa fa-check"></i><b>5.1</b> Packages installieren</a></li>
+<li class="chapter" data-level="5.2" data-path="packages.html"><a href="packages.html#usepackages"><i class="fa fa-check"></i><b>5.2</b> Packages nutzen</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="workflow.html"><a href="workflow.html"><i class="fa fa-check"></i><b>6</b> Workflow</a><ul>
+<li class="chapter" data-level="6.1" data-path="workflow.html"><a href="workflow.html#arbeitsverzeichnisse"><i class="fa fa-check"></i><b>6.1</b> Arbeitsverzeichnisse</a></li>
+<li class="chapter" data-level="6.2" data-path="workflow.html"><a href="workflow.html#rprojects"><i class="fa fa-check"></i><b>6.2</b> Projekte und Ordnerstrukturen</a></li>
+<li class="chapter" data-level="6.3" data-path="workflow.html"><a href="workflow.html#r-markdown"><i class="fa fa-check"></i><b>6.3</b> R Markdown</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="workflow.html"><a href="workflow.html#yaml-header"><i class="fa fa-check"></i><b>6.3.1</b> YAML-Header</a></li>
+<li class="chapter" data-level="6.3.2" data-path="workflow.html"><a href="workflow.html#freitext-in-markdown"><i class="fa fa-check"></i><b>6.3.2</b> Freitext in Markdown</a></li>
+<li class="chapter" data-level="6.3.3" data-path="workflow.html"><a href="workflow.html#code-chunks"><i class="fa fa-check"></i><b>6.3.3</b> Code Chunks</a></li>
+<li class="chapter" data-level="6.3.4" data-path="workflow.html"><a href="workflow.html#ausgabedateien-erzeugen"><i class="fa fa-check"></i><b>6.3.4</b> Ausgabedateien erzeugen</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="workflow.html"><a href="workflow.html#r-aktuell-halten"><i class="fa fa-check"></i><b>6.4</b> R aktuell halten</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="workflow.html"><a href="workflow.html#packages-aktualisieren"><i class="fa fa-check"></i><b>6.4.1</b> Packages aktualisieren</a></li>
+<li class="chapter" data-level="6.4.2" data-path="workflow.html"><a href="workflow.html#rstudio-aktualisieren"><i class="fa fa-check"></i><b>6.4.2</b> RStudio aktualisieren</a></li>
+<li class="chapter" data-level="6.4.3" data-path="workflow.html"><a href="workflow.html#r-aktualisieren"><i class="fa fa-check"></i><b>6.4.3</b> R aktualisieren</a></li>
+</ul></li>
+</ul></li>
+<li class="part"><span><b>II Datenhandling in R</b></span></li>
+<li class="chapter" data-level="7" data-path="datahandling-intro.html"><a href="datahandling-intro.html"><i class="fa fa-check"></i><b>7</b> Einführung in das Datenhandling</a><ul>
+<li class="chapter" data-level="7.1" data-path="datahandling-intro.html"><a href="datahandling-intro.html#daten--und-dateiformate-tabellarischer-daten"><i class="fa fa-check"></i><b>7.1</b> Daten- und Dateiformate tabellarischer Daten</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="datahandling-intro.html"><a href="datahandling-intro.html#tidy-data"><i class="fa fa-check"></i><b>7.1.1</b> Tidy data</a></li>
+<li class="chapter" data-level="7.1.2" data-path="datahandling-intro.html"><a href="datahandling-intro.html#dateiformate"><i class="fa fa-check"></i><b>7.1.2</b> Dateiformate</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="datahandling-intro.html"><a href="datahandling-intro.html#willkommen-im-tidyverse"><i class="fa fa-check"></i><b>7.2</b> Willkommen im Tidyverse</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="workingwithdata.html"><a href="workingwithdata.html"><i class="fa fa-check"></i><b>8</b> Daten laden, modifizieren und speichern</a><ul>
+<li class="chapter" data-level="8.1" data-path="workingwithdata.html"><a href="workingwithdata.html#daten-laden"><i class="fa fa-check"></i><b>8.1</b> Daten laden</a><ul>
+<li class="chapter" data-level="8.1.1" data-path="workingwithdata.html"><a href="workingwithdata.html#csv-dateien-einlesen"><i class="fa fa-check"></i><b>8.1.1</b> CSV-Dateien einlesen</a></li>
+<li class="chapter" data-level="8.1.2" data-path="workingwithdata.html"><a href="workingwithdata.html#andere-dateiformate"><i class="fa fa-check"></i><b>8.1.2</b> Andere Dateiformate</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="workingwithdata.html"><a href="workingwithdata.html#daten-modifizieren"><i class="fa fa-check"></i><b>8.2</b> Daten modifizieren</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="workingwithdata.html"><a href="workingwithdata.html#variablen-spaltenweise-auswählen-mit-select"><i class="fa fa-check"></i><b>8.2.1</b> Variablen spaltenweise auswählen mit <code>select()</code></a></li>
+<li class="chapter" data-level="8.2.2" data-path="workingwithdata.html"><a href="workingwithdata.html#variablen-zeilenweise-filtern-mit-filter"><i class="fa fa-check"></i><b>8.2.2</b> Variablen zeilenweise filtern mit <code>filter()</code></a></li>
+<li class="chapter" data-level="8.2.3" data-path="workingwithdata.html"><a href="workingwithdata.html#daten-sortieren-mit-arrange"><i class="fa fa-check"></i><b>8.2.3</b> Daten sortieren mit <code>arrange()</code></a></li>
+<li class="chapter" data-level="8.2.4" data-path="workingwithdata.html"><a href="workingwithdata.html#neue-variablen-hinzufügen-mit-mutate"><i class="fa fa-check"></i><b>8.2.4</b> Neue Variablen hinzufügen mit <code>mutate()</code></a></li>
+<li class="chapter" data-level="8.2.5" data-path="workingwithdata.html"><a href="workingwithdata.html#variablen-zusammenfassen-mit-summarize"><i class="fa fa-check"></i><b>8.2.5</b> Variablen zusammenfassen mit <code>summarize()</code></a></li>
+<li class="chapter" data-level="8.2.6" data-path="workingwithdata.html"><a href="workingwithdata.html#variablen-gruppieren-mit-group_by"><i class="fa fa-check"></i><b>8.2.6</b> Variablen gruppieren mit <code>group_by()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="workingwithdata.html"><a href="workingwithdata.html#daten-speichern"><i class="fa fa-check"></i><b>8.3</b> Daten speichern</a><ul>
+<li class="chapter" data-level="8.3.1" data-path="workingwithdata.html"><a href="workingwithdata.html#tabellarische-daten-exportieren"><i class="fa fa-check"></i><b>8.3.1</b> Tabellarische Daten exportieren</a></li>
+<li class="chapter" data-level="8.3.2" data-path="workingwithdata.html"><a href="workingwithdata.html#r-objekte-exportieren"><i class="fa fa-check"></i><b>8.3.2</b> R-Objekte exportieren</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="workingwithdata.html"><a href="workingwithdata.html#übungsaufgaben-4"><i class="fa fa-check"></i><b>8.4</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html"><i class="fa fa-check"></i><b>9</b> Der Pipe-Operator <code>%&gt;%</code></a><ul>
+<li class="chapter" data-level="9.1" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#lesbarkeit-verschachtelter-funktionen"><i class="fa fa-check"></i><b>9.1</b> Lesbarkeit verschachtelter Funktionen</a></li>
+<li class="chapter" data-level="9.2" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#ein-beispiel-in-pseudo-code"><i class="fa fa-check"></i><b>9.2</b> Ein Beispiel in Pseudo-Code</a></li>
+<li class="chapter" data-level="9.3" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#formale-definition"><i class="fa fa-check"></i><b>9.3</b> Formale Definition</a></li>
+<li class="chapter" data-level="9.4" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#einsatz-von-pipes-im-tidyverse"><i class="fa fa-check"></i><b>9.4</b> Einsatz von Pipes im Tidyverse</a></li>
+<li class="chapter" data-level="9.5" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#übungsaufgaben-5"><i class="fa fa-check"></i><b>9.5</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="appendix"><span><b>Anhang</b></span></li>
+<li class="chapter" data-level="A" data-path="loesungen.html"><a href="loesungen.html"><i class="fa fa-check"></i><b>A</b> Lösungen der Übungsaufgaben</a><ul>
+<li class="chapter" data-level="" data-path="loesungen.html"><a href="loesungen.html#kapitel-2-objekte-und-datenstrukturen"><i class="fa fa-check"></i>Kapitel 2: Objekte und Datenstrukturen</a></li>
+<li class="chapter" data-level="" data-path="loesungen.html"><a href="loesungen.html#kapitel-3-funktionen"><i class="fa fa-check"></i>Kapitel 3: Funktionen</a></li>
+<li class="chapter" data-level="" data-path="loesungen.html"><a href="loesungen.html#kapitel-4-kontrollstrukturen"><i class="fa fa-check"></i>Kapitel 4: Kontrollstrukturen</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Computational Methods in der politischen Kommunikationsforschung</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="workflow" class="section level1">
+<h1><span class="header-section-number">6</span> Workflow</h1>
+<p>Zum Abschluss der Einführung in die Grundlagen von R schauen wir uns noch einige Möglichkeiten an, effizient(er) mit R und RStudio arbeiten zu können.</p>
+<div id="arbeitsverzeichnisse" class="section level2">
+<h2><span class="header-section-number">6.1</span> Arbeitsverzeichnisse</h2>
+<p>Abgesehen von den Skripten für die Übungsaufgaben haben wir bisher noch nicht mit Dateien gearbeitet. In Zukunft sieht dies natürlich anders aus: wir laden Datensätze auf unserer Festplatte, erstellen Skripte und speichern unsere Ergebnisse, z. B. in Form von Tabellen oder Abbildungen.</p>
+<p>Sobald wir daher mit Dateien arbeiten, wird das Konzept des Arbeitsverzeichnisses relevant, da R basierend auf diesem nach Dateien sucht. Unser aktuelles Arbeitsverzeichnis können wir mit dem Befehl <code>getwd()</code> (für <em>w</em>orking <em>d</em>irectory) anzeigen.</p>
+<p>Nehmen wir einmal an, unser Arbeitsverzeichnis lautet <code>C:/Projekte/R</code>. R wird nun Pfadangaben zu Dateien <em>relativ</em> zu diesem Verzeichnis betrachten. Eine Datensatz-Datei <code>beispiel.csv</code>, die in diesem Verzeichnis liegt (deren gesamter Dateipfad also <code>C:/Projekte/R/beispiel.csv</code> ist), könnten wir mit der Funktion <code>read.csv()</code>, die zum Einlesen von CSV-Dateien verwendet wird, daher über <code>read.csv("beispiel.csv")</code> laden. Läge die Datei in einem Unterordner <code>data</code> (wäre der vollständige Dateipfad also <code>C:/Projekte/R/data/beispiel.csv</code>), müssten wir entsprechend <code>read.csv("data/beispiel.csv")</code> angeben. Gleiches gilt auch für Dateien, die wir mit R erstellen – geben wir keinen weiteren Pfad an, so landen diese im Hauptordner des aktuellen Arbeitsverzeichnisses.</p>
+<p>Umgekehrt bedeutet dies auch, dass es umständlich wird, Dateien zu laden, die außerhalb unseres Arbeitsverzeichnisses (also im Beispiel in einem anderen Ordner auf <code>C:</code>) liegen. Zwar kann immer auch der gesamte Dateipfad angegeben werden (z. B. <code>read.csv("C:/Projekte/R/data/beispiel.csv")</code>), das hat aber die Nachteile, dass Sie immer sehr viel tippen müssen und vor allem, dass Ihre Skripte nur noch auf Ihrem eigenen Rechner laufen, da Sie auf anderen Rechnern mit hoher Wahrscheinlichkeit auch eine andere Ordnerstruktur haben.</p>
+<p>Es ist daher wichtig, sich a) eine sinnvolle Ordnerstruktur zu überlegen und b) sicherzustellen, dass R auch das korrekte Arbeitsverzeichnis nutzt. Das Arbeitsverzeichnis kann mit der Funktion <code>setwd()</code> festgelegt bzw. geändert werden – allerdings bietet R-Studio noch eine Funktionalität, die das nochmals deutlich erleichert:</p>
+</div>
+<div id="rprojects" class="section level2">
+<h2><span class="header-section-number">6.2</span> Projekte und Ordnerstrukturen</h2>
+<p>RStudio bietet mittels Projekten eine einfache Möglichkeit, alle relevanten Projektdateien zusammenzuhalten und das Arbeitsverzeichnis automatisch zu setzen. Projektdateien (Dateieindung <code>.rproj</code>) sind prinzipiell nichts weiter als “Markierungen” für RStudio, dass es sich bei einen Ordner auf der Festplatte (und den darin enthaltenen Dateien) um ein Analyseprojekt mit R handelt.</p>
+<p>Erstellen wir also unser erstes R-Projekt für diesen Kurs: Klicken Sie in RStudio auf <em>File - New Project</em> und wählen Sie im sich nun öffnenden Fenster <em>New Directory</em> und anschließend <em>New Project</em> aus. Im folgenden Fenster können Sie Ihrem Projekt einen sinnvollen Namen (z. B. “R-Kurs”) geben und das Verzeichnis auswählen, in dem Ihr Projekt erstellt werden soll (RStudio erzeugt darin einen Unterordner mit dem Namen des Projekts):</p>
+<p><img src="img/6/proj1.png" />
+<img src="img/6/proj2.png" />
+<img src="img/6/proj3.png" /></p>
+<p>Schließen Sie nun RStudio und navigieren zu dem Projektordner auf Ihrer Festplatte. Durch einen Doppelklick auf die <code>.rproj</code>-Datei öffnet sich RStudio mit diesem Projekt; das Arbeitsverzeichnis wird automatisch auf den Hauptordner des Projektes gesetzt, der <em>Files</em>-Browser im rechten unteren Bildschirmbereich zeigt ebenfalls dieses an.</p>
+<p>Am rechten oberen Bildschirmrand wird Ihnen außerdem das aktuelle Projekt angezeigt – bearbeiten Sie mehrere Projekte gleichzeitig, können Sie hier auch direkt von einem Projekt in ein anderes wechseln (oder sogar mehrere gleichzeitig in unterschiedlichen RStudio-Sessions öffnen).</p>
+<div class="figure">
+<img src="img/6/projects.png" alt="Auswahl von Projekten in RStudio" />
+<p class="caption">Auswahl von Projekten in RStudio</p>
+</div>
+<p>Schließlich ist nun auch ein guter Zeitpunkt, sich eine Ordnerstruktur zu überlegen. Ich persönlich lege (nummerierte) Skriptdateien meist direkt im Hauptordner des Projektes ab, speichere alle relevanten Datensätze in einem Unterordner <code>data</code>, und alle Ergbnisse in entsprechend benannten Unterordnern (z. B. <code>tables</code> und <code>figures</code>). Finden Sie hier vor allem eine Struktur, in der Sie sich – und im besten Falle auch andere, wenn Sie Daten aus einem Projekt anderen zur Verfügung stellen – intuitiv zurechtfinden.</p>
+<div class="figure">
+<img src="img/6/wd.png" alt="Ein – besonders für meine Verhältnisse – gut aufgeräumter Projektordner" />
+<p class="caption">Ein – besonders für meine Verhältnisse – gut aufgeräumter Projektordner</p>
+</div>
+</div>
+<div id="r-markdown" class="section level2">
+<h2><span class="header-section-number">6.3</span> R Markdown</h2>
+<p><em>R Markdown</em> ist ein Dateiformat (Endung: <code>.Rmd</code>) von RStudio, das es erlaubt, Code, Ergebnisse und freien Text in nur einem Dokument zu kombinieren. Es ist dementsprechend gut geeignet, um Analyseschritte und die dahinterstehenden Entscheidungen und Gedanken festzuhalten. Zudem können solche Dokumente schnell in andere Dokumenttypen – z. B. HTML-Websiten, PDF-Dateien oder Word-Dokumente – umgewandelt werden.</p>
+<div class="figure">
+<img src="img/6/rmd.png" alt="Ein R Markdown-Dokument mit Text, Code und Ergebnissen – in diesem Fall – Grafiken" />
+<p class="caption">Ein R Markdown-Dokument mit Text, Code und Ergebnissen – in diesem Fall – Grafiken</p>
+</div>
+<div class="figure">
+<img src="img/6/rmd-knitted.png" alt="…und dasselbe Dokument als HTML-Seite konvertiert" />
+<p class="caption">…und dasselbe Dokument als HTML-Seite konvertiert</p>
+</div>
+<p>Wir erstellen R-Markdown-Dokumente über <em>File - New File - R Markdown</em>. Im folgenden Fenster können wir einen Dokumenttitel, Ausgabeformat usw. einstellen – all dies lässt sich aber auch später noch bearbeiten, sodass Sie fürs erste die Standardeinstellungen übernehmen können. Die erzeugte Datei ist bereits mit etwas Beispieltext gefüllt und besteht aus drei Komponenten:</p>
+<div id="yaml-header" class="section level3">
+<h3><span class="header-section-number">6.3.1</span> YAML-Header</h3>
+<p>Ganz oben steht ein (optionaler) Block in der Auszeichnungssprache <em>YAML</em> (für <em>Y</em>et <em>A</em>nother <em>M</em>arkdown <em>L</em>anguage), abgetrennt durch <code>---</code>, der die Outputoptionen festlegt.</p>
+<pre><code>---
+title: &quot;Auswertung&quot;
+author: &quot;Julian Unkel&quot;
+date: &quot;4/29/2020&quot;
+output: html_document
+---</code></pre>
+<p>Je nach Ausgabeformat können hier noch weitere Optionen angegeben werden, beispielsweise ob automatisch ein Inhaltsverzeichnis erzeugt werden soll. Auch hier reichen die Standardeinstellungen fürs erste jedoch vollkommen aus.</p>
+</div>
+<div id="freitext-in-markdown" class="section level3">
+<h3><span class="header-section-number">6.3.2</span> Freitext in Markdown</h3>
+<p>Freier Text kann jeder Stelle in das Dokument eingefügt werden. Dabei nutzt das Format die Formatierungssyntax <em>Markdown</em> (daher auch der Dateiformatname), mit der sich Text schnell mittels bestimmter Symbole formatieren lässt. Die Grundidee dahinter ist, dass man sich beim Schreiben auf das Schreiben konzentriert und alle wesentlichen Formatierungen im Nachhinein automatisiert auf Basis von Vorlagen erfolgen. Einige Formatierungsoptionen sind:</p>
+<table>
+<caption><span id="tab:rmarkdown">Tabelle 6.1: </span> Einige Formatierungsoptionen in R Markdown</caption>
+<colgroup>
+<col width="36%" />
+<col width="63%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Syntax</th>
+<th>Erzeugt</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Klartext</td>
+<td>Klartext</td>
+</tr>
+<tr class="even">
+<td><code>_kursiv_</code><br><code>*kursiv*</code></td>
+<td><em>kursiv</em><br><em>kursiv</em></td>
+</tr>
+<tr class="odd">
+<td><code>__fett__</code><br><code>**fett**</code></td>
+<td><strong>fett</strong><br><strong>fett</strong></td>
+</tr>
+<tr class="even">
+<td><code># Überschrift</code><br><code>## Überschrift</code><br><code>### Überschrift</code></td>
+<td>Überschrift erster Ebene<br>Überschrift zweiter Ebene<br>Überschrift dritter Ebene</td>
+</tr>
+<tr class="odd">
+<td><code>- Listenpunkt 1</code><br><code>- Listenpunkt 2</code></td>
+<td>- Listenpunkt 1<br>- Listenpunkt 2</td>
+</tr>
+<tr class="even">
+<td><code>1. nummerierte Liste</code><br><code>2. Listenpunkt 2</code></td>
+<td>1. nummerierte Liste<br>2. Listenpunkt 2</td>
+</tr>
+</tbody>
+</table>
+<p>Ein gelungener Spickzettel für R Markdown findet sich zudem <a href="https://rstudio.com/wp-content/uploads/2015/06/rmarkdown-german.pdf">hier</a>.</p>
+</div>
+<div id="code-chunks" class="section level3">
+<h3><span class="header-section-number">6.3.3</span> Code Chunks</h3>
+<p>R-Code kann in speziellen Blöcken hinzugefügt werden, die durch <code>```{r}</code> (und einem optionalen Namen hinter <code>r</code>) eingeleitet werden und abschließend <code>```</code> begrenzt werden. Alles innerhalb dieser Blöcke (“Chunks”) wird als R-Code interpretiert. Einfacher können R-Code-Chunks mit der Tastenkombination <code>Strg/Cmd + Alt + I</code> eingefügt werden.</p>
+<p>Einzelne Codezeilen können wie gehabt mit <code>Strg/Cmd + Enter/Return</code> ausgeführt werden; mittels <code>Strg/Cmd + Shift + Enter/Return</code> oder durch Klick auf den grünen “Play”-Knopf am rechten oberen Ende des Chunks wird der gesamte Code des Chunks auf einmal ausgeführt. Die Besonderheit dabei ist, dass das Ergebnis direkt unter dem Chunk – und nicht in der Konsole – angezeigt wird, sodass Sie Code damit auch sehr schön gliedern können. Die Codebeispiele in der erzeugten R-Markdown-Datei verdeutlichen dies – einzelne Werte, Tabellen und auch Grafiken können so direkt in dem Dokument angezeigt werden.</p>
+</div>
+<div id="ausgabedateien-erzeugen" class="section level3">
+<h3><span class="header-section-number">6.3.4</span> Ausgabedateien erzeugen</h3>
+<p>Mit einem Klick auf den “Knit”-Knopf (mit Stricksymbol) am oberen Rand wird die im Header definierte Ausgabedatei erzeugt – standardmäßig also eine HTML-Datei, die im Arbeitsverzeichnis abgelegt wird und mit jedem Browser geöffnet werden kann. Auch dies können Sie einmal mit dem Beispielcode ausprobieren.</p>
+<p>Diese Einführung kann nicht alle Ausgabeformate in Detail ansprechen – hier gibt es aber inzwischen vielfältige Möglichkeiten, die quasi den gesamten wissenschaftlichen Prozess abdecken, aber natürlich auch etwas Einarbeitung erfordern: mittels spezieller Packages lassen sich so unter anderem Präsentationen, PDF-Berichte (inklusive Literaturverwaltung und automatischer Formatierung von Ergebnistabellen nach gängigen wissenschaftlichen Standards) oder ganze Webseiten erstellen (auch dieser Kurs bzw. diese Website ist komplett in R Markdown erstellt).</p>
+<p>Übungsaufgaben können Sie zukünftig sowohl als R-Skript (<code>.R</code>) als auch als R Markdown (<code>.Rmd</code>) abgeben.</p>
+<div class="figure">
+<img src="img/horst/rmarkdown_wizards.png" alt="Illustration von @allison_horst: https://twitter.com/allison_horst" />
+<p class="caption">Illustration von @allison_horst: <a href="https://twitter.com/allison_horst" class="uri">https://twitter.com/allison_horst</a></p>
+</div>
+</div>
+</div>
+<div id="r-aktuell-halten" class="section level2">
+<h2><span class="header-section-number">6.4</span> R aktuell halten</h2>
+<p>Wie bei jeder anderen Software auch sollte die Arbeitsumgebung in R durch regelmäßige Updates aktuell gehalten werden, um neue Features, Fehlerkorrekturen, Performance-Verbesserungen und Beseitigungen von Sicherheitslücken zu erhalten. Da wir mit unterschiedlichen Komponenten – R, RStudio und jeder Menge Packages – arbeiten, müssen all diese Komponenten auch getrennt geupdated werden.</p>
+<div id="packages-aktualisieren" class="section level3">
+<h3><span class="header-section-number">6.4.1</span> Packages aktualisieren</h3>
+<p>Am häufigsten sollten Sie Ihre installierten Packages aktualisieren. Dies geht in RStudio sehr komfortabel über <em>Tools - Check for Package Updates</em>, wodurch alle Packages angezeigt werden, für die Updates bereitstehen. Nach einer Auswahl der gewünschten Packages können Updates gesammelt über den Button <em>Install Updates</em> heruntergeladen und installiert werden.</p>
+<p>Um nur ein einzelnes Packages zu aktualisieren, kann dieses auch einfach über die Funktion <code>install.packages("package_name")</code> mit der aktuellsten Version neu installiert werden.</p>
+</div>
+<div id="rstudio-aktualisieren" class="section level3">
+<h3><span class="header-section-number">6.4.2</span> RStudio aktualisieren</h3>
+<p>Auch RStudio kann direkt aus dem Programm heraus aktualisiert werden. Hier empfiehlt es sich, regelmäßig unter <em>Help - Check for Updates</em> zu überprüfen, ob eine Aktualisierung bereitsteht.</p>
+</div>
+<div id="r-aktualisieren" class="section level3">
+<h3><span class="header-section-number">6.4.3</span> R aktualisieren</h3>
+<p>Etwas unkomfortabler ist es, R selbst zu aktualisieren. Dass eine neue Version bereitsteht, erfährt man häufig dadurch, dass Packages beim Laden darauf aufmerksam machen, dass Sie mit einer aktuelleren Version von R als der aktuell installierten erstellt wurden. Das liest sich in der Konsole dann so:</p>
+<pre><code>Warning message:
+package ‘package_name’ was built under R version x.x.x</code></pre>
+<p>Das Updaten funktioniert dabei ebenso wie eine Neuinstallation, wie sie in Kapitel <a href="firststeps.html#rinstallieren">1.1</a> beschrieben wurde – RStudio sollte die neue R-Version dann automatisch erkennen (die aktuell installierte R-Version wird stets beim Starten von R/RStudio in der Konsole angezeigt). Dabei ist zu beachten, dass installierte Packages nicht von einer R-Version zur nächsten kopiert werden; es ist also entweder manuelles Kopieren oder eine Neuinstallation der Packages nötig.</p>
+<p>Unter Windows kann zudem das Paket <code>installr</code> genutzt werden, dessen Funktion <code>updateR()</code> prüft, ob eine neue R-Version bereitsteht, diese herunterlädt und installiert sowie die Möglichkeit bietet, automatisch Packages der alten Installation für die neue Installation zu kopieren (was nicht immer auch funktioniert). Allerdings wird empfohlen, diese Funktion nicht in RStudio, sondern direkt in R zu nutzen.</p>
+<p>Da vorige Woche eine neue Hauptversion von R erschienen ist (<code>R 4.0.0</code>) und wir aktuell noch kaum Packages installiert haben, die wir durch ein Update verlieren könnten, ist nun ein guter Zeitpunkt, um diese Version zu installieren. Falls Sie einen Mac nutzen, führen Sie also eine Neuinstallation von R wie unter Kapitel <a href="firststeps.html#rinstallieren">1.1</a> beschrieben durch.</p>
+<p>Auch unter Windows können Sie diesen Weg wählen – oder Sie probieren das <code>installr</code>-Package aus. Hierzu installieren Sie das Package zunächst über <code>install.packages("installr")</code>. Schließen Sie dann RStudio und öffnen R (Sie finden R in der Regel im Startmenü unter R; das gibt Ihnen auch die Gelegenheit, wertzuschätzen, wie viel komfortabler RStudio ist). In die Konsole können Sie nun <code>installr::updateR()</code> ein und folgen den Anweisungen des Installationsprogramms.</p>
+<p>In beiden Fällen sollte beim nächsten Start von RStudio in der ersten Konsolenzeile die neue R-Version angezeigt werden:</p>
+<pre><code>R version 4.0.0 (2020-04-24) -- &quot;Arbor Day&quot;</code></pre>
+
+</div>
+</div>
+</div>
+
+
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="packages.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="datahandling-intro.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["ComputationalMethods.pdf", "ComputationalMethods.epub"],
+"toc": {
+"collapse": "section",
+"depth": 3
+},
+"split_by": "chapter+number"
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

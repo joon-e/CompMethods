@@ -1,0 +1,96 @@
+--- 
+title: "Computational Methods in der politischen Kommunikationsforschung"
+subtitle: "Methodische Vertiefung: Computational Methods mit R und RStudio"
+author: "Julian Unkel"
+site: bookdown::bookdown_site
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+---
+
+# Einführung {-}
+
+Zuletzt aktualisiert: `r Sys.time()`.
+Dies ist ein _Work-in-Progress_ und wird laufend aktualisiert. 
+
+## Seminarinformationen {-}
+
+- Dozent: Julian Unkel, [unkel@ifkw.lmu.de](mailto:unkel@ifkw.lmu.de)
+- Zeit und Ort: Donnerstags, 12-14 Uhr, ~~Oe 057~~ (bis auf weiteres findet das Seminar rein digital statt)
+- Moodle: [https://moodle.lmu.de/course/view.php?id=8250](https://moodle.lmu.de/course/view.php?id=8250)
+
+## Ablauf des Kurses {-}
+
+Aufgrund der aktuellen Situation wird dieses Seminar in einen Online-Kurs überführt. Alle Seminarinhalte werden in Textform aufbereitet und nach und nach diesem Online-Kurs hinzugefügt. Auf Basis des Kurses sollen die Seminarinhalte selbstständig und mit weitestgehend eigenem Lerntempo erarbeitet werden. 
+
+In jedem Kapitel werden hierzu zunächst die wesentlichen Konzepte und Inhalte erläutert. Jedes Kapitel schließt mit einigen Übungsaufgaben, die über Moodle abgegeben werden müssen. Deadlines für die Übungsaufgaben werden ebenfalls über Moodle kommuniziert, Lösungen im Anschluss an die Deadlines im Kurs hinzugefügt.
+
+Jeden Donnerstag zum regulären Seminartermin findet von 12-14 Uhr eine Online-Sprechstunde via Zoom statt. Hier können Fragen zu den Seminarinhalten, Übungsaufgaben etc. gestellt und diskutiert werden.
+
+In Moodle stehen zudem zwei Foren zur Verfügung, in dem Sie 1) allgemeine Fragen zu R und RStudio sowie 2) spezifische Fragen / alternative Lösungen zu den Übungsaufgaben (vor-)stellen und diskutieren können. Scheuen Sie sich bitte nicht, auch selbst auf Fragen und Probleme von Kommiliton*innen einzugehen.
+
+Neben den regulären Übungsaufgaben werden Sie bisweilen auch optionale, besonders knifflige Aufgaben vorfinden, die ich in der Sprache meiner Ahnen als _Käpseles-Aufgaben_ kennzeichnen werde. Diese sind nicht verpflichtend, können Ihnen aber als Gradmesser dienen, ob Sie die jeweiligen Inhalte auch eigenständig und in leicht abgewandelter Form anwenden können.
+
+## Motivation und Ziele des Seminars {-}
+
+Das Ziel des Kurses ist es, methodische Kenntnisse zur Anwendung computationaler Methoden zu vermitteln. Hierzu werden wir uns zunächst allgemein mit der Datenbearbeitung und -analyse mit der statistischen Programmiersprache R auseinandersetzen. Es folgen dann spezifischere Verfahren der computationalen Datenerhebung und -analyse. 
+
+Dabei stehen insbesondere folgende Inhalte im Vordergrund:
+
+- Einführung in _R_ und die Arbeit mit _RStudio_
+- Datenmanagement in _R_
+- Computationale Datenerhebung mit _R_
+- Datenvisualisierung mit _R_
+- Automatisierte Inhaltsanalyse mit _R_
+
+Zudem wird darauf eingegangen, wie mittels R und RStudio Kommunikationsforschung transparent, nachvollziehbar und reproduzierbar gestaltet werden kann.
+
+Es werden keine Vorkenntnisse in R vorausgesetzt; die Inhalte der Veranstaltung _15424 Datenanalyse_ werden als bekannt vorausgesetzt.
+
+Bevor es jedoch ans Eingemachte geht, ein paar Worte zur Motivation hinter diesem Seminar: Warum lohnt es sich überhaupt, eine Programmiersprache für die quantitativ-wissenschaftliche Arbeit zu lernen? Und warum ausgerechnet R? 
+
+### Warum also eine Programmiersprache für Datenanalyse lernen? {-}
+
+Wenn Sie bisher Daten statistisch ausgewertet haben, etwa im Rahmen von Forschungsseminaren oder der Bachelorarbeit, wird das in der Regel mit einem Programm mit grafischer Oberfläche erfolgt sein, etwa mit _Microsoft Excel_ oder mit _IBM SPSS_. Diese Programme haben viele Vorteile: sie sind meist auf spezifische Funktionen zugeschnitten, in ihrer Aufmachung an typische Computersoftware angepasst und entsprechend intuitiv zu bedienen - ein paar Klicks, und schon gibt SPSS eine Regressionstabelle mit allen relevanten Informationen aus. Für die meisten Anwendungsfälle im KW-Studium bieten genannten Programme leicht zu erlernende und umzusetzende Lösungen an. Programmiersprachen haben hingegen eine zweifellos höhere Einstiegshürde, deren Bewältigung für viele Anwendungsfälle in der Kommunikationswissenschaft auf den ersten Blick keinen größeren Nutzen verspricht.
+
+Vielleicht ist im Studium aber auch schon eine Situation aufgetreten, in der SPSS keine Hilfe bot. Eine Effektstärke für einen Mittelwertvergleich? Die bietet SPSS zwar in Form von $\eta^2_p$ für die ANOVA an, nicht jedoch Cohen's $d$ für den t-Test. Sie haben zusammen mit Komilliton*innen eine Inhaltsanalyse geplant und möchten vorab einen Intercoderreliabilitätstest durchführen? SPSS kennt weder die Reliabilität nach Holsti noch Krippendorff's $\alpha$. Und auch wenn SPSS Grafiken ausgeben kann, so hat es doch einen Grund, warum man diese selten in wissenschaftlichen Veröffentlichungen (und hoffentlich auch in studentischen Arbeiten) findet.
+
+Benötigt man also eine Funktion, die in der gewählten Softwarelösung nicht vorhanden ist, so muss man auf eine andere ausweichen. Programmiersprachen bieten hier deutlich mehr Flexibilität - ist die gewünschte Funktion nicht vorhanden, so schreibt man sie eben selbst (bzw. hat dies in aller Regel schon jemand anderes, der ebenfalls vor diesem Problem stand, für Sie getan). Dies gilt natürlich umso mehr, je weniger standardisiert die zu analysierenden Daten und gewählten Analyseverfahren sind. Beschäftigen wir uns beispielsweise mit Onlinetexten oder digitalen Spurendaten, dann liegen diese oftmals nicht in vorstrukturierter Form vor, müssen erst über Schnittstellen abgerufen, automatisiert heruntergeladen und/oder für die weitere Nutzung aufbereitet werden. Computationale Analyseverfahren wie beispielsweise Verfahren zur automatisierten Inhaltsanalyse werden beständig weiterentwickelt und angepasst. Die Flexibilität, die skriptbasierte Datenanalyse bietet, ist daher einer der Hauptgründe, warum nicht nur in der Wissenschaft, sondern auch in anderen professionellen Kontexten, etwa der Markt- und Medienforschung, wo Lösungen für vielseitige datenanalytische Fragen gesucht werden, die Bedeutung von Programmiersprachen zur Datenanalyse zunimmt.
+
+Zugleich ist der Einstieg in das Programmieren deutlich einfacher geworden. Für viele Programmiersprachen stehen sogenannte Integrierte Entwicklungsumgebungen (IDEs) zur Verfügung, die mittels grafischer Benutzeroberflächen, intuitiver Bedienung und Hilfswerkzeugen (z. B. der automatischen Vervollständigung von Funktionsnamen) den Umgang mit Programmiersprachen deutlich erleichtern und komfortabler gestalten.
+
+Ein weiterer entscheidender Vorteil der _programmatischen_ ^[d. h. skript- bzw. codebasiert; im Englischen wird _programmatically_ verwendet, um auszudrücken, dass etwas 'durch Code' und nicht durch Klicken von Knöpfen in einem Computerprogramm erfolgt ist, im Deutschen ist diese Wortbedeutung außerhalb von Informatikkreisen (noch) kaum geläufig; siehe auch [diese Diskussion](https://german.stackexchange.com/questions/5675/welches-wort-anstelle-von-programmatisch) zur Wortbedeutung.] Datenanalyse ist, dass Skripte und Code alle Analyseschritte nachvollziehbar, transparent und reproduzierbar gestalten (entsprechend wurden Sie in der Datenanalyse-Ausbildung vermutlich auch dazu angehalten, in SPSS stets die Syntax zu nutzen). Einmal durchgeführte Arbeiten können somit jederzeit und problemlos von anderen und auch Ihnen selbst wiederholt und angepasst werden.
+
+Schließlich können auch karrieretechnische Überlegungen eine Rolle spielen. Viele Unternehmen setzen für datenanalytische Tätigkeiten die Kenntnis einer einschlägigen Programmiersprache inzwischen zwingend voraus. Und natürlich spiegelt sich das auch im Gehalt wider: das Vergleichsportal _PayScale_ gibt beispielweise für _Data Analysts_, die die [statistische Programmiersprache R](https://www.payscale.com/research/US/Job=Data_Analyst/Salary/beb644bc/R) beherrschen, ein um rund 5.000 US-Dollar höheres Jahresdurchschnittsgehalt an als für diejenigen Data Analysts, die mit [SPSS](https://www.payscale.com/research/US/Job=Data_Analyst/Salary/cc748401/SPSS) arbeiten.
+
+### Warum _R_ lernen? {-}
+
+Bisher wurde allgemein von Programmiersprachen gesprochen. In der Datenanalyse-Praxis sind viele unterschiedliche Programmiersprachen gängig, z. B. _Python_, _R_, _SQL_ und _Julia_. Wir werden in den kommenden zwei Semestern mit R arbeiten. Dies hat einige Gründe:
+
+- R ist eine speziell auf statistische und datenanalytische Anwendungen ausgelegte Programmiersprache (auch wenn die Anwendungsbereiche inzwischen darüber hinausgehen). Das bedeutet, dass viele gängige statistische Verfahren bereits in der Basis-Version vorhanden sind und ohne weitere Anpassungen genutzt werden können.
+- In der _Scientific Community_ ist R inzwischen sehr weit verbreitet und wird durch diese kontinuierlich weiterentwickelt. Das bedeutet auch, dass neue Verfahren, sowohl zur Datenerhebung als auch zur Datenanalyse, meist sehr schnell auch in R verfügbar sind.
+- Zugleich gibt es durch die weite Verbreitung auch vielzählige Hilfsangebote. In Communities wie [Stack Overflow](https://stackoverflow.com/) und durch googeln werden Sie für nahezu jedes Problem, das sich Ihnen bei der Arbeit mit R stellt, schnell eine Lösung finden.
+- R ist komplett kostenlos und für jedes Betriebssystem verfügbar.
+- Mit _RStudio_ steht eine ebenfalls kostenfreie IDE zur Verfügung, die die ehemals hohen Einstiegshürden erheblich senkt.
+- R und RStudio decken durch Erweiterungen nahezu alle Schritte ab, die für die wissenschaftliche Arbeit erforderlich sind. Das reicht vom Datenabruf aus Befragungssoftware sowie der Datenerhebung durch Programmierschnittstellen oder Web Scraping über die Datenbearbeitung, -bereinigung und -analyse bis hin zur Erstellung von Manuskripten und publikationsfähigen Grafiken. Auch dieser Kurs ist komplett in RStudio erstellt. 
+
+Auch wenn sich R in einigen Aspekten von den oben genannten Programmiersprachen unterscheidet, so sind viele der Konzepte, die wir in den kommenden zwei Semestern lernen werden, auch in anderen Programmiersprachen gleich oder zumindest ähnlich umgesetzt. Ihnen wird es in Zukunft also auch leichter fallen, sich bei Bedarf in andere Programmiersprachen einzuarbeiten.
+
+## Hinweise zur Nutzung des Online-Kurses {-}
+
+- In der Onlineversion können Sie mit den Cursortasten `←` und `→` durch die Seiten des Kurses blättern.
+- In der oberen Leiste finden Sie einen Download-Knopf, mit dem Sie sich die aktuelle Version des Kurses als _PDF_ oder _EPUB_ (für E-Reader) herunterladen können. Bitte achten Sie in diesem Fall darauf, regelmäßig die aktuellste und somit vollständigste Version herunterzuladen. Oben auf dieser Seite ist angegeben, wann der Kurs zuletzt aktualisiert wurde.
+- Früher oder später wird etwas in Ihrem Code nicht so funktionieren, wie Sie sich das vorstellen oder wünschen. Hier greift die [15-Minuten-Regel](https://twitter.com/math_rachel/status/764931533383749632): Versuchen Sie zunächst, 15 Minuten lang das Problem selbst zu lösen - in dem Sie das Problem in kleinere Schritte zerlegen, den Code nach Tippfehlern durchsuchen, nochmals Hilfsdokumente konsultieren etc. Sind Sie nach 15 Minuten noch nicht weitergekommen, fragen Sie um Hilfe - z. B. in unseren Moodle-Foren. 
+- Der Witz, wonach Programmieren zu 70% aus Googeln bestehe, hat einen wahren Kern. Es ist nicht verwerflich, im Internet nach Hilfestellungen und Lösungen zu suchen und Code-Schnipsel von anderen zu verwenden - ganz im Gegenteil, gezieltes Suchen stellt einen wesentlichen Teil der Problemlösekompetenz dar. Auch wenn es jedoch verlockend und einfach erscheinen mag, Code von [StackOverflow](https://stackoverflow.com/) und vergleichbaren Portalen zu kopieren, sollten Sie immer versuchen, den Code und damit die Lösung auch nachvollziehen zu können.
+
+![Illustration von \@allison_horst: https://twitter.com/allison_horst](img/horst/r_first_then.png)
+
+Beginnen wir mit der [Installation von R und RStudio sowie ersten Schritten](#firststeps).
+
+```{r include=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(c(
+  .packages(), 'bookdown', 'knitr', 'rmarkdown'
+), 'packages.bib')
+```

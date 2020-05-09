@@ -1,0 +1,27 @@
+# Auf einen Blick
+
+## Objekte {-}
+
+`objektname <- wert` weist Werten Objekte zu.
+
+Table: (\#tab:objekttypenA) Objekttypen
+
+|  Objekttyp  |     Datentyp     |      Prüfen      |     Erzwingen    |
+|:-----------:|:----------------:|:----------------:|:----------------:|
+|   `double`  |    Kommazahlen   |   `is.double()`  |   `as.double()`  |
+|  `integer`  |   Ganze Zahlen   |  `is.integer()`  |  `as.integer()`  |
+| `character` |       Text       | `is.character()` | `as.character()` |
+|  `logical`  | `TRUE` / `FALSE` |  `is.logical()`  |  `as.logical()`  |
+
+Table: (\#tab:datenstrukturenA) Datenstrukturen
+
+| Datenstruktur | Dimensionalität | Objekttypen | Wird erstellt mit |
+|:-------------:|:---------------:|:-----------:|:-----------------:|
+| Vektor        | eindimensional  | homogen     | `c()`             |
+| Liste         | eindimensional  | heterogen   | `list()`          |
+| Matrix        | zweidimensional | homogen     | `matrix()`        |
+| Dataframe     | zweidimensional | heterogen   | `data.frame()`    |
+
+## Operatoren {-}
+
+## 

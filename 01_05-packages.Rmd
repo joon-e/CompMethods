@@ -1,0 +1,56 @@
+# Packages
+
+Bereits mit der Basisversion von R kommen wir schon recht weit. Der Erfolg von R geht aber nicht zuletzt darauf zurück, dass sich die Basisversion sehr einfach durch _Packages_ erweitern lässt. Dabei handelt es sich um Sammlungen von Funktionen, deren Dokumentation und Zusatzinhalten (z. B. Beispieldaten), die R beispielsweise um neue Analyse- und Erhebungsverfahren erweitern oder bestehende Funktionalitäten vereinfachen.
+
+Auf [CRAN](https://cran.r-project.org/), dem *C*omprehensive *R* *A*rchive *N*etwork -- Sie erinnern sich, von dort haben Sie auch R installiert --, stehen aktuell rund 15.500 Packages zur Verfügung, die so ziemlich jede Funktionalität abdecken, die man sich wünschen kann. 
+
+## Packages installieren
+
+Packages lassen von sich von CRAN sehr einfach direkt in R bzw. RStudio über die Funktion `install.packages("package_name")` installieren. Mit folgendem Befehl installieren wir beispielsweise das Paket `tibble`:
+
+```{r, eval=FALSE}
+install.packages("tibble")
+```
+
+R lädt automatisch die benötigten Dateien (und Packages, sollte das gewünschte Package andere Packages voraussetzen) herunter und installiert diese, sodass Sie meist nach wenigen Sekunden mit dem Package arbeiten können. Einmal installierte Packages bleiben Ihnen erhalten, bis Sie den Computer wechseln oder zu einer neuen R-Version (siehe nächstes Kapitel) wechseln.
+
+## Packages nutzen {#usepackages}
+
+Packages werden über die Funktion `library(package_name)` für die aktuelle R-Session geladen, sodass Sie auf die enthaltenen Funktionen zugreifen können. Es bietet sich daher an, die `library()`-Befehle immer ganz oben in ein R-Skript zu schreiben, da von ihnen dann die Funktionalität des restlichen Skripts abhängig ist.
+
+Laden wir einmal das `tibble`-Package:
+
+```{r}
+library(tibble)
+```
+
+Was kann dieses Package nun? In der Regel haben wir davon natürlich schon eine Vorstellung, da wir das neue Package vermutlich über eine Google-Suche nach dessen Funktionalität gefunden haben (ganz allgemein funktioniert eine Suche nach _"R + [Name des gesuchten Verfahrens]"_ meist gut). Wie auch bei den Basis-Funktionen können wir auch bei Funktionen aus Packages über ein vorangestelltes `?` die Dokumentationsseite der jeweiligen Funktion anzeigen.
+
+Viele Packages kommen zudem mit einer oder mehreren _Vignetten_, längeren Dokumentationen, die die Funktionen eines Packages genauer erläutern, oft mit Anwendungsbeispielen. Wir können diese Vignetten über den Befehl `vignette()` öffnen, wobei wir dafür den Namen der Vignette kennen müssen -- viele Packages bieten daher eine Vignette an, die nach dem Package selbst benannt ist. Alternativ öffnet sich über `browseVignettes("package_name")` in einem Webbrowser eine Übersicht über alle Vignetten, die zu einem bestimmten Package gehören.
+
+Öffnen wir einmal die Vignette unseres neues Packages `tibble`:
+
+```{r, eval=FALSE}
+vignette("tibble")
+```
+
+Wir erfahren also, dass das `tibble`-Package einen "modern take on data frames" einführt. Neben einigen technischen Details zeichnen sich "Tibbles" vor allem durch eine schickere Darstellung in der R-Konsole aus. Schauen wir uns das doch einmal an -- die Funktion, um einen Dataframe in ein Tibble umzuwandeln lautet `as_tibble()`:
+
+```{r}
+as_tibble(iris)
+```
+
+Im Gegensatz zu Dataframes sehen wir auf den ersten Blick folgende Unterschiede:
+
+- Wir erhalten zunächst eine Zeile mit den Dimensionen des Datensatzes: `A tibble: 150 x 5`
+- Unter der Kopfzeile sind die Objekttypen der jeweiligen Spalten aufgelistet, hier also `dbl` (für `double`) und `fct` (für `factr`).
+- Standardmäßig werden nur die ersten 10 Zeilen des Datensatzes angezeigt, sodass uns bei langen Datensätzen nicht die Konsole vollläuft.
+- hier nicht sichtbar: negative Zahlen und fehlende Werte werden farbig hervorgehoben
+
+Wir werden zukünftig viel mit Tibbles arbeiten, doch nun erst einmal zurück zur Package-Nutzung: Bisweilen lohnt es sich nicht, das gesamte Package zu laden, da Sie nur einmal eine einzige Funktion daraus benötigen. In diesem Fall lassen sich die Funktionen installierter Packages auch ohne `library()` nutzen, indem die Funktion über das Format `package_name::funktionsname()` aufgerufen wird:
+
+```{r}
+tibble::as_tibble(iris)
+```
+
+Dies ist vor allem dann sinnvoll, wenn Sie in einem Skript viele verschiedene Packages nutzen: Da es durchaus vorkommen kann, dass mehrere Packages denselben Funktionsnamen nutzen, kann das Laden vieler unterschiedlicher Packages dazu führen, dass die eigentlich gewünschte Funktion aus Package 1 durch eine gleichnamige Funktion aus Package 2 "überschrieben" wird -- eine häufige Fehlerquelle.

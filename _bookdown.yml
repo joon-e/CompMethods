@@ -1,0 +1,18 @@
+book_filename: "ComputationalMethods"
+delete_merged_file: true
+rmd_files: ["index.Rmd", "01_00-intro-to-R.Rmd", "01_01-installation.Rmd", "01_02-objects.Rmd",
+            "01_03-functions.Rmd", "01_04-controlflow.Rmd", "01_05-packages.Rmd", "01_06-workflow.Rmd",
+            "02_00-data-handling.Rmd", "02_01-intro.Rmd", "02_02-working-with-data.Rmd", "02_03-pipe.Rmd",
+            "99_00-appendix.Rmd", "99_01-solutions.Rmd"]
+language:
+  label:
+    fig: 'Abbildung '
+    tab: 'Tabelle '
+    eq: 'Gleichung '
+    exm: 'Beispiel '
+    exr: 'Übungsaufgabe '
+    solution: 'Lösung '
+  ui:
+    edit: Bearbeiten
+    chapter_name: ''
+    appendix_name: ''

@@ -1,0 +1,238 @@
+# Lösungen der Übungsaufgaben {#loesungen}
+
+## Kapitel 2: Objekte und Datenstrukturen {-}
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue2-1)__: 
+
+Am sinnvollsten ist eine Liste `list()`, da diese heterogene Objekttypen beinhalten kann. Ein Dataframe lohnt sich bei nur einem Fall eher nicht.
+
+```{r}
+myself <- list(
+  name = "Julian", # Texte als character
+  year = 1988L, # Jahr als numeric - oder noch präziser als Integer
+  from_bavaria = FALSE # Binäre Entscheidung als logical
+)
+```
+
+Auch wenn wir hier alle Werte z. B. als Text repräsentieren könnten, ist es immer sinnvoll, den Objekttypen zu verwenden, der am besten zu den Werten passt -- numerische (`year`) und logische Objekte (`from_bavaria`) ermöglichen uns mehr Rechenoptionen, einfacheres Filtern von Datensätzen etc.
+
+---
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue2-2)__:
+
+```{r}
+values <- c(1.2, 1.3, 0.8, 0.7, 0.7, 1.5, 1.1, 1.0, 1.1, 1.2, 1.1)
+average <- mean(values)
+above_average <- values > average
+sum(above_average) / length(values)
+```
+
+1. In der ersten Zeile ordnen wir `values` einen numerischen Vektor aus einigen Zahlen zu
+2. In der zweiten Zeile berechnen wir den Mittelwert von `values` und weisen diesen `average` zu.
+3. `values > average` prüft nun für jeden Wert in `values`, ob dieser größer als der Mittelwert (gespeichert in `average` ist). Dies erzeugt einen `logical`-Vektor, den wir `above_average` zuweisen.
+4. `sum(above_average)` zählt, wie viele `TRUE`-Werte in dem Vektor sind. Das ist darauf zurückzuführen, dass `TRUE` die numerische Entsprechung `1`, `FALSE` die numerische Entsprechung `0` hat; `sum()` wandelt den logischen Vektor automatisch in einen numerischen um. Wir teilen dies durch die Anzahl der Werte in `values` und bekommen als Ergebnis, dass 63.6 % der Werte in `values` über dem Mittelwert liegen. (Etwas schneller hätten wir dieses Ergebnis auch bekommen, wenn wir die letzte Zeile durch `mean(above_average)` ersetzen.)
+
+---
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue2-3)__:
+
+```{r}
+str(mtcars)
+```
+
+`mtcars` enthält 11 Variablen, allesamt `numeric`, und 32 Fälle.
+
+```{r}
+mean(mtcars$cyl)
+```
+
+Im Durchschnitt haben die Fahrzeuge ca. 6.2 Zylinder.
+
+Um einen Teildatensatz `cars_short`, der lediglich die Variablen `mpg` und `hp` enthält, zu erstellen, führen viele Wege zum Ziel, z. B.:
+
+```{r}
+cars_short <- mtcars[, c("mpg", "hp")]
+cars_short <- mtcars[c("mpg", "hp")] # Steht nur eine Angabe in den eckigen Klammern, interpretiert R dies als Spaltenangabe
+cars_short <- data.frame(mtcars$mpg, mtcars$hp)
+```
+
+## Kapitel 3: Funktionen {-}
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue3-1)__:
+
+Um die gewünschte Sequenz zu erzeugen, benötigen wir die Argumente `from` (Startwert), `to` (Endwert) und `by` (Zunahmewert). 
+
+```{r}
+seq(from = 0, to = 100, by = 5)
+```
+
+Da es sich, wie wir der Funktionsdokumentation entnehmen können, dabei um die ersten drei Funktionsargumente handelt, können wir diese auch unbenannt übergeben:
+
+```{r}
+seq(0, 100, 5)
+```
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue3-2)__:
+
+Unsere Funktion benötigt lediglich ein Argument, die Temperatur in Grad Fahrenheit (als numerischen Wert), und soll diese in Grad Celsius mit der Formel $°C = (°F − 32) × 5/9$ umwandeln:
+
+```{r}
+fahrenheit_to_celsius <- function(fahrenheit) {
+  celsius <- (fahrenheit - 32) * 5/9
+  return(celsius)
+}
+
+# Unsere neue Funktion kann sogar mehrere Temperaturwerte auf einmal umrechnen
+fahrenheit_to_celsius(c(0, 50, 80, 100))
+```
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue3-3)__:
+
+Für das erste zusätzliche Feature, der Anzahl der fehlenden Werte, müssen wir `descriptives_vector` lediglich ein Element hinzufügen (das wir z. B. `Missing` nennen), in dem eben diese Anzahl festgehalten wird. Mit der Funktion `is.na()` prüfen wir jeden Wert eines Vektors darauf, ob es sich um einen fehlenden Wert `NA` handelt, mit der Summenfunktion `sum()` können wir diese addieren. Wir ändern `descriptives_vector` daher wie folgt:
+
+```{r, eval=FALSE}
+  descriptives_vector <- c(
+    n = length(x),
+    Missing = sum(is.na(x)), # Hier zählen wir die fehlenden Werte
+    M = mean(x, na.rm = na.rm),
+    SD = sd(x, na.rm = na.rm),
+    Minimum = min(x, na.rm = na.rm), 
+    Maximum = max(x, na.rm = na.rm),
+    Median = median(x, na.rm = na.rm)
+  )
+```
+
+Für das zweite zusätzliche Feature, Rundung auf eine gewünsche Anzahl an Nachkommastelle, benötigen wir die `round()`-Funktion, mit dem wir `descriptives_vector` abschließend runden, und ein zusätzliches Argument, mit dem die gewünschte Anzahl an Nachkommastellen übergeben werden kann. Da dieses Argument bei der `round()`-Funktion `digits` heißt, nennen wir es aus Konsistenzgründen auch in unserer Funktion so. Um standardmäßig auf zwei Nachkommastellen zu runden, geben wir dem Argument den Default-Wert `2`. Der vollständige Funktionscode sieht also wie folgt aus:
+
+```{r}
+descriptives <- function(x, na.rm = FALSE, digits = 2) { # Zusätzliches Argument digits mit Default-Wert 2
+  
+  # Vektor mit Variablenbeschreibung erstellen
+  descriptives_vector <- c(
+    n = length(x),
+    Missing = sum(is.na(x)), # Hier zählen wir die fehlenden Werte
+    M = mean(x, na.rm = na.rm),
+    SD = sd(x, na.rm = na.rm),
+    Minimum = min(x, na.rm = na.rm), 
+    Maximum = max(x, na.rm = na.rm),
+    Median = median(x, na.rm = na.rm)
+  )
+  
+  # Vektor runden
+  descriptives_vector <- round(descriptives_vector, digits = digits)
+  
+  return(descriptives_vector)
+}
+```
+
+Wir haben nun eine flexibel einsetzbare Funktion, um schnell relevante Kennwerte einer numerischen Variablen zu erhalten:
+
+```{r}
+descriptives(iris$Sepal.Length)
+descriptives(mtcars$cyl, digits = 1)
+```
+
+## Kapitel 4: Kontrollstrukturen {-}
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue4-1)__:
+
+Erneut gibt es verschiedene Möglichkeiten, den Entscheidungsbaum abzubilden. Wenn wir uns pro `if ()` bzw. `else ()` oder `else if ()` auf das Prüfen einer Bedingung beschränken wollen, benötigen wir einen verschachtelten Baum, also eine Bedinung in einer Bedingung:
+
+```{r, eval=FALSE}
+if (news_channel != "Internet") {             # Prüfen, ob news_channel NICHT "Internet" ist...
+  news_category <- "Offline"                  # dann news_category "Offline" zuweisen
+} else {                                      # Falls das nicht der Fall ist, also news_channel "Internet" ist..
+  if (news_website == "Twitter") {            # dann prüfen wir ob news_category "Twitter" ist
+    news_category <- "SNS"                    # falls das so ist, weisen wir news_category "SNS" zu
+  } else if (news_website == "Facebook") {    # analog verfahren wir mit Facebook
+    news_category <- "SNS"                    #
+  } else if (news_website == "Instagram") {   # analog mit Instagram
+    news_category <- "SNS"                    #
+  } else {                                    # falls das alles nicht zutrifft
+    news_category <- "Online: Sonstige"       # weisen wir "Online: Sonstige" zu
+  }
+}
+```
+
+Das erzeugt allerdings einen ziemlich langen Entscheidungsbaum und einige Redundanzen, da wir für `"Twitter"`, `"Facebook"` und `"Instagram"` jeweils dieselbe Aktion, `news_category <- "SNS"` ausführen. Wir können diese Bedingungen also auch verknüpfen:
+
+```{r, eval=FALSE}
+if (news_channel != "Internet") {             # Prüfen, ob news_channel NICHT "Internet" ist...
+  news_category <- "Offline"                  # dann news_category "Offline" zuweisen
+} else {                                      # Falls das nicht der Fall ist, also news_channel "Internet" ist..
+  if (news_website == "Twitter" | news_website == "Facebook" | news_website == "Instagram") {
+    news_category <- "SNS"                    # Alle Bedingungen mit ODER verbunden, dann SNS zuweisen
+  } else {                                    # falls das nicht zutrifft
+    news_category <- "Online: Sonstige"       # weisen wir "Online: Sonstige" zu
+  }                                           # und haben uns einige Zeilen gespart
+}
+```
+
+Tatsächlich können wir auch die Verschachtelung aufheben, da nach `if (news_channel != "Internet")` folgt, dass bei allen anschließenden `else if()`-Bedingungen `news_channel == "Internet"` ist: 
+
+```{r, eval=FALSE}
+if (news_channel != "Internet") {             
+  news_category <- "Offline"                  
+} else if (news_website == "Twitter" | news_website == "Facebook" | news_website == "Instagram") {
+  news_category <- "SNS" 
+} else {                                    
+  news_category <- "Online: Sonstige" 
+}
+```
+
+Und noch kürzer wir der Entscheidungsbaum, wenn wir den `%in%`-Operator verwenden:
+
+```{r, eval=FALSE}
+SNS <- c("Twitter", "Facebook", "Instagram")
+
+if (news_channel != "Internet") {             
+  news_category <- "Offline"                  
+} else if (news_website %in% SNS) {
+  news_category <- "SNS" 
+} else {                                    
+  news_category <- "Online: Sonstige" 
+}
+```
+
+---
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue4-2)__:
+
+Beim ersten Platzhalter müssen wir einen `for`-Loop, wie in Kapitel \@ref(forloops) beschrieben, einfügen und uns für einen Namen für das Iterator-Objekt entscheiden. Da wir über den Vektor `variables` loopen, bietet sich der Singular `variable` an (aber natürlich funktioniert auch jeder andere Objektname). Diesen müssen wir dann bei den folgenden Platzhaltern ergänzen:
+
+```{r}
+numeric_summary <- function(data) {
+  
+  # Alle Variablennamen in Vektor speichern
+  variables <- names(data)
+  
+  # Leere Liste für Ausgabe vorbereiten
+  summary_list <- list()
+  
+  # Über alle Variablen iterieren
+  for (variable in variables) { # Wir loopen über variables
+    variable_vector <- data[[variable]] # Und arbeiten nun immer mit dem Iterator-Objekt variable
+    
+    if (is.numeric(variable_vector)) { # Prüfen ob die Variable numerisch ist
+      
+      # Mittelwert und Standardabweichung dieser Variablen der summary_list hinzufügen
+      summary_list[[variable]] <- c(
+        M = mean(variable_vector),   
+        SD = sd(variable_vector)
+      )
+    }
+    
+  }
+  
+  # Summary List ausgeben
+  return(summary_list)
+}
+```
+
+Diese Funktion erzeugt uns nun auf einen Schlag eine Kurzzusammenfassung anhand von Mittelwert und Standardabweichung _aller_ numerischen Variablen in einem Datensatz:
+
+```{r}
+numeric_summary(iris)
+numeric_summary(mtcars)
+```
+

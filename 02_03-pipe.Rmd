@@ -1,0 +1,160 @@
+# Der Pipe-Operator `%>%` 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+Neben vielen praktischen Funktionen und der Datenstruktur Tibbles führt das Tidyverse auch ein neuens Syntax-Konzept in R ein: den sogenannten Pipe-Operator `%>%`, mit dem Argumente auf eine andere Art und Weise an Funktionen übergeben werden.^[Das Konzept ist aus anderen Programmiersprachen entlehnt und wurde ursprünglich durch das Package `magrittr` in R eingeführt; soll der Pipe-Operator `%>%` ohne das Tidyverse-Package genutzt werden, kann also dieses Package geladen werden: `library(magrittr)`.]
+
+## Lesbarkeit verschachtelter Funktionen
+
+Hierzu rufen wir uns zunächst noch einmal in Erinnerung, wie Funktionen in R grundsätzlich aufgerufen werden:
+
+```{r, eval=F}
+funktionsname(argument1 = wert1, argument2 = wert2, argument3 = wert3, ...)
+```
+
+Wir haben außerdem bereits gesehen, dass wir Funktionen ineinander verschachteln können, wenn wir mehrere Funktionen hintereinander aufrufen möchten:
+
+```{r}
+round(mean(iris$Sepal.Length), 2)
+```
+
+Das wird jedoch irgendwann sehr unübersichtlich und anfällig für Fehler -- bereits bei diesem Beispiel müssen wir darauf achten, dass die Klammern zur richtigen Zeit geöffnet und vor allem wieder geschlossen werden, und wir müssen "Klammern zählen", wenn wir wissen wollen, zu welcher der aufgerufenen Funktionen das Argument `2` gehört. Zusätzlich ergibt sich durch die Verschachtelung die unnatürliche Lesereihenfolge von innen nach außen, was komplexeren Code schwer nachvollziehbar macht.
+
+## Ein Beispiel in Pseudo-Code
+
+Um dies zu verdeutlichen, stellen wir uns einmal vor, eine typische Morgenroutine bestünde aus "Funktionen", die wir der Reihe nach "aufrufen":
+
+1. Aufstehen
+2. Frühstücken
+3. Zähne putzen
+4. Duschen
+5. Anziehen
+
+In R-Code ausgedrückt würde das also wie folgt aussehen:
+
+```{r, eval=FALSE}
+einsatzbereit <- anziehen(duschen(zaehne_putzen(fruehstuecken(aufstehen(ich), food = "muesli")), wasser_temperatur = "warm"))
+```
+
+Wir könnten das ganze durch Einrückungen zumindest etwas lesbarer gestalten:
+
+```{r, eval=FALSE}
+einsatzbereit <- anziehen(
+  duschen(
+    zaehne_putzen(
+      fruehstuecken(
+        aufstehen(ich), 
+        food = "muesli")
+      ), wasser_temperatur = "warm")
+  )
+```
+
+Das ist schon etwas besser, aber immer noch nicht sonderlich intuitiv zu lesen -- und schließen wir nur eine Klammer an der falschen Stelle oder vergessen sie gar ganz, fliegt uns der gesamte Code um die Ohren.
+
+Natürlich könnten wir die Schritte der Morgenroutine auch einzeln durchgehen und jeweils einem neuen "Objekt" zuweisen:
+
+```{r, eval=FALSE}
+wach <- aufstehen(ich)
+satt <- fruehstuecken(wach, food = "muesli")
+sauber1 <- zaehe_putzen(satt)
+sauber2 <- duschen(sauber1, wasser_temperatur = "warm")
+einsatzbereit <- anziehen(sauber2)
+```
+
+Das erzeugt aber viele Objekte, die wir gar nicht weiter benötigen, da wir nur an `einsatzbereit` interessiert sind. Wir könnten natürlich auch immer das gleiche Objekt wieder und wieder überschreiben, darunter leidet dann aber erneut die Lesbarkeit.
+
+Mit dem Pipe-Operator `%>%` können wir diese Schritte in einer logischen Lesereihenfolge ohne die Erstellung von redundaten Objekten durchführen:
+
+```{r, eval=FALSE}
+einsatzbereit <- ich %>%
+  aufstehen() %>% 
+  fruehstuecken(food = "muesli") %>% 
+  zaehne_putzen() %>% 
+  duschen(wasser_temperatur = "warm") %>% 
+  anziehen()
+```
+
+## Formale Definition
+
+Formal ausgedrückt übergibt der Pipe-Operator `%>%` das links von ihm stehende Objekt als erstes Argument an die rechts von ihm stehende Funktion:
+
+```{r, eval=FALSE}
+# Die folgenden beiden Zeilen sind analog
+f(x)
+x %>% f()
+
+# Oder anhand einer echten Funktion
+mean(x) # ist analog zu
+x %>% mean()
+```
+
+Weitere Funktionsargumente können regulär entweder positional oder explizit durch Namensnennung an die Funktion übergeben werden:
+
+```{r, eval=FALSE}
+# Die folgenden beiden Zeilen sind wiederum analog
+f(x, y, z)
+x %>% f(y, z)
+
+# Und wieder am Beispiel der mean()-Funktion
+mean(x, na.rm = TRUE) # ist analog zu
+x %>% mean(na.rm = TRUE)
+```
+
+## Einsatz von Pipes im Tidyverse
+
+Besonders sinnvoll sind _Pipes_ dann, wenn wir viele Funktionen hintereinander am gleichen Ausgangsobjekt aufrufen wollen, z. B. wenn wir unterschiedliche Schritte der Datenmodifikation an einem Datensatz vornehmen möchten. Bei den Tidyverse-Funktionen wissen wir, dass 
+
+1. das erste Argument immer der Datensatz, also ein Tibble, ist und
+2. das Resultat der Funktion auch immer ein Datensatz, also ein Tibble ist.
+
+Daher können wir diese Schritte schnell aneinanderreihen. Nutzen wir als Beispiel nochmals den Datensatz aus Kapitel \@ref(workingwithdata):
+
+```{r, message=FALSE}
+# Wir laden den Datensatz
+df_fb_eu <- read_csv("data/facebook_europawahl.csv")
+
+# Wir erstellen einen modifizierten Datensatz, indem wir:
+# 1. nur die Video-Posts auswählen
+# 2. nur die Variablen id, party und comment_count auswählen
+# 3. Nach Partei gruppieren
+# 4. Eine neue Variable erstellen, die für jeden Post angibt,
+#    welchen Anteil dieser an allen Kommentaren unter Post der
+#    jeweiligen Partei hatte
+# 5. heben die Gruppierung wieder auf und
+# 6. weisen das Resultat dieser 'Pipe' dem Objekt modified_df zu
+
+modified_df <- df_fb_eu %>% # Wir definieren die Zuweisung und übergeben df_fb_eu an
+  filter(type == "video") %>% # die filter()-Funktion; der resultierende Datensatz wird an
+  select(id, party, comments_count) %>% # select() übergeben; das Resultat wiederum wird
+  group_by(party) %>%                   # gruppiert etc.
+  mutate(comment_percentage = comments_count / sum(comments_count)) %>% 
+  ungroup()
+
+modified_df
+```
+
+Auch für schnelle deskriptive Auswertungen können wir Pipes gut nutzen --  z. B. um uns schnell die Mittelwerte bestimmter Variablen gruppiert nach anderen Variablen anzuzeigen:
+
+```{r}
+df_fb_eu %>% 
+  group_by(party, type) %>% 
+  summarize(mean_comments = mean(comments_count, na.rm = TRUE),
+            mean_shares = mean(shares_count, na.rm = TRUE), 
+            mean_reactions = mean(reactions_count, na.rm = TRUE))
+```
+
+Praktisch, oder? Bleibt noch die eine Hürde, dass `%>%` eher kompliziert zu tippen ist -- dankenswerterweise stellt RStudio aber auch hier eine Tastenkombination zur Verfügung: `Strg/Cmd + Shift + M` fügt den gesamten Operator ein.
+
+## Übungsaufgaben
+
+Erstellen Sie für die folgende Übungsaufgabe eine eigene Skriptdatei oder eine R-Markdown-Datei und speichern diese als `ue9_nachname.R` bzw. `ue9_nachname.Rmd` ab.
+
+---
+
+```{exercise, label="ue9-1"}
+Pipes:
+```
+
+Lösen Sie die Übungsaufgaben \@ref(exr:ue8-2) und \@ref(exr:ue8-3) erneut, aber verwenden Sie Pipes, um den Code lesbarer und mit weniger redundanten Zwischenobjekten zu gestalten. An welchen Stellen ist es sinnvoll bzw. weniger sinnvoll, Pipes zu verwenden?

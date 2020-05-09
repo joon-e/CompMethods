@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Einführung | Computational Methods in der politischen Kommunikationsforschung</title>
+  <meta name="description" content="Einführung | Computational Methods in der politischen Kommunikationsforschung" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Einführung | Computational Methods in der politischen Kommunikationsforschung" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Einführung | Computational Methods in der politischen Kommunikationsforschung" />
+  
+  
+  
+
+<meta name="author" content="Julian Unkel" />
+
+
+<meta name="date" content="2020-04-09" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+<link rel="next" href="references.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Inhalt</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Kursinformationen</a></li>
+<li class="chapter" data-level="" data-path="einführung.html"><a href="einführung.html"><i class="fa fa-check"></i>Einführung</a><ul>
+<li class="chapter" data-level="" data-path="einführung.html"><a href="einführung.html#warum-also-eine-programmiersprache-für-datenanalyse-lernen"><i class="fa fa-check"></i>Warum also eine Programmiersprache für Datenanalyse lernen?</a></li>
+<li><a href="einführung.html#warum-r-lernen">Warum <em>R</em> lernen?</a></li>
+<li class="chapter" data-level="" data-path="einführung.html"><a href="einführung.html#hinweise"><i class="fa fa-check"></i>Hinweise</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Computational Methods in der politischen Kommunikationsforschung</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="einführung" class="section level1 unnumbered">
+<h1>Einführung</h1>
+<p><em>Dies ist ein Work-in-Progress und wird laufend aktualisiert.</em></p>
+<p>Das Ziel dieses Kurses ist eine Einführung in die Datenerhebung, -bearbeitung und -auswertung mit der Programmiersprache <em>R</em> und der zugehörigen grafischen Benutzeroberfläche <em>RStudio</em>. Es werden keine Vorkenntnisse in R vorausgesetzt; die Inhalte der Veranstaltung <em>15424 Datenanalyse</em> werden als bekannt vorausgesetzt.</p>
+<p>Bevor es jedoch ans Eingemachte geht, ein paar Worte zur Motivation hinter diesem Kurs: Warum lohnt es sich überhaupt, eine Programmiersprache für die quantitativ-wissenschaftliche Arbeit zu lernen? Und warum ausgerechnet R? Einige Hinweise und praktische Tipps schließen das Einleitungskapitel ab.</p>
+<div id="warum-also-eine-programmiersprache-für-datenanalyse-lernen" class="section level2 unnumbered">
+<h2>Warum also eine Programmiersprache für Datenanalyse lernen?</h2>
+<p>Wenn Sie bisher Daten statistisch ausgewertet haben, etwa im Rahmen von Forschungsseminaren oder der Bachelorarbeit, wird das in der Regel mit einem Programm mit grafischer Oberfläche erfolgt sein, etwa mit <em>Microsoft Excel</em> oder mit <em>IBM SPSS</em>. Diese Programme haben viele Vorteile: sie sind meist auf spezifische Funktionen zugeschnitten, in ihrer Aufmachung an typische Computersoftware angepasst und entsprechend intuitiv zu bedienen - ein paar Klicks, und schon gibt SPSS eine Regressionstabelle mit allen relevanten Informationen aus. Für die meisten Anwendungsfälle im KW-Studium bieten genannten Programme leicht zu erlernende und umzusetzende Lösungen an. Programmiersprachen haben hingegen eine zweifellos höhere Einstiegshürde, deren Bewältigung für viele Anwendungsfälle in der Kommunikationswissenschaft auf den ersten Blick keinen größeren Nutzen verspricht.</p>
+<p>Vielleicht ist im Studium aber auch schon eine Situation aufgetreten, in der SPSS keine Hilfe bot. Eine Effektstärke für einen Mittelwertvergleich? Die bietet SPSS zwar in Form von <span class="math inline">\(\eta^2_p\)</span> für die ANOVA an, nicht jedoch Cohen’s <span class="math inline">\(d\)</span> für den t-Test. Sie haben zusammen mit Komillitoninnen eine Inhaltsanalyse geplant und möchten vorab einen Intercoderreliabilitätstest durchführen? SPSS kennt weder die Reliabilität nach Holsti noch Krippendorff’s <span class="math inline">\(\alpha\)</span>. Und auch wenn SPSS Grafiken ausgeben kann, so hat es doch einen Grund, warum man diese selten in wissenschaftlichen Veröffentlichungen (und hoffentlich auch in studentischen Arbeiten) findet.</p>
+<p>Benötigt man also eine Funktion, die in der gewählten Softwarelösung nicht vorhanden ist, so muss man auf eine andere ausweichen. Programmiersprachen bieten hier deutlich mehr Flexibilität - ist die gewünschte Funktion nicht vorhanden, so schreibt man sie eben selbst (bzw. hat dies in aller Regel schon jemand anderes, der ebenfalls vor diesem Problem stand, für Sie getan). Diese Flexibilität ist einer der Hauptgründe, warum nicht nur in der Wissenschaft, sondern auch in anderen professionellen Kontexten, etwa der Markt- und Medienforschung, wo Lösungen für vielseitige datenanalytische Fragen gesucht werden, zunehmend auf die Nutzung von Programmiersprachen umgestiegen wird.</p>
+<p>Ein weiterer entscheidender Vorteil der <em>programmatischen</em><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> Datenanalyse ist, dass Skripte und Code alle Analyseschritte nachvollziehbar, transparent und reproduzierbar gestalten (entsprechend wurden Sie in der Datenanalyse-Ausbildung vermutlich auch dazu angehalten, in SPSS stets die Syntax zu nutzen). Einmal durchgeführte Arbeiten können somit jederzeit und problemlos von anderen und auch Ihnen selbst wiederholt und angepasst werden.</p>
+<p>Schließlich können (und sollten!) auch karrieretechnische Überlegungen eine Rolle spielen. Viele Unternehmen setzen für datenanalytische Tätigkeiten die Kenntnis einer einschlägigen Programmiersprache inzwischen zwingend voraus. Und natürlich spiegelt sich das auch im Gehalt wider: das Vergleichsportal <em>PayScale</em> gibt beispielweise für <em>Data Analysts</em>, die die <a href="https://www.payscale.com/research/US/Job=Data_Analyst/Salary/beb644bc/R">statistische Programmiersprache R</a> beherrschen, ein um rund 5.000 US-Dollar höheres Jahresdurchschnittsgehalt an als für diejenigen Data Analysts, die <a href="https://www.payscale.com/research/US/Job=Data_Analyst/Salary/cc748401/SPSS">SPSS</a> beherrschen.</p>
+</div>
+<div id="warum-r-lernen" class="section level2 unnumbered">
+<h2>Warum <em>R</em> lernen?</h2>
+<p>Bisher wurde allgemein von Programmiersprachen gesprochen. In der Datenanalyse-Praxis sind viele unterschiedliche Programmiersprachen gängig, z. B. <em>Python</em>, <em>R</em>, <em>SQL</em> und <em>Julia</em>. Wir werden in den kommenden zwei Semestern mit R arbeiten. Dies hat einige Gründe:</p>
+<ul>
+<li>R ist eine speziell auf statistische und datenanalytische Anwendungen ausgelegte Programmiersprache (auch wenn die Anwendungsbereiche inzwischen darüber hinausgehen). Das bedeutet, dass viele gängige statistische Verfahren bereits in der Basis-Version vorhanden sind und ohne weitere Anpassungen genutzt werden können.</li>
+<li>In der <em>Scientific Community</em> ist R inzwischen sehr weit verbreitet und wird durch diese kontinuierlich weiterentwickelt. Das bedeutet auch, dass neue Verfahren, sowohl zur Datenerhebung als auch zur Datenanalyse, meist sehr schnell auch in R verfügbar sind.</li>
+<li>Zugleich gibt es durch die weite Verbreitung auch vielzählige Hilfsangebote. In Communities wie <a href="https://stackoverflow.com/">Stack Overflow</a> und durch googeln werden Sie für nahezu jedes Problem, das sich Ihnen bei der Arbeit mit R stellt, schnell eine Lösung finden.</li>
+<li>R ist komplett kostenlos und für jedes Betriebssystem verfügbar.</li>
+<li>Mit <em>RStudio</em> steht eine ebenfalls kostenfreie, grafische Benutzeroberfläche zur Verfügung, die die ehemals hohen Einstiegshürden erheblich senkt.</li>
+<li>R und RStudio decken durch Erweiterungen nahezu alle Schritte ab, die für die wissenschaftliche Arbeit erforderlich sind. Das reicht vom Datenabruf aus Befragungssoftware sowie der Datenerhebung durch Programmierschnittstellen oder Web Scraping über die Datenbearbeitung, -bereinigung und -analyse bis hin zur Erstellung von Manuskripten und publikationsfähigen Grafiken. Auch dieser Kurs ist komplett in RStudio erstellt.</li>
+</ul>
+<p>Auch wenn sich R in einigen Aspekten von den oben genannten Programmiersprachen unterscheidet, so sind viele der Konzepte, die wir in den kommenden zwei Semestern lernen werden, auch in anderen Programmiersprachen gleich oder zumindest ähnlich umgesetzt. Ihnen wird es in Zukunft also auch leichter fallen, sich bei Bedarf in andere Programmiersprachen einzuarbeiten.</p>
+</div>
+<div id="hinweise" class="section level2 unnumbered">
+<h2>Hinweise</h2>
+<ul>
+<li>Sie können das Lerntempo selbst bestimmen.</li>
+<li>Der alte Witz, dass Programmieren zu 70% (oder 80%, oder 90%) aus googeln besteht, hat einen wahren Kern.</li>
+</ul>
+
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="1">
+<li id="fn1"><p>d. h. codebasiert; im Englischen wird <em>programmatically</em> verwendet, um auszudrücken, dass etwas ‘durch Code’ und nicht durch Klicken von Knöpfen in einem Computerprogramm erfolgt ist, im Deutschen ist diese Wortbedeutung außerhalb von Informatikkreisen (noch) kaum geläufig; siehe auch <a href="https://german.stackexchange.com/questions/5675/welches-wort-anstelle-von-programmatisch">diese Diskussion</a> zur Wortbedeutung.<a href="einführung.html#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["ComputationalMethods.pdf", "ComputationalMethods.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

@@ -1,0 +1,137 @@
+# Einführung in das Datenhandling {#datahandling-intro}
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+```
+
+Das [Paretoprinzip](https://de.wikipedia.org/wiki/Paretoprinzip) -- 80% der Ergebnisse werden mit 20% des Aufwands, 20% der Ergebnisse mit 80% des Aufwands erreicht -- behält auch im datenanalytischen Kontext seine Gültigkeit: ein Großteil der Arbeitszeit wird darauf verwendet, Daten zu finden, zu importieren, zu säubern, zu transformieren, zu modifizieren und zu explorieren; die tatsächliche Analyse der Daten hingegen ist dann verhältnismäßig schnell erledigt. Wir fassen diese Schritte unter dem Begriff des _Datenhandlings_ zusammen.
+
+## Daten- und Dateiformate tabellarischer Daten
+
+Wenn wir von Datensätzen sprechen, denken wir zumeist direkt an tabellarische Daten. In den kommenden Kapiteln werden wir auch zunächst lediglich mit tabellarischen Daten arbeiten. Daten können und werden aber auch in anderen Datenformaten repräsentiert, zum Beispiel als verschachtelte und hierarchisch strukturierte Daten (dieses Datenformat wird uns u.a. bei der Arbeit mit APIs begegnen) oder als unstrukturierte Textdokumente -- dazu an gegegeber Stelle mehr.
+
+### Tidy data
+
+Dieselben Daten können in Tabellen unterschiedlich repräsentiert werden. Schauen wir uns dazu einen Datensatz an -- was könnten hier Probleme sein?
+
+```{r, echo=FALSE}
+starwars %>% 
+  filter(name %in% c("Anakin Skywalker", "Luke Skywalker", "Leia Organa", "Obi-Wan Kenobi")) %>% 
+  select(name, height, mass) %>% 
+  gather(variable, value, height, mass) %>% 
+  arrange(name)
+```
+
+Diese Datenanordnung ist in dreierlei Hinsicht nicht optimal, wobei alle Probleme miteinander verbunden sind:
+
+1. Zwei Variablen sind in einer Spalte hinterlegt: `value` enthält sowohl Werte, die sich auf die Körpergröße als auch auf das Gewicht beziehen.
+2. Entsprechend ist die Spalte `value` abhängig von der Spalte `variable` -- allein anhand der Werte `188`, `84`, `150` etc. wissen wir nicht, ob diese sich auf die Größe `height` oder das Gewicht `mass` beziehen.
+3. Daraus folgt, dass wir Probleme mit vektorisierten Funktionen -- wir erinnern uns, in R sind Spalten in Datensätzen Vektoren -- bekommen: wir können beispielsweise nicht einfach die `mean()`-Funktion auf die Spalte `value` anwenden, um das Durchschnittsgewicht der Star-Wars-Charaktere zu berechnen, da dort auch die Werte für die Körpergröße enthalten wären.
+
+Schauen wir uns eine zweite Version derselben Daten an:
+
+```{r, echo=FALSE}
+starwars %>% 
+  filter(name %in% c("Anakin Skywalker", "Luke Skywalker", "Leia Organa", "Obi-Wan Kenobi")) %>% 
+  select(name, height, mass) %>% 
+  mutate(height_and_mass = paste(height, mass, sep = ";")) %>% 
+  select(name, height_and_mass) %>% 
+  arrange(name)
+```
+
+Auch hier ergeben sich zwei miteinander verbundene Probleme:
+
+1. In einer Zelle stehen zwei Werte, die je eine unterschiedliche Variable abbilden.
+2. Sowohl bei Körpergröße als auch Gewicht handelt es sich um numerische Werte, sie werden aber hier als `character` gespeichert, wodurch wir keine Berechnungen durchführen können.
+
+Dieselben Daten können wir jedoch auch besser tabellarisch abbilden:
+
+```{r, echo=FALSE}
+starwars %>% 
+  filter(name %in% c("Anakin Skywalker", "Luke Skywalker", "Leia Organa", "Obi-Wan Kenobi")) %>% 
+  select(name, height, mass) %>% 
+  arrange(name)
+```
+
+Daten, die so aufbereitet, werden als _tidy data_ bezeichnet. Sie befolgen drei Regeln:
+
+- Jede Variable steht in einer eigenen Spalte
+- Jede Beobachtung/jeder Fall steht in einer eigenen Zeile
+- Jeder Wert steht in einer Zelle
+
+![Tidy data (Quelle: [R for Data Science](https://r4ds.had.co.nz/tidy-data.html))](img/7/tidy.png)
+
+Im Umkehrschluss bedeutet dies, dass Daten die nicht diesen Regeln folgen, als _messy data_ vorliegen und entsprechend aufbereitet werden sollten. Tidy data hat zwei entscheidende Vorteile:
+
+1. Konsistent aufbereitete Daten sind leichter zu lesen, zu verarbeiten, zu laden und zu speichern.
+2. Viele Verfahren (bzw. die zugehörigen Funktionen) in R setzen diese Art der Daten voraus. 
+
+Wenn Sie bisher vor allem mit Daten aus Befragungssoftware o.ä. gearbeitet haben, dann werden Ihnen diese Grundprinzipien bereits vertraut sein, da der Datenexport aus Befragungssoftware in der Regel diesen Prinzipien folgt. Tatsächlich liegen in der "Realität" Daten aber häufig nicht in dieser Form vor, beispielsweise weil die Eingabe oder Speicherung der Daten anderen Prinzipien als einer möglichst einfachen Analyse folgt (z. B. möglichst einfache Dateneingabe; Abruf von bestimmten Werten). 
+
+### Dateiformate
+
+Sie kennen vermutlich bereits eine Vielzahl an Dateiformaten, in denen tabellarische Daten gespeichert werden können. Einige Beispiel sind Excel-Dateien mit den Endungen `.xls` bzw. `.xlsx` oder SPSS-Dateien mit der Endung `.sav`. Hierbei handelt es sich um sogenannte _proprietäre_ Dateiformate, sich im Eigentum von Unternehmen befindliche und oft softwarespezifische Dateiformaten. Ein Vorteil dieser Formate ist es, dass oft relevante Zusatzinformationen für die jeweilige Software mitgespeichert werden, etwa Formatierungen in Excel oder Wertebeschriftungen in SPSS. Zugleich entsteht hierbei der große Nachteil, dass der Austausch der Daten zwischen verschiedenen Programmen oft recht kompliziert, durch Zusatzpakete oder Zwischenschritte möglich ist.
+
+Ein _offenes_ und sehr simples Dateiformat ist `.csv` (für *c*omma-*s*eparated *v*alues), das tabellarische Daten als Klartext abspeichert, von so gut wie jedem Programm auf jedem Computer der Welt gelesen werden kann und daher das Standardformat für tabellarische Daten ist. Dabei werden Kommas zu Trennung von Spalten und Zeilenumbrüche zur Trennung von Zeilen genutzt, wobei in der ersten Zeile optional Spaltenüberschriften stehen können. Die Daten aus obigen Beispiel sähen als `.csv` also so aus:
+
+```{}
+name,height,mass
+Anakin Skywalker,188,84
+Leia Organa,150,49
+Luke Skywalker,172,77
+Obi-Wan Kenobi,182,77
+```
+
+Soll das Trennzeichen in den einzelnen Text-Werten vorkommen (beispielsweise als Komma in einem Satz), werden Textbegrenzungszeichen, häufig doppelte Anführungszeichen `"` verwendet:
+
+```{}
+name,height,mass
+"Skywalker, Anakin",188,84
+"Organa, Leia",150,49
+"Skywalker, Luke",172,77
+"Kenobi, Obi-Wan",182,77
+```
+
+In verallgemeinerter Form kann letztlich jedes Zeichen als Trennzeichen genutzt werden; im deutschsprachigen Raum wird in `.csv`-Dateien häufig ein Semikolon `;` statt einem Komma genutzt `,` (z. B. wenn Sie Daten aus SPSS oder Excel als `.csv` exportieren):
+
+```{}
+name;height;mass
+Anakin Skywalker;188;84
+Leia Organa;150;49
+Luke Skywalker;172;77
+Obi-Wan Kenobi;182;77
+```
+
+Zwar kann R mittels unterschiedlicher Packages inzwischen auch relativ komfortabel Excel- und SPSS-Dateien einlesen; aus oben genannten Gründen werden wir zum Laden und Speichern jedoch vorrangig `.csv`-Dateien nutzen.
+
+## Willkommen im Tidyverse
+
+Die Idee, Datenhandling komplett codebasiert durchzuführen, erscheint zunächst vielleicht wenig komfortabel -- vor allem wenn wir daran denken, dass das Auswählen und Verarbeiten von Dataframes bisher wenig intuitiv ablief (oder wissen Sie auf Anhieb noch, was der Unterschied zwischen `iris[, "Sepal.Width"]`, `iris$Sepal.Width` und `iris[["Sepal.Width"]]` ist?).^[Die erste Variante resultiert in einem Dataframe, der lediglich `Sepal.Width` enthält, Varianten zwei und drei extrahieren diese Spalte als Vektor.]
+
+Seit einigen Jahren hat sich jedoch das [Tidyverse](https://www.tidyverse.org/) als Standard des Datenhandlings in R durchgesetzt, was die mit dem Datenhandling verbundenen Schritte deutlich vereinfacht. Dabei handelt es sich um ein sogenanntes Meta-Package, also eine Sammlung von verschiedenen Packages, die allesamt den gleichen Designprinzipien folgen, um Datenhandling zu vereinfachen und den zugehörigen Code möglichst lesbar (für Menschen) zu machen. So haben beispielsweise Funktionen im Tidyverse in der Regel Verben als Namen, die genau das beschreiben, was die Funktion macht.
+
+> The tidyverse is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures. 
+
+Das Tidyverse umfasst hierzu unter anderem Pakete für:
+
+- Datenstrukturen (`tibble`)
+- Einlesen von Daten (z. B. `readr` für CSV, `haven` für SPSS, Stata und SAS, `readxl` für Excel)
+- Datentransformation und -modifikation (`tidyr`, `dplyr`)
+- Spezielle Objekttypen (z. B. `stringr` für die Arbeit mit Textobjekten, `forcats` für Faktoren, `lubridate` für Zeitdaten)
+- Programmieren mit R (`purrr`)
+- Grafik-/Diagrammerstellung (`ggplot2`)
+
+Alle Pakete lassen sich gesammelt installieren und laden^[`library(tidyverse)` lädt dabei genauer gesagt die Kernpakete des Tidyverse, die die alltäglich am häufigsten genutzten Funktionen bereitstellen. Tidyverse-Packages für eher spezifische Anwendungsgebiete -- z. B. `lubridate` für Zeitdaten oder `haven` für SPSS-Datensätze -- müssen einzeln über den `library()`-Befehl geladen werden.]:
+
+```{r eval=FALSE}
+install.packages("tidyverse") # Dies muss natürlich nur einmal ausgeführt werden
+library(tidyverse)
+```
+
+Die Standard-Datenstruktur des Tidyverse ist das Tibble, das wir bereits aus Kapitel \@ref(usepackages) kennen. Zur Erinnerung, dabei handelt es sich im Wesentlichen um Dataframes mit einigen technischen und kosmetischen Verbesserungen:
+
+```{r}
+as_tibble(iris)
+```
+
+Im folgenden Kapitel werden wir uns nun ansehen, wie wir mittels Tidyverse-Funktionen Datensätze laden und modifizieren können.

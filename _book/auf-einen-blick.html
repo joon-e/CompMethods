@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>B Auf einen Blick | Computational Methods in der politischen Kommunikationsforschung</title>
+  <meta name="description" content="B Auf einen Blick | Computational Methods in der politischen Kommunikationsforschung" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="B Auf einen Blick | Computational Methods in der politischen Kommunikationsforschung" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="B Auf einen Blick | Computational Methods in der politischen Kommunikationsforschung" />
+  
+  
+  
+
+<meta name="author" content="Julian Unkel" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="loesungen.html"/>
+
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Methodische Vertiefung: Computational Methods</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Einführung</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#seminarinformationen"><i class="fa fa-check"></i>Seminarinformationen</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#ablauf-des-kurses"><i class="fa fa-check"></i>Ablauf des Kurses</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#motivation-und-ziele-des-seminars"><i class="fa fa-check"></i>Motivation und Ziele des Seminars</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#warum-also-eine-programmiersprache-für-datenanalyse-lernen"><i class="fa fa-check"></i>Warum also eine Programmiersprache für Datenanalyse lernen?</a></li>
+<li><a href="index.html#warum-r-lernen">Warum <em>R</em> lernen?</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#hinweise-zur-nutzung-des-online-kurses"><i class="fa fa-check"></i>Hinweise zur Nutzung des Online-Kurses</a></li>
+</ul></li>
+<li class="part"><span><b>I Eine kurze Einführung in R</b></span></li>
+<li class="chapter" data-level="1" data-path="firststeps.html"><a href="firststeps.html"><i class="fa fa-check"></i><b>1</b> Installation und erste Schritte</a><ul>
+<li class="chapter" data-level="1.1" data-path="firststeps.html"><a href="firststeps.html#rinstallieren"><i class="fa fa-check"></i><b>1.1</b> R installieren</a></li>
+<li class="chapter" data-level="1.2" data-path="firststeps.html"><a href="firststeps.html#rstudioinstallieren"><i class="fa fa-check"></i><b>1.2</b> RStudio installieren</a></li>
+<li class="chapter" data-level="1.3" data-path="firststeps.html"><a href="firststeps.html#oberflaeche"><i class="fa fa-check"></i><b>1.3</b> Die Benutzeroberfläche von RStudio</a><ul>
+<li class="chapter" data-level="1.3.1" data-path="firststeps.html"><a href="firststeps.html#konsole"><i class="fa fa-check"></i><b>1.3.1</b> Konsole</a></li>
+<li class="chapter" data-level="1.3.2" data-path="firststeps.html"><a href="firststeps.html#r-skripte"><i class="fa fa-check"></i><b>1.3.2</b> R-Skripte</a></li>
+<li class="chapter" data-level="1.3.3" data-path="firststeps.html"><a href="firststeps.html#environment"><i class="fa fa-check"></i><b>1.3.3</b> Environment</a></li>
+<li class="chapter" data-level="1.3.4" data-path="firststeps.html"><a href="firststeps.html#files"><i class="fa fa-check"></i><b>1.3.4</b> Files</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="firststeps.html"><a href="firststeps.html#anpassen"><i class="fa fa-check"></i><b>1.4</b> RStudio anpassen</a></li>
+<li class="chapter" data-level="1.5" data-path="firststeps.html"><a href="firststeps.html#übungsaufgaben"><i class="fa fa-check"></i><b>1.5</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html"><i class="fa fa-check"></i><b>2</b> Objekte und Datenstrukturen</a><ul>
+<li class="chapter" data-level="2.1" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#objektnamen"><i class="fa fa-check"></i><b>2.1</b> Objektnamen</a></li>
+<li class="chapter" data-level="2.2" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#objekttypen"><i class="fa fa-check"></i><b>2.2</b> Objekttypen</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#numerische-objekte"><i class="fa fa-check"></i><b>2.2.1</b> Numerische Objekte</a></li>
+<li class="chapter" data-level="2.2.2" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#textobjekte"><i class="fa fa-check"></i><b>2.2.2</b> Textobjekte</a></li>
+<li class="chapter" data-level="2.2.3" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#logicals"><i class="fa fa-check"></i><b>2.2.3</b> Logicals (logische Objekte)</a></li>
+<li class="chapter" data-level="2.2.4" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#weitere-objekttypen"><i class="fa fa-check"></i><b>2.2.4</b> Weitere Objekttypen</a></li>
+<li class="chapter" data-level="2.2.5" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#missingvals"><i class="fa fa-check"></i><b>2.2.5</b> Fehlende Werte</a></li>
+<li class="chapter" data-level="2.2.6" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#coercion"><i class="fa fa-check"></i><b>2.2.6</b> Objekttypen ändern</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#datenstrukturen"><i class="fa fa-check"></i><b>2.3</b> Datenstrukturen</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#vectors"><i class="fa fa-check"></i><b>2.3.1</b> Vektoren</a></li>
+<li class="chapter" data-level="2.3.2" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#listen"><i class="fa fa-check"></i><b>2.3.2</b> Listen</a></li>
+<li class="chapter" data-level="2.3.3" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#matrizen"><i class="fa fa-check"></i><b>2.3.3</b> Matrizen</a></li>
+<li class="chapter" data-level="2.3.4" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#dataframes"><i class="fa fa-check"></i><b>2.3.4</b> Dataframes</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="objekte-und-datenstrukturen.html"><a href="objekte-und-datenstrukturen.html#übungsaufgaben-1"><i class="fa fa-check"></i><b>2.4</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="funktionen.html"><a href="funktionen.html"><i class="fa fa-check"></i><b>3</b> Funktionen</a><ul>
+<li class="chapter" data-level="3.1" data-path="funktionen.html"><a href="funktionen.html#funktionen-aufrufen"><i class="fa fa-check"></i><b>3.1</b> Funktionen aufrufen</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="funktionen.html"><a href="funktionen.html#funktionsargumente"><i class="fa fa-check"></i><b>3.1.1</b> Funktionsargumente</a></li>
+<li class="chapter" data-level="3.1.2" data-path="funktionen.html"><a href="funktionen.html#hilfestellungen-zu-funktionen"><i class="fa fa-check"></i><b>3.1.2</b> Hilfestellungen zu Funktionen</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="funktionen.html"><a href="funktionen.html#eigene-funktionen-erstellen"><i class="fa fa-check"></i><b>3.2</b> Eigene Funktionen erstellen</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="funktionen.html"><a href="funktionen.html#funktionen-erstellen-wann-und-warum"><i class="fa fa-check"></i><b>3.2.1</b> Funktionen erstellen: wann und warum?</a></li>
+<li class="chapter" data-level="3.2.2" data-path="funktionen.html"><a href="funktionen.html#aufbau-und-erstellung-von-funktionen"><i class="fa fa-check"></i><b>3.2.2</b> Aufbau und Erstellung von Funktionen</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="funktionen.html"><a href="funktionen.html#übungsaufgaben-2"><i class="fa fa-check"></i><b>3.3</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html"><i class="fa fa-check"></i><b>4</b> Kontrollstrukturen</a><ul>
+<li class="chapter" data-level="4.1" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#conditions"><i class="fa fa-check"></i><b>4.1</b> Bedingungen</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#if-bedingungen"><i class="fa fa-check"></i><b>4.1.1</b> <code>if</code>-Bedingungen</a></li>
+<li class="chapter" data-level="4.1.2" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#if-else-bedingungen"><i class="fa fa-check"></i><b>4.1.2</b> <code>if</code>-<code>else</code>-Bedingungen</a></li>
+<li class="chapter" data-level="4.1.3" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#bedingungen-verketten"><i class="fa fa-check"></i><b>4.1.3</b> Bedingungen verketten</a></li>
+<li class="chapter" data-level="4.1.4" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#mehrere-bedingungen"><i class="fa fa-check"></i><b>4.1.4</b> Mehrere Bedingungen</a></li>
+<li class="chapter" data-level="4.1.5" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#mehrere-prüfwerte"><i class="fa fa-check"></i><b>4.1.5</b> Mehrere Prüfwerte</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#iterationen"><i class="fa fa-check"></i><b>4.2</b> Iterationen</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#vektorisierte-funktionen"><i class="fa fa-check"></i><b>4.2.1</b> Vektorisierte Funktionen</a></li>
+<li class="chapter" data-level="4.2.2" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#forloops"><i class="fa fa-check"></i><b>4.2.2</b> <code>for</code>-Loops</a></li>
+<li class="chapter" data-level="4.2.3" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#while-loops"><i class="fa fa-check"></i><b>4.2.3</b> <code>while</code>-Loops</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="kontrollstrukturen.html"><a href="kontrollstrukturen.html#übungsaufgaben-3"><i class="fa fa-check"></i><b>4.3</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="packages.html"><a href="packages.html"><i class="fa fa-check"></i><b>5</b> Packages</a><ul>
+<li class="chapter" data-level="5.1" data-path="packages.html"><a href="packages.html#packages-installieren"><i class="fa fa-check"></i><b>5.1</b> Packages installieren</a></li>
+<li class="chapter" data-level="5.2" data-path="packages.html"><a href="packages.html#usepackages"><i class="fa fa-check"></i><b>5.2</b> Packages nutzen</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="workflow.html"><a href="workflow.html"><i class="fa fa-check"></i><b>6</b> Workflow</a><ul>
+<li class="chapter" data-level="6.1" data-path="workflow.html"><a href="workflow.html#arbeitsverzeichnisse"><i class="fa fa-check"></i><b>6.1</b> Arbeitsverzeichnisse</a></li>
+<li class="chapter" data-level="6.2" data-path="workflow.html"><a href="workflow.html#rprojects"><i class="fa fa-check"></i><b>6.2</b> Projekte und Ordnerstrukturen</a></li>
+<li class="chapter" data-level="6.3" data-path="workflow.html"><a href="workflow.html#r-markdown"><i class="fa fa-check"></i><b>6.3</b> R Markdown</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="workflow.html"><a href="workflow.html#yaml-header"><i class="fa fa-check"></i><b>6.3.1</b> YAML-Header</a></li>
+<li class="chapter" data-level="6.3.2" data-path="workflow.html"><a href="workflow.html#freitext-in-markdown"><i class="fa fa-check"></i><b>6.3.2</b> Freitext in Markdown</a></li>
+<li class="chapter" data-level="6.3.3" data-path="workflow.html"><a href="workflow.html#code-chunks"><i class="fa fa-check"></i><b>6.3.3</b> Code Chunks</a></li>
+<li class="chapter" data-level="6.3.4" data-path="workflow.html"><a href="workflow.html#ausgabedateien-erzeugen"><i class="fa fa-check"></i><b>6.3.4</b> Ausgabedateien erzeugen</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="workflow.html"><a href="workflow.html#r-aktuell-halten"><i class="fa fa-check"></i><b>6.4</b> R aktuell halten</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="workflow.html"><a href="workflow.html#packages-aktualisieren"><i class="fa fa-check"></i><b>6.4.1</b> Packages aktualisieren</a></li>
+<li class="chapter" data-level="6.4.2" data-path="workflow.html"><a href="workflow.html#rstudio-aktualisieren"><i class="fa fa-check"></i><b>6.4.2</b> RStudio aktualisieren</a></li>
+<li class="chapter" data-level="6.4.3" data-path="workflow.html"><a href="workflow.html#r-aktualisieren"><i class="fa fa-check"></i><b>6.4.3</b> R aktualisieren</a></li>
+</ul></li>
+</ul></li>
+<li class="part"><span><b>II Datenhandling in R</b></span></li>
+<li class="chapter" data-level="7" data-path="einführung-in-das-datenhandling.html"><a href="einführung-in-das-datenhandling.html"><i class="fa fa-check"></i><b>7</b> Einführung in das Datenhandling</a><ul>
+<li class="chapter" data-level="7.1" data-path="einführung-in-das-datenhandling.html"><a href="einführung-in-das-datenhandling.html#daten--und-dateiformate-tabellarischer-daten"><i class="fa fa-check"></i><b>7.1</b> Daten- und Dateiformate tabellarischer Daten</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="einführung-in-das-datenhandling.html"><a href="einführung-in-das-datenhandling.html#tidy-data"><i class="fa fa-check"></i><b>7.1.1</b> Tidy data</a></li>
+<li class="chapter" data-level="7.1.2" data-path="einführung-in-das-datenhandling.html"><a href="einführung-in-das-datenhandling.html#dateiformate"><i class="fa fa-check"></i><b>7.1.2</b> Dateiformate</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="einführung-in-das-datenhandling.html"><a href="einführung-in-das-datenhandling.html#willkommen-im-tidyverse"><i class="fa fa-check"></i><b>7.2</b> Willkommen im Tidyverse</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="workingwithdata.html"><a href="workingwithdata.html"><i class="fa fa-check"></i><b>8</b> Daten laden, modifizieren und speichern</a><ul>
+<li class="chapter" data-level="8.1" data-path="workingwithdata.html"><a href="workingwithdata.html#daten-laden"><i class="fa fa-check"></i><b>8.1</b> Daten laden</a><ul>
+<li class="chapter" data-level="8.1.1" data-path="workingwithdata.html"><a href="workingwithdata.html#csv-dateien-einlesen"><i class="fa fa-check"></i><b>8.1.1</b> CSV-Dateien einlesen</a></li>
+<li class="chapter" data-level="8.1.2" data-path="workingwithdata.html"><a href="workingwithdata.html#andere-dateiformate"><i class="fa fa-check"></i><b>8.1.2</b> Andere Dateiformate</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="workingwithdata.html"><a href="workingwithdata.html#daten-modifizieren"><i class="fa fa-check"></i><b>8.2</b> Daten modifizieren</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="workingwithdata.html"><a href="workingwithdata.html#variablen-spaltenweise-auswählen-mit-select"><i class="fa fa-check"></i><b>8.2.1</b> Variablen spaltenweise auswählen mit <code>select()</code></a></li>
+<li class="chapter" data-level="8.2.2" data-path="workingwithdata.html"><a href="workingwithdata.html#variablen-zeilenweise-filtern-mit-filter"><i class="fa fa-check"></i><b>8.2.2</b> Variablen zeilenweise filtern mit <code>filter()</code></a></li>
+<li class="chapter" data-level="8.2.3" data-path="workingwithdata.html"><a href="workingwithdata.html#daten-sortieren-mit-arrange"><i class="fa fa-check"></i><b>8.2.3</b> Daten sortieren mit <code>arrange()</code></a></li>
+<li class="chapter" data-level="8.2.4" data-path="workingwithdata.html"><a href="workingwithdata.html#neue-variablen-hinzufügen-mit-mutate"><i class="fa fa-check"></i><b>8.2.4</b> Neue Variablen hinzufügen mit <code>mutate()</code></a></li>
+<li class="chapter" data-level="8.2.5" data-path="workingwithdata.html"><a href="workingwithdata.html#variablen-zusammenfassen-mit-summarize"><i class="fa fa-check"></i><b>8.2.5</b> Variablen zusammenfassen mit <code>summarize()</code></a></li>
+<li class="chapter" data-level="8.2.6" data-path="workingwithdata.html"><a href="workingwithdata.html#variablen-gruppieren-mit-group_by"><i class="fa fa-check"></i><b>8.2.6</b> Variablen gruppieren mit <code>group_by()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="workingwithdata.html"><a href="workingwithdata.html#daten-speichern"><i class="fa fa-check"></i><b>8.3</b> Daten speichern</a><ul>
+<li class="chapter" data-level="8.3.1" data-path="workingwithdata.html"><a href="workingwithdata.html#tabellarische-daten-exportieren"><i class="fa fa-check"></i><b>8.3.1</b> Tabellarische Daten exportieren</a></li>
+<li class="chapter" data-level="8.3.2" data-path="workingwithdata.html"><a href="workingwithdata.html#r-objekte-exportieren"><i class="fa fa-check"></i><b>8.3.2</b> R-Objekte exportieren</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="workingwithdata.html"><a href="workingwithdata.html#übungsaufgaben-4"><i class="fa fa-check"></i><b>8.4</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html"><i class="fa fa-check"></i><b>9</b> Der Pipe-Operator <code>%&gt;%</code></a><ul>
+<li class="chapter" data-level="9.1" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#lesbarkeit-verschachtelter-funktionen"><i class="fa fa-check"></i><b>9.1</b> Lesbarkeit verschachtelter Funktionen</a></li>
+<li class="chapter" data-level="9.2" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#ein-beispiel-in-pseudo-code"><i class="fa fa-check"></i><b>9.2</b> Ein Beispiel in Pseudo-Code</a></li>
+<li class="chapter" data-level="9.3" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#formale-definition"><i class="fa fa-check"></i><b>9.3</b> Formale Definition</a></li>
+<li class="chapter" data-level="9.4" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#einsatz-von-pipes-im-tidyverse"><i class="fa fa-check"></i><b>9.4</b> Einsatz von Pipes im Tidyverse</a></li>
+<li class="chapter" data-level="9.5" data-path="der-pipe-operator.html"><a href="der-pipe-operator.html#übungsaufgaben-5"><i class="fa fa-check"></i><b>9.5</b> Übungsaufgaben</a></li>
+</ul></li>
+<li class="appendix"><span><b>Anhang</b></span></li>
+<li class="chapter" data-level="A" data-path="loesungen.html"><a href="loesungen.html"><i class="fa fa-check"></i><b>A</b> Lösungen der Übungsaufgaben</a><ul>
+<li class="chapter" data-level="" data-path="loesungen.html"><a href="loesungen.html#kapitel-2-objekte-und-datenstrukturen"><i class="fa fa-check"></i>Kapitel 2: Objekte und Datenstrukturen</a></li>
+<li class="chapter" data-level="" data-path="loesungen.html"><a href="loesungen.html#kapitel-3-funktionen"><i class="fa fa-check"></i>Kapitel 3: Funktionen</a></li>
+<li class="chapter" data-level="" data-path="loesungen.html"><a href="loesungen.html#kapitel-4-kontrollstrukturen"><i class="fa fa-check"></i>Kapitel 4: Kontrollstrukturen</a></li>
+</ul></li>
+<li class="chapter" data-level="B" data-path="auf-einen-blick.html"><a href="auf-einen-blick.html"><i class="fa fa-check"></i><b>B</b> Auf einen Blick</a><ul>
+<li class="chapter" data-level="" data-path="auf-einen-blick.html"><a href="auf-einen-blick.html#objekte"><i class="fa fa-check"></i>Objekte</a></li>
+<li class="chapter" data-level="" data-path="auf-einen-blick.html"><a href="auf-einen-blick.html#operatoren"><i class="fa fa-check"></i>Operatoren</a></li>
+<li class="chapter" data-level="B.1" data-path="auf-einen-blick.html"><a href="auf-einen-blick.html#section"><i class="fa fa-check"></i><b>B.1</b> </a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Computational Methods in der politischen Kommunikationsforschung</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="auf-einen-blick" class="section level1">
+<h1><span class="header-section-number">B</span> Auf einen Blick</h1>
+<div id="objekte" class="section level2 unnumbered">
+<h2>Objekte</h2>
+<p><code>objektname &lt;- wert</code> weist Werten Objekte zu.</p>
+<table>
+<caption><span id="tab:objekttypenA">Tabelle B.1: </span> Objekttypen</caption>
+<thead>
+<tr class="header">
+<th align="center">Objekttyp</th>
+<th align="center">Datentyp</th>
+<th align="center">Prüfen</th>
+<th align="center">Erzwingen</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><code>double</code></td>
+<td align="center">Kommazahlen</td>
+<td align="center"><code>is.double()</code></td>
+<td align="center"><code>as.double()</code></td>
+</tr>
+<tr class="even">
+<td align="center"><code>integer</code></td>
+<td align="center">Ganze Zahlen</td>
+<td align="center"><code>is.integer()</code></td>
+<td align="center"><code>as.integer()</code></td>
+</tr>
+<tr class="odd">
+<td align="center"><code>character</code></td>
+<td align="center">Text</td>
+<td align="center"><code>is.character()</code></td>
+<td align="center"><code>as.character()</code></td>
+</tr>
+<tr class="even">
+<td align="center"><code>logical</code></td>
+<td align="center"><code>TRUE</code> / <code>FALSE</code></td>
+<td align="center"><code>is.logical()</code></td>
+<td align="center"><code>as.logical()</code></td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption><span id="tab:datenstrukturenA">Tabelle B.2: </span> Datenstrukturen</caption>
+<thead>
+<tr class="header">
+<th align="center">Datenstruktur</th>
+<th align="center">Dimensionalität</th>
+<th align="center">Objekttypen</th>
+<th align="center">Wird erstellt mit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">Vektor</td>
+<td align="center">eindimensional</td>
+<td align="center">homogen</td>
+<td align="center"><code>c()</code></td>
+</tr>
+<tr class="even">
+<td align="center">Liste</td>
+<td align="center">eindimensional</td>
+<td align="center">heterogen</td>
+<td align="center"><code>list()</code></td>
+</tr>
+<tr class="odd">
+<td align="center">Matrix</td>
+<td align="center">zweidimensional</td>
+<td align="center">homogen</td>
+<td align="center"><code>matrix()</code></td>
+</tr>
+<tr class="even">
+<td align="center">Dataframe</td>
+<td align="center">zweidimensional</td>
+<td align="center">heterogen</td>
+<td align="center"><code>data.frame()</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="operatoren" class="section level2 unnumbered">
+<h2>Operatoren</h2>
+</div>
+<div id="section" class="section level2">
+<h2><span class="header-section-number">B.1</span> </h2>
+
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="loesungen.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["ComputationalMethods.pdf", "ComputationalMethods.epub"],
+"toc": {
+"collapse": "section",
+"depth": 3
+},
+"split_by": "chapter+number"
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

@@ -1,0 +1,317 @@
+# Daten laden, modifizieren und speichern {#workingwithdata}
+
+In diesem Kapitel sehen wir uns grundlegende Arbeitsschritte und Funktionen des Datenhandlings: das Einlesen von Daten, einfaches Modifizieren von Datensätzen und das Abspeichern der Ergebnisse. Für all diese Schritte arbeiten wir mit Funktionen aus dem Tidyverse -- falls noch nicht geschehen, sollten Sie das Package jetzt also installieren.
+
+```{r, eval=FALSE}
+install.packages("tidyverse")
+```
+
+Und dann laden wir das Package zu Beginn unseres Auswertungsskripts:
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+## Daten laden
+
+Wir sprechen von _lokalen_ Daten, wenn wir diese in Form einer Datei auf unserer Festplatte gespeichert haben. _Externe_ Daten liegen beispielsweise auf Webservern oder sind in Packages enthalten. Zunächst laden wir nur lokale Daten.
+
+### CSV-Dateien einlesen
+
+Wenn Sie den Schritten in Kapitel \@ref(rprojects) gefolgt sind, haben Sie ein R-Projektverzeichnis auf des Festplatte. Auf Moodle finden Sie den Datensatz `facebook_europawahl.csv`, der Informatationen zu Facebook-Posts der deutschen Parteien im Vorfeld der Europawahl 2019 enthält.^[Vielen Dank an den Kollegen Jörg Haßler!] Speichern Sie diesen Datensatz in Ihrem Projektverzeichnis ab -- im Beispiel liegt der Datensatz im Unterordner `data`.
+
+Funktionen zum Einlesen von Daten folgen im Tidyverse dem Namensschema `read_`, wobei nach dem Unterstrich der Dateityp folgt. Für CSV-Dateien sind zwei Funktionen relevant:
+
+- `read_csv()` liest CSV-Dateien, die ein Komma `,` als Spalten- und einen Punkt `.` als Dezimaltrennzeichen verwenden
+- `read_csv2()` liest CSV-Dateien, die ein Semikolon `;` als Spalten- und das Komma `,` als Dezimaltrennzeichen verwenden
+
+Bei beiden Funktionen handelt es sich um spezifische Varianten der Funktion `read_delim()`, bei der Trennzeichen etc. einzeln definiert werden können. In der Regel sollten aber die beiden oben genannten Funktionen ausreichen. Im Zweifelsfall können CSV-Dateien durch anklicken im _Files_-Bereich in RStudio geöffnet werden, sodass ersichtlich wird, wie diese aufgebaut sind und welches Trennzeichen verwendet wird.
+
+Alle Funktionen aus der `read_`-Familie benötigen als erstes (und oft auch einziges) Argument den Dateipfad (relativ zum Arbeitsverzeichnis) als Textobjekt. Da unser Datensatz im Unterordner `data` liegt, lautet der gesamte Dateipfad also `"data/facebook_europawahl.csv"`. Natürlich sollten wir das Resultat der Funktion einem treffend benannten Objekt zuweisen. ^[Häufig verwendete Objektnamen für Datensätze sind `df` und `data`, aber es schadet auch nicht, etwas spezifischere Namen zu vergeben, besonders wenn mit mehreren Datensätzen gearbeitet wird.]
+
+```{r}
+df_fb_eu <- read_csv("data/facebook_europawahl.csv")
+```
+
+Die Funktion teilt uns direkt mit, welche Objekttypen für welche Variable verwendet wurden, sodass wir hier auch direkt sehen können, ob z. B. eine numerische Variable als Text eingelesen wurde. Zudem ist der eingelesene Datensatz direkt ein _Tibble_, wir müssen also nicht mehr durch `as_tibble()` konvertieren.^[Auch die Basisversion von R bietet Funktionen zum Einlesen von CSV-Dateien, die `read.csv()`, `read.csv2()` etc. heißen. Diese erzeugen einen Dataframe und sind weniger gut für große Dateien optimiert, sodass ich empfehle, immer direkt die Tidyverse-Funktionen zu nutzen. Generell erkennen Sie Tidyverse-Varianten von Funktionen der R-Basisversion daran, dass diese einen Unterstrich anstatt eines Punkts zur Worttrennung nutzen.]
+
+Schauen wir uns unseren gerade geladenen Datensatz einmal an -- da unser Datensatz als Tibble vorliegt, erhalten wir die wichtigsten Informationen zu Struktur und einen Einblick in die Daten direkt in Konsole, wenn wir das Datensatz-Objekt aufrufen:
+
+```{r}
+df_fb_eu
+```
+
+Wir haben also einen Datensatz mit 902 Zeilen bzw. Fällen -- im diesen Falle also Facebook-Posts -- und 16 Spalten bzw. Variablen. Darunter sind:
+
+- eine numerische `id`, die `URL` und ein Zeitstempel (`timestamp`) des Posts
+- Die Parteiseite `party` von der der Post abgesetzt wurde
+- Der Typ (`type`) des Posts (Video, Photo, Link oder Status)
+- Der Text (`message`) des Posts und ein etwaiger enthaltener `link`
+- Die Anzahl verschiedener Facebook-Metriken, darunter Kommentare, Shares sowie Reactions gesamt und getrennt in einzelne Typen, allesamt auf `_count` endend
+
+### Andere Dateiformate
+
+Andere Dateiformate funktionieren analog -- in der Regel reicht es, die korrekte Funktion zu verwenden und den Dateipfad anzugeben. Allerdings müssen für proprietäre Dateiformate erst die -- mit dem Tidyverse bereits installierten -- Packages geladen werden:
+
+- das Paket `readxl` bietet Funktionen zum Import von Excel-Dateien, z. B. `readxl::read_xlsx()`
+- das Paket `haven` deckt den Import von Datensätzen aus anderer Statistiksoftware (SAS, Stata, SPSS) ab, z. B. `haven::read_sav()` für SPSS-Datensätze
+
+## Daten modifizieren
+
+Zur Datenmodifikation betrachten wir sechs zentrale Funktionen (+ einige zugehörige Hilfsfunktionen bzw. Variationen davon), die das Tidyverse -- genauer gesagt das Teilpaket `dplyr`^[Wobei umstritten ist, ob man das Paket *dee_plier* oder *deeply_ar* ausspricht.] -- zur Verfügung stellt:
+
+- `select()` zum Auswählen von Variablen (spaltenweise)
+- `filter()` zum Filtern von Variablen (zeilenweise)
+- `arrange()` zum Sortieren des Datensatzes
+- `mutate()` zum Erzeugen neuer Variablen
+- `summarize()` zum Zusammenfassen von Variablen
+- `group_by` zum Gruppieren von Variablen
+
+Alle Funktionen haben dabei gemeinsam (und das trifft auf nahezu alle Funktionen des Tidyverse zu), dass das erste Argument der Datensatz selbst (als Tibble) ist und auch das Resultat der Funktion wiederum ein Tibble ist.
+
+![Illustration von \@allison_horst: https://twitter.com/allison_horst](img/horst/dplyr_wrangling.png)
+
+### Variablen spaltenweise auswählen mit `select()`
+
+Mit `select()` können wir bestimmte Spalten eines Datensatzes auswählen. Hierzu übergeben wir nach dem Datensatz einfach alle Variablen, die wir benötigen, direkt als Objektnamen -- in unserem Beispiel `id`, `URL`, `party` usw. -- ohne Anführungszeichen durch Kommas getrennt:^[Und natürlich müssen wir das Resultat der Funktionen immer einem Objekt zuweisen, wenn wir damit weiterarbeiten wollen -- zu Demonstrationszwecken reicht aber der reine Aufruf der Funktion.]
+
+```{r}
+# Wähle nur die Variablen id, party und timestamp aus
+select(df_fb_eu, id, party, timestamp) 
+```
+
+Durch ein vorangstelltes `-` werden Variablen ausgeschlossen:
+
+```{r}
+# Entferne die id und die URL-Variable
+select(df_fb_eu, -id, -URL)
+```
+
+Durch ein vorangestelltes `neuer_objektname =` können wir Variablen beim Auswählen auch direkt umbenennen:
+
+```{r}
+# Benenne party und message beim Auswählen um in partei respektive inhalt
+select(df_fb_eu, partei = party, inhalt = message)
+```
+
+Um Variablen basierend auf Namensbestandteilen auszuwählen, sind einige Hilfsfunktionen - z. B. `starts_with()`, `ends_with()` und `contains()` - verfügbar. Da in unserem Beispiel alle Facebook-Metriken auf `_count` enden, können wir diese gesammelt mit `ends_with("count")` auswählen:
+
+```{r}
+# Wähle party und alle Facebook-Metriken aus
+select(df_fb_eu, party, ends_with("count"))
+```
+
+Schließlich kann die Hilfsfunktion `everything()` (ohne Argumente) genutzt werden, um sämtliche nicht zuvor angegebenen Variablen auswählen -- das ist hilfreich, wenn nur bestimmte Variablen z. B. umbenannt oder an den Anfang des Datensatzes gestellt werden sollen, aber man nicht alle anderen Variablen von Hand tippen möchte:
+
+```{r}
+# Stelle party umbenannt in Partei an den Anfang und hänge alle verbleibenden Variablen an
+select(df_fb_eu, Partei = party, everything())
+```
+
+
+### Variablen zeilenweise filtern mit `filter()`
+
+Um nur bestimmte Zeilen auswählen, können wir mittels `filter()` eine oder mehrere Bedingungen übergeben, die analog zu den `if`-Bedingungen in Kapitel \@ref(conditions) angegeben werden. Zuerst wird erneut der Datensatz übergeben:
+
+```{r, results="hold"}
+# Wähle alle Facebookposts mit mindestens einem Kommentar
+filter(df_fb_eu, comments_count > 0)
+# Achten Sie in der Ausgabe auf die veränderte Zeilenanzahl
+```
+
+Natürlich können auch Boolesche Operatoren (`!` für `NICHT`, `&` für `UND`, `|` für `ODER`) verwendet werden. Mehrere Bedingungen können auch per `,` getrennt werden (`UND`-Verknüpfung):
+
+```{r}
+# Wähle nur Video-Posts der großen Koalition, die keine fehlenden Werte bei den Shares haben
+filter(df_fb_eu, party %in% c("CDU", "CSU", "SPD"), type == "video", !is.na(shares_count))
+```
+
+### Daten sortieren mit `arrange()`
+
+Um den Datensatz für die Ansicht umzusortieren, wird die Funktion `arrange()` genutzt, die aufsteigend nach den angegebenen Variablen sortiert:
+
+```{r}
+# Sortiere aufsteigend nach Datum
+arrange(df_fb_eu, timestamp)
+```
+
+Werden mehrere Variablen angegeben, wird zunächst nach der ersten Variablen, dann innerhalb der ersten Variablen nach der zweiten Variablen usw. sortiert. Soll eine Variable stattdessen absteigend sortiert werden, wird der Variablenname in die Hilfsfunktion `desc()` gepackt:
+
+```{r}
+# Sortiere alphabetisch aufsteigend nach Partei
+# und innerhalb von Parteien absteigend nach Kommentaranzahl
+arrange(df_fb_eu, party, desc(comments_count))
+```
+
+### Neue Variablen hinzufügen mit `mutate()`
+
+Mit `mutate()`, dem vielleicht einzigen nicht selbsterklärenden Funktionsnamen der sechs diskutierten Funktionen, können wir Datensätzen neue Variablen hinzufügen (oder alte überschreiben). Hierzu geben wir den neuen Variablennamen an, gefolgt von einem `=` und der Berechnung bzw. Konstruktion der neuen Variablen. Wird als Variablenname ein schon im Datensatz bestehender Variablenname verwendet, so wird diese Variable überschrieben. Mit Kommas getrennt können auch mehrere neue Variablen erstellt werden.
+
+```{r}
+# Wir erstellen eine neue Variable comments_centered,
+# die die Kommentarzahl am allgemeinen Mittelwert zentriert
+# indem wir von jedem Wert den Mittelwert der Kommentarzahl abziehen
+# und wandeln die bestehende Variable message in Kleinschreibung
+# mittels der Funktion tolower() um.
+#
+# Zur Darstellung werden die beiden 'mutierten' Variablen 
+# anschließend mit select() ausgewählt
+
+df_mutated <- mutate(df_fb_eu,
+       comments_centered = comments_count - mean(comments_count, na.rm = TRUE),
+       message = tolower(message))
+
+select(df_mutated, comments_centered, message)
+```
+
+### Variablen zusammenfassen mit `summarize()`
+
+Mit `summarize()`^[Wer _the King's English_ bevorzugt: `summarise()` funktioniert auch.] fassen wir Variablen zusammen, indem wir Funktionen auf eine Variable anwenden. Das Resultat ist ein neues Tibble, das die zusammengefassten Variablen als Spalten enthält. Die Funktionsweise ist ähnlich wie bei `mutate()`:
+
+```{r}
+# Mittelwert der drei zentralen Facebook-Metriken berechen
+summarize(df_fb_eu, 
+          mean_comments = mean(comments_count, na.rm = TRUE),
+          mean_shares = mean(shares_count, na.rm = TRUE),
+          mean_reactions = mean(reactions_count, na.rm = TRUE))
+```
+
+### Variablen gruppieren mit `group_by()`
+
+Mittels `group_by()` können wir unseren Datensatz nach einer oder mehrerer Variablen gruppieren. Das Resultat ist erstmal ein Tibble, das nicht weiter von unserem Ausgangs-Tibble unterscheidet. Die Gruppierung wird dann jedoch bei folgenden Funktionen wie `mutate()` oder `summarize()` berücksichtig.
+
+```{r}
+# Wir berechnen erneut die zentralen Facebook-Metriken
+# mit summarize(), gruppieren aber zuvor nach Partei
+
+grouped_df <- group_by(df_fb_eu, party)
+
+summarize(grouped_df, mean_comments = mean(comments_count, na.rm = TRUE),
+          mean_shares = mean(shares_count, na.rm = TRUE),
+          mean_reactions = mean(reactions_count, na.rm = TRUE))
+```
+
+Analog wird auch bei `mutate()` die Gruppierung in den Berechnungen berücksichtigt. Wenden wir die oben durchgeführte Mittelwert-Zentrierung der Kommentaranzahl auf unseren gruppierten Datensatz an, wird durch die `mean()`-Funktion der Mittelwert _innerhalb_ der Gruppen (hier also der Parteien) berechnet. Im Ergebnis bekommen wir also für jeden Facebook-Post einen Wert, wie dieser von der durchschnittlichen Kommentaranzahl auf dieser Parteienseite abweicht:
+
+```{r}
+mutated_df <- mutate(grouped_df, 
+                     comments_group_centered = comments_count - mean(comments_count, na.rm = TRUE))
+
+select(mutated_df, party, comments_group_centered, comments_count)
+```
+
+Wir können auch nach mehreren Variablen gruppieren:
+
+```{r, results="hold"}
+# Wir berechnen erneut die zentralen Facebook-Metriken
+# mit summarize(), gruppieren aber zuvor nach Partei UND Post-Typ
+
+grouped_df <- group_by(df_fb_eu, party, type)
+
+summarize(grouped_df, mean_comments = mean(comments_count, na.rm = TRUE),
+          mean_shares = mean(shares_count, na.rm = TRUE),
+          mean_reactions = mean(reactions_count, na.rm = TRUE))
+```
+
+Wir sehen hier also, dass die AfD im Mittel 826.14 Kommentare auf Links bekommt, 860.49 auf Photos usw.
+
+Gruppierungen können (und sollten) im Anschluss mittels `ungroup()` wieder entfernt werden (auch hier wird der Datensatz als Argument übergeben), um Probleme bei der weiteren Datentransformation zu vermeiden.
+
+Eine besondere Variante von `group_by()` ist `rowwise()`, die den Datensatz zeilenweise gruppiert; dies ermöglicht zeilenweise Berechnungen mit Funktionen über mehrere Variablen hinweg, z. B. die Erstellung von Mittelwerts-Indizes:
+
+```{r}
+# Gruppiere den Datensatz zeilenweise, um für jeden Post
+# den Mittelwert der einzelnen Reactions (Like, Love etc.)
+# zu berechnen
+
+rowwise_df <- rowwise(df_fb_eu)
+
+mutated_df <- mutate(rowwise_df, 
+                     mean_reactions = mean(c(like_count, love_count, wow_count, haha_count, sad_count, angry_count),
+                                           na.rm = TRUE))
+
+select(mutated_df, mean_reactions)
+```
+
+Eine Funktion, die einen häufigen Anwendungsfall von `group_by()`, `summarize()` und `ungroup()` kombiniert, ist `count()`, die die Fallzahl einer oder mehrerer Gruppierungsvariablen ausgibt. Mit dem Argument `sort = TRUE` kann die Ausgabe zudem direkt absteigend nach Anzahl sortiert werden:
+
+```{r}
+# Zähle Posts pro Partei
+count(df_fb_eu, party)
+
+# Zähle Posts pro Partei und Post-Typ und sortiere absteigend nach Anzahl
+count(df_fb_eu, party, type, sort = TRUE)
+```
+
+
+## Daten speichern
+
+Wenn wir unsere Dateien modifiziert haben, möchten wir diese wohl auch speichern bzw. exportieren.
+
+### Tabellarische Daten exportieren
+
+Analog zu den `read_`-Funktionen stehen daher Exportfunktionen nach dem Schema `write_` zur Verfügung. Als Argumente werden dabei der Datensatz, der gespeichert werden soll, sowie der Dateipfad der zu speichernden Datei übergeben. Haben wir durch Modifikation beispielsweise das Tibble `df_modified` erstellt und möchten es in der Datei `datensatz_modifiziert.csv` im Unterordner `data` abspeichern, führen wir die `write_csv()`-Funktion aus:
+
+```{r, eval=FALSE}
+write_csv(df_modified, "data/datensatz_modifiziert.csv")
+```
+
+`write_csv()` nutzt dabei das Komma `,` als Spalten- und einen Punkt `.` als Dezimaltrennzeichen. Möchten wir stattdessen das in Deutschland gebräuchliche Format mit Semikolon `;` als Spalten- und Komma `,` als Dezimaltrennzeichen haben, verwenden wir analog zu `read_csv2()` `write_csv2()`. 
+
+Da Excel öfters Probleme mit dem Einlesen von CSV-Dateien hat, können, soll die Datei danach in Excel betrachtet werden, auch die Funktionen `write_excel_csv()` bzw. `write_excel_csv2()` verwendet werden. Dies fügt ein spezielles Zeichen hinzu, das Excel den Datenimport erleichert.
+
+### R-Objekte exportieren
+
+Beim Export als CSV gehen unweigerlich auch Informationen verloren -- bei unserem Datensatz beispielsweise die Objekttypen, die R den jeweiligen Variablen zugeordnet hat. Wollen wir R-Objekte daher für die zukünftige Verwendung in R abspeichern, lohnt es sich, direkt das jeweilige R-Objekt zu exportieren. Hierfür steht das Dateiformat `.rds` zur Verfügung, mit dem beliebige R-Objekte -- neben Datensätzen also auch Vektoren, Listen, statistische Modelle etc. - gespeichert werden können.
+
+Die zugehörige Funktion lautet `saveRDS()` und wird analog zu den `write_`-Funktionen verwendet:
+
+```{r, eval=FALSE}
+saveRDS(df_mutated, "data/datensatz_modifiziert.rds")
+```
+
+RDS-Dateien können dann jederzeit mit der Funktion `readRDS()` wieder geladen werden.
+
+Sollen mehrere R-Objekte exportiert werden -- also beispielsweise ein Ausgangsdatensatz, ein modifizierter Arbeitsdatensatz und zugehörige statistische Modelle -- kann das Dateiformat `.RData` und die Funktion `save()` verwendet werden. Dabei werden alle zu speichernden Objekte gefolgt von dem benannten Argument `file = `, das den Dateipfad angibt, in dem Funktionsaufruf genannt:
+
+```{r, eval=FALSE}
+save(df_fb_eu, df_mutated, "data/eu_file.RData")
+```
+
+So exportiere Objekte können dann gesammelt über die `load()`-Funktion, die den Dateipfad als Argument benötigt, wieder geladen werden, was sehr praktisch ist, um direkt den gesamten Arbeitsstand wiederherzustellen.
+
+## Übungsaufgaben
+
+Erstellen Sie für die folgenden Übungsaufgaben eine eigene Skriptdatei oder eine R-Markdown-Datei und speichern diese als `ue8_nachname.R` bzw. `ue8_nachname.Rmd` ab.
+
+---
+
+```{exercise, label="ue8-1"}
+Daten laden:
+```
+
+Laden Sie die Datei `facebook_europawahl.csv` aus Moodle in Ihr Projektverzeichnis herunter und laden Sie den Datensatz.
+
+---
+
+```{exercise, label="ue8-2"}
+Daten modifizieren und speichern:
+```
+
+Erstellen Sie einen Teildatensatz, der:
+
+- nur Posts der aktuell im Bundestag vertretenen Parteien enthält (CDU, CSU, SPD, FDP, Linke, Grüne, AfD); Tipp: Betrachten Sie vorab die Schreibweise der Parteien (bzw. deren Facebook-Accounts)
+- nur die Variablen `party`, `timestamp`, `type` sowie alle Facebook-Metriken enthält
+- eine neue Variable `total_count` enthält, in der für jeden Post die Gesamtzahl der Kommentare, Shares und Reactions angegeben ist
+
+Speichern Sie diesen Teildatensatz sowohl als CSV- als auch als RDS-Datei.
+
+---
+
+```{exercise, label="ue8-3"}
+Daten modifizieren und zusammenfassen:
+```
+
+Nutzen Sie die oben vorgestellten Funktionen, um pro Partei Mittelwert und Standardabweichung der drei Facebook-Metriken (Kommentare, Shares, Reactions) aller Posts zu berechnen, die in der Woche vor der Wahl (also nach dem 19.05.2019) erschienen sind. 
+
+Tipp: Logische Operatoren funktionieren auch mit Datums- und Zeitvariablen; Text, der wie ein Datum aussieht, wir dabei automatisch in ein Datum bzw. eine Zeitangabe konvertiert.
