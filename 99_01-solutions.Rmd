@@ -2,7 +2,7 @@
 
 ## Kapitel 2: Objekte und Datenstrukturen {-}
 
-__Lösung zur Übungsaufgabe \@ref(exr:ue2-1)__: 
+__Lösung zur Übungsaufgabe \@ref(exr:ue2a1)__: 
 
 Am sinnvollsten ist eine Liste `list()`, da diese heterogene Objekttypen beinhalten kann. Ein Dataframe lohnt sich bei nur einem Fall eher nicht.
 
@@ -18,7 +18,7 @@ Auch wenn wir hier alle Werte z. B. als Text repräsentieren könnten, ist es im
 
 ---
 
-__Lösung zur Übungsaufgabe \@ref(exr:ue2-2)__:
+__Lösung zur Übungsaufgabe \@ref(exr:ue2a2)__:
 
 ```{r}
 values <- c(1.2, 1.3, 0.8, 0.7, 0.7, 1.5, 1.1, 1.0, 1.1, 1.2, 1.1)
@@ -34,7 +34,7 @@ sum(above_average) / length(values)
 
 ---
 
-__Lösung zur Übungsaufgabe \@ref(exr:ue2-3)__:
+__Lösung zur Übungsaufgabe \@ref(exr:ue2a3)__:
 
 ```{r}
 str(mtcars)
@@ -58,7 +58,7 @@ cars_short <- data.frame(mtcars$mpg, mtcars$hp)
 
 ## Kapitel 3: Funktionen {-}
 
-__Lösung zur Übungsaufgabe \@ref(exr:ue3-1)__:
+__Lösung zur Übungsaufgabe \@ref(exr:ue3a1)__:
 
 Um die gewünschte Sequenz zu erzeugen, benötigen wir die Argumente `from` (Startwert), `to` (Endwert) und `by` (Zunahmewert). 
 
@@ -72,9 +72,9 @@ Da es sich, wie wir der Funktionsdokumentation entnehmen können, dabei um die e
 seq(0, 100, 5)
 ```
 
-__Lösung zur Übungsaufgabe \@ref(exr:ue3-2)__:
+__Lösung zur Übungsaufgabe \@ref(exr:ue3a2)__:
 
-Unsere Funktion benötigt lediglich ein Argument, die Temperatur in Grad Fahrenheit (als numerischen Wert), und soll diese in Grad Celsius mit der Formel $°C = (°F − 32) × 5/9$ umwandeln:
+Unsere Funktion benötigt lediglich ein Argument, die Temperatur in Grad Fahrenheit (als numerischen Wert), und soll diese in Grad Celsius mit der Formel $°C = (°F - 32) × 5/9$ umwandeln:
 
 ```{r}
 fahrenheit_to_celsius <- function(fahrenheit) {
@@ -86,7 +86,7 @@ fahrenheit_to_celsius <- function(fahrenheit) {
 fahrenheit_to_celsius(c(0, 50, 80, 100))
 ```
 
-__Lösung zur Übungsaufgabe \@ref(exr:ue3-3)__:
+__Lösung zur Übungsaufgabe \@ref(exr:ue3a3)__:
 
 Für das erste zusätzliche Feature, der Anzahl der fehlenden Werte, müssen wir `descriptives_vector` lediglich ein Element hinzufügen (das wir z. B. `Missing` nennen), in dem eben diese Anzahl festgehalten wird. Mit der Funktion `is.na()` prüfen wir jeden Wert eines Vektors darauf, ob es sich um einen fehlenden Wert `NA` handelt, mit der Summenfunktion `sum()` können wir diese addieren. Wir ändern `descriptives_vector` daher wie folgt:
 
@@ -134,7 +134,7 @@ descriptives(mtcars$cyl, digits = 1)
 
 ## Kapitel 4: Kontrollstrukturen {-}
 
-__Lösung zur Übungsaufgabe \@ref(exr:ue4-1)__:
+__Lösung zur Übungsaufgabe \@ref(exr:ue4a1)__:
 
 Erneut gibt es verschiedene Möglichkeiten, den Entscheidungsbaum abzubilden. Wenn wir uns pro `if ()` bzw. `else ()` oder `else if ()` auf das Prüfen einer Bedingung beschränken wollen, benötigen wir einen verschachtelten Baum, also eine Bedinung in einer Bedingung:
 
@@ -196,7 +196,7 @@ if (news_channel != "Internet") {
 
 ---
 
-__Lösung zur Übungsaufgabe \@ref(exr:ue4-2)__:
+__Lösung zur Übungsaufgabe \@ref(exr:ue4a2)__:
 
 Beim ersten Platzhalter müssen wir einen `for`-Loop, wie in Kapitel \@ref(forloops) beschrieben, einfügen und uns für einen Namen für das Iterator-Objekt entscheiden. Da wir über den Vektor `variables` loopen, bietet sich der Singular `variable` an (aber natürlich funktioniert auch jeder andere Objektname). Diesen müssen wir dann bei den folgenden Platzhaltern ergänzen:
 
@@ -234,5 +234,149 @@ Diese Funktion erzeugt uns nun auf einen Schlag eine Kurzzusammenfassung anhand 
 ```{r}
 numeric_summary(iris)
 numeric_summary(mtcars)
+```
+
+## Kapitel 8: Daten laden, modifizieren und speichern {-}
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue8a1)__:
+
+Wir benötigen die `read_csv()`-Funktion, da alle Werte durch Kommas getrennt sind. Falls der Datensatz im Hauptverzeichnis des Projektordners liegt, genügt die Angabe von `"facebook_europawahl.csv"` als Argument:
+
+```{r, eval=FALSE}
+facebook_europawahl <- read_csv("facebook_europawahl.csv")
+```
+
+Liegt der Datensatz in einem Unterordner, muss der Dateipfad entsprechend als Argument angepasst werden, z. b. `"data/facebook_europawahl.csv"`.
+
+---
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue8a2)__:
+
+Um den Datensatz zu filtern, benötigen wir zunächst die Schreibweisen der Partei-Accounts. Hierzu bietet es sich an, die `party`-Variable auszuzählen:
+
+```{r}
+count(facebook_europawahl, party)
+```
+
+Ebenfalls optional, aber hilfreich ist es, die entsprechenden Parteiseiten in einem Vektor zu speichern:
+
+```{r}
+bt_parteien <- c("alternativefuerde", "B90DieGruenen", "CDU", "CSU", "FDP", "linkspartei", "SPD")
+```
+
+Nun filtern wir den Datensatz zunächst nach Parteien:
+
+```{r}
+df_bt_parteien <- filter(facebook_europawahl, party %in% bt_parteien)
+```
+
+Dann wählen wir nur die gewünschten Variablen aus:
+
+```{r}
+df_reduziert <- select(df_bt_parteien, party, timestamp, type,
+                       comments_count, shares_count, reactions_count)
+```
+
+Und schließlich erzeugen wir die neue Variable `total_count`:
+
+```{r}
+df_mit_tc <- mutate(df_reduziert,
+                    total_count = sum(c(comments_count, shares_count, reactions_count), na.rm = TRUE))
+
+df_mit_tc
+```
+
+Warum addieren wir nicht einfach alle Spalten ohne die Summenfunktion?
+
+```{r}
+df_mit_total2 <- mutate(df_reduziert, total_count = comments_count + shares_count + reactions_count)
+
+df_mit_total2
+```
+
+Dies führt augenscheinlich zunächst zum gleichen Ergebnis, hat aber ein Problem: kommen in einer der drei Facebook-Metriken fehlende Werte in Form von `NA` vor, ist das Ergebnis in `total_count` ebenfalls `NA`. Der Summenfunktion `sum()` können wir mit dem Argument `na.rm = TRUE` mitteilen, dass fehlende Werte nicht berücksichtigt werden sollen:
+
+```{r, results="hold"}
+# Fehlende Werte zählen:
+sum(is.na(df_ungrouped$total_count))
+sum(is.na(df_mit_total2$total_count))
+
+```
+
+Wählen wir diese `+`-Variante, haben wir also 5 fehlende Werte in unserem `total_count`, bei der ersten Variante keine.
+
+Nun können wir den Datensatz abspeichern:
+
+```{r, eval=FALSE}
+write_csv(df_ungrouped, "data/df_reduziert.csv")
+saveRDS(df_ungrouped, "data/df_reduziert.rds")
+```
+
+---
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue8a3)__:
+
+Zunächst wählen wir nur die Woche vor der Wahl aus. Hierzu können wir die `timestamp`-Variable anfiltern -- Text, der wie ein Datum aussieht, wir dabei automatisch in ein Datum konvertiert:
+
+```{r}
+df_woche_vor_wahl <- filter(facebook_europawahl, timestamp >= "2019-05-20")
+```
+
+Nun gruppieren wir den Datensatz nach `party`:
+
+```{r}
+df_group_by_party <- group_by(df_woche_vor_wahl, party)
+```
+
+Und schließlich berechnen wir mit `summarize()` die gewünschten Kennwerte:
+
+```{r}
+summarize(df_group_by_party,
+          M_comments = mean(comments_count, na.rm = TRUE),
+          SD_comments = sd(comments_count, na.rm = TRUE),
+          M_shares = mean(shares_count, na.rm = TRUE),
+          SD_shares = sd(shares_count, na.rm = TRUE),
+          M_reactions = mean(reactions_count, na.rm = TRUE),
+          SD_reactions = sd(reactions_count, na.rm = TRUE))
+```
+
+## Kapitel 9: Der Pipe-Operator `%>%` {-}
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue9a1)__:
+
+Dank Pipes können wir uns bei Übungsaufgabe \@ref(exr:ue8a2) die ganzen Zwischendatensätze sparen. Es ist jedoch sinnvoll, vor dem Speichern ein Datensatz-Objekt zuzuweisen, da wir dieses auf zweierlei Arten speichern möchten. Auch nach dem erstmaligen Laden bietet es sich an, den Originaldatensatz zunächst als Objekt zuzuweisen:
+
+```{r, message=FALSE}
+facebook_europawahl <- read_csv("data/facebook_europawahl.csv")
+
+bt_parteien <- c("alternativefuerde", "B90DieGruenen", "CDU", "CSU", "FDP", "linkspartei", "SPD")
+
+df_reduziert <- facebook_europawahl %>% 
+  filter(party %in% bt_parteien) %>% 
+  select(party, timestamp, type, comments_count, shares_count, reactions_count) %>% 
+  mutate(total_count = sum(c(comments_count, shares_count, reactions_count), na.rm = TRUE))
+  
+df_reduziert
+```
+
+Anschließend können wir den Datensatz wieder speichern:
+
+```{r, eval=FALSE}
+write_csv(df_ungrouped, "data/df_reduziert.csv")
+saveRDS(df_ungrouped, "data/df_reduziert.rds")
+```
+
+Die Schritte aus Übungsaufgabe \@ref(exr:ue8a3) können wir ebenfalls in eine Pipe verpacken -- da wir den Datensatz nicht speichern bzw. weiter mit diesem arbeiten, ist auch keine Objektzuweisung erforderlich:
+
+```{r}
+facebook_europawahl %>% 
+  filter(timestamp >= "2019-05-20") %>% 
+  group_by(party) %>% 
+  summarize(M_comments = mean(comments_count, na.rm = TRUE),
+            SD_comments = sd(comments_count, na.rm = TRUE),
+            M_shares = mean(shares_count, na.rm = TRUE),
+            SD_shares = sd(shares_count, na.rm = TRUE),
+            M_reactions = mean(reactions_count, na.rm = TRUE),
+            SD_reactions = sd(reactions_count, na.rm = TRUE))
 ```
 

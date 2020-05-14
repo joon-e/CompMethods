@@ -6,7 +6,7 @@ bookdown::gitbook:
         <li><a href="./">Methodische Vertiefung: Computational Methods</a></li>
       depth: 3
       collapse: section
-    download: ["pdf", "epub"]
+    download: ["pdf"]
     split_by: chapter+number
 bookdown::pdf_book:
   includes:

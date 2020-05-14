@@ -25,3 +25,19 @@ sample_data <- bind_cols(short, times, reactions) %>%
   select(id, URL, party, timestamp, type, message, link, ends_with("count"))
 
 write_csv(sample_data, "data/facebook_europawahl.csv")
+
+# Topics
+
+data %>% 
+  select(starts_with("topic")) %>% 
+  select(-topic_new) %>% 
+  mutate(id = 1:nrow(.)) %>% 
+  select(id, everything()) %>%
+  arrange(desc(topic330)) %>% 
+  write_csv("data/facebook_codings.csv")
+
+
+test <- read_csv("data/facebook_codings.csv")
+
+facebook_europawahl %>% 
+  left_join(test)

@@ -1,0 +1,448 @@
+# Daten umstrukturieren und zusammenfügen {#restructurecombine}
+
+Datenhandling umfasst oft auch etwas komplexere Schritte, als lediglich relevante Variablen zu selektieren und nach bestimmten Bedingungen zu filtern. In diesem Kapitel sehen wir uns daher an, wie wir Daten umstrukturieren und mehrere Datensätze zusammenfügen können.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+## Daten umstrukturieren
+
+Wir haben in Kapitel \@ref(tidydata) gesehen, dass dieselben Daten ganz unterschiedlich tabellarisch abgebildet werden können. Oftmals ist es jedoch so, dass wir unsere Daten in einem ganz bestimmten Format benötigen, um mit diesen weiterarbeiten zu können -- beispielsweise um diese an eine Funktion, die ein statistisches Verfahren implementiert, zu übergeben oder diese grafisch darzustellen. Hierfür bietet das Tidyverse einige Funktionen, um Datensätze schnell umzustrukturieren. 
+
+### Wide vs. Long Data
+
+Einer der häufigsten Fälle der Umstrukturierung von Datensätzen betrifft das Konvertieren von _Wide Data_ in _Long Data_ und umgekehrt. 
+
+Nehmen wir als Beispiel einen Datensatz, der die Auflagezahlen verschiedener politischer Wochenmagazine beinhält:
+
+```{r, echo=FALSE}
+auflagen1 <- tibble(
+  medium = c("Der Spiegel", "Stern", "Focus"),
+  auflage_2018 = c(708077, 539191, 425737),
+  auflage_2019 = c(701337, 476097, 373847),
+  auflage_2020 = c(685799, 422156, 328587)
+)
+
+auflagen1
+```
+
+Man spricht hierbei von _Wide_ Data: Mehrere Beobachtungen desselben Wertetyps stehen in unterschiedlichen Spalten -- in diesem Fall haben wir drei Spalten, in denen jeweils Auflagenzahlen stehen. Unsere Fallebene ist das einzelne Medium: jeweils eine Zeile für _Spiegel_, _Stern_ und _Focus_.
+
+Wir könnten dieselben Daten aber auch so darstellen:
+
+```{r, echo=FALSE}
+auflagen1 %>% 
+  pivot_longer(-medium, names_to = "jahr", names_prefix = "auflage_", names_ptypes = list(jahr = integer()), values_to = "auflage")
+```
+
+Hierbei handelt es sich _Long_ Data: alle Beobachtungen desselben Wertetyps, also z. B. die Auflagenzahlen, stehen in einer Spalte, die weiteren Spalten dienen zur Identifikation dieser Beobachtungen, hier also, für welches Jahr und für welches Medium diese gelten. Unsere Fallebene wäre also *Medium und Jahr*: jeweils eine Zeile pro Medium und Jahr.
+
+Wide Data ist häufig intuitiver zu lesen, insbesondere wenn es sich um bivariate Verteilungen handelt, da die Darstellung einer Kreuztabelle gleicht. Tatsächlich würden wir diese erste tabellarische Darstellung aber nicht als _tidy_ bezeichnen, da derselbe Werte- bzw. Beobachtungstyp in unterschiedlichen Spalten steht.
+
+Viele Funktionen in R sind jedoch auf Long Data ausgelegt. Häufig müssen wir daher Wide Data in Long Data transformieren:
+
+### Wide Data in Long Data transformieren mit `pivot_longer()`
+
+Mittels `pivot_longer()` können wir Wide Data in Long Data umwandeln. Als erstes Argument nutzen wir hierbei wie immer den Datensatz, den wir transformieren möchten, gefolgt von einem Vektor, der alle Spalten umfasst, die "länger" gemacht werden sollen.
+
+Als Beispiel nutzen wir den ersten Auflagen-Datensatz aus dem vorherigen Unterkapitel, der über folgenden Code erstellt wird:
+
+```{r}
+auflagen_wide <- tibble(
+  medium = c("Der Spiegel", "Stern", "Focus"),
+  auflage_2018 = c(708077, 539191, 425737),
+  auflage_2019 = c(701337, 476097, 373847),
+  auflage_2020 = c(685799, 422156, 328587)
+)
+```
+
+Wir möchten nun alle Auflagenspalten (`auflage_2018`, `auflage_2019`, `auflage_2020`) transformieren, sodass alle Auflagenwerte in einer Spalte stehen. Wir übergeben diese Spalten daher als zweites Argument als `pivot_longer()`:
+
+```{r}
+auflagen_wide %>% 
+  pivot_longer(c(auflage_2018, auflage_2019, auflage_2020))
+```
+
+Das führt uns schon (fast) zum gewünschten Ergebnis. Wie wir sehen, stehen nun alle Auflagenzahlen in der Spalte `value`, die Information aus den Spaltennamen stehen in der Spalte `name`. Wir können den Aufruf aber noch etwas anpassen, um die Ausgabe zu optimieren:
+
+- Mit nur drei Variablen war es kein großer Aufwand, alle Variablen zum umtransformieren einzeln anzugeben. Wenn wir jedoch Auflagenzahlen der vergangenen 50 Jahre hätten, wäre dies sehr viel Tipparbeit. Wir können jedoch alle Hilfsfunktionen, die auch bei `select()` (siehe Kapitel \@ref(select)) zur Verfügung stehen verwenden. In unserem Fall könnten wir uns die Arbeit beispielsweise mit `starts_with("auflage")` abkürzen.^[Da alle Spalten bis auf `medium` transformiert werden sollen, könnten wir alternativ auch mit `-medium` angeben, um alle Spalten außer eben dieser zu nutzen.]
+- Die neuen Variablen haben recht generische Namen. Hier können wir mit den Argumenten `names_to` (Name(n) der neuen Spalte(n) basierend auf den alten Spaltennamen) und `values_to` (Name der neuen Wertespalte) Text-Vektoren übergeben, die die neuen Spaltennamen beinhalten. In unserem Fall bieten sich daher `names_to = "jahr"` und `values_to = "auflage"` an.
+- Der Bestandteil `"auflage_"` ist redundant; schöner wäre es wenn lediglich die Jahreszahl angeben wird. Hierfür können wir das Argument `names_prefix` nutzen und einen Textbestandteil der Spaltennamen angeben, der abgeschnitten werden soll -- in unserem Fall also `names_prefix = "auflage_"`.
+
+```{r}
+auflagen_wide %>% 
+  pivot_longer(starts_with("auflage"), names_to = "jahr", values_to = "auflage", names_prefix = "auflage_")
+```
+
+Schon fast perfekt! Das einzige Schönheitsfehler ist, dass die Variable `jahr` nun vom Typ `character` ist -- `pivot_longer()` weist diesen Typ allen Informationen zu, die aus den ursprünglichen Spaltennamen stammen. Sinnvoller wäre ein numerischer Objekttyp. Hier können wir dem Argument `names_ptypes` eine Liste übergeben, die für alle aus den ursprünglichen Spaltennamen generierten Variablen jeweils den gewünschten Objekttyp angibt:
+
+```{r}
+# Da nun alles passt, weiesen wir unseren neuen Long-Datensatz auch einem Objekt zu
+auflagen_long <- auflagen_wide %>% 
+  pivot_longer(starts_with("auflage"), names_to = "jahr", values_to = "auflage", 
+               names_prefix = "auflage_", names_ptypes = list(jahr = integer()))
+
+auflagen_long
+```
+
+Betrachten wir ein zweites, noch etwas komplexeres Beispiel:
+
+```{r}
+auflagen_wide2 <- tibble(
+  medium = c("Der Spiegel", "Stern", "Focus"),
+  auflage_2018_q1 = c(708077, 539191, 425737),
+  auflage_2018_q2 = c(704656, 528860, 417759),
+  auflage_2018_q3 = c(716663, 514889, 412165),
+  auflage_2018_q4 = c(712268, 480739, 413276),
+  auflage_2019_q1 = c(701337, 476097, 373847),
+  auflage_2019_q2 = c(707459, 464489, 367101),
+  auflage_2019_q3 = c(719326, 466019, 364254),
+  auflage_2019_q4 = c(691451, 440284, 349944),
+  auflage_2020_q1 = c(685799, 422156, 328587)
+)
+
+auflagen_wide2
+```
+
+Nun haben in den Spaltennamen gleich zwei Informationen: das Jahr und das jeweilige Quartal. Es ist daher sinnvoll, diese Informationen beim Transformieren in getrennten Spalten zu speichern. Hierzu können wir zusätzlich das Argument `names_sep` heranziehen, mit dem wir ein(e) Zeichen(kette) übergeben -- in unserem Fall den Unterstrich `_`, an der wir die ursprünglichen Spaltennamen weiter aufteilen möchten. Entsprechend müssen wir in `names_to` dann mehrere neuen Spaltennamen angeben -- in unserem Fall 2, da wir `jahr` und `quartal` trennen möchten:^[Noch schöner wäre es, wenn wir automatisch auch noch das `q` aus `q1`, `q2` etc. entfernen und das Quartal auch als `integer` speichern könnten, aber die nötigen Funktionen zum Umgang mit Textvariablen lernen wir erst in zwei Wochen. Möglich ist es aber.]
+
+```{r}
+auflagen_long2 <- auflagen_wide2 %>% 
+  pivot_longer(starts_with("auflage"), names_to = c("jahr", "quartal"), values_to = "auflage", 
+               names_prefix = "auflage_", names_sep = "_", names_ptypes = list(jahr = integer()))
+
+auflagen_long2
+```
+
+`pivot_longer()` bietet also eine mächtige, wenn auch anfangs nicht immer intuitive Syntax zum umformen von Datensätzen -- aber auch ohne die Kenntnis aller Zusatzargumente hätten wir einen tranformierten Datensatz, den wir mit wenigen zusätzlichen Funktionen wie `select()` oder `rename()` sowie `mutate()` in unsere gewünschte Form bringen können.
+
+### Long Data in Wide Data transformieren mit `pivot_wider()`
+
+Umgekehrt können wir natürlich auch Wide Data in Long Data transformieren. Die passende Funktion heißt `pivot_wider()`. Hier geben wir mittels `names_from` an, die Werte welcher Variablen in Spalten überführt werden sollen, und definieren mit `values_from`, welche Variable die Werte für die neu erzeugten Spalten liefert.
+
+Nehmen wir Long-Variante unseres jährlichen Auflagen-Datensatzes:
+
+```{r}
+auflagen_long
+```
+
+Um diesen in den ursprünglichen Wide-Datensatz zu transformieren, wollen wir also die Werte in `jahr` in Spaltennamen umwandeln und die Werte in `auflage` auf diese neuen Spalten verteilen. Wir geben also `names_from = "jahr"` und `values_from = "auflage"` an:
+
+```{r}
+auflagen_long %>% 
+  pivot_wider(names_from = jahr, values_from = auflage)
+```
+
+Da Spaltennamen, die nicht mit Buchstaben beginnen, suboptimal sind und wir nun nicht mehr direkt sehen können, dass es sich um Auflagen-Daten handelt, können und sollten wir mittels `names_prefix` auch wieder die ursprünglichen Spaltennamen herstellen:
+
+```{r}
+auflagen_long %>% 
+  pivot_wider(names_from = jahr, values_from = auflage, names_prefix = "auflage_")
+```
+
+Im zweiten Fall stehen in mehreren Spalten Informationen, die wir in Spaltennamen überführen wollen, nämlich `jahr` und `quartal`:
+
+```{r}
+auflagen_long2
+```
+
+Zum Transformieren nutzen wir erneut `names_from`, nur geben dieses Mal beide Variablen an, die für die Spaltennamen kombiniert werden sollen, und übergeben mit `names_sep` wieder ein Trennzeichen^[Tatsächlich wäre der Unterstrich `_` aber auch bereits als Default-Wert von `names_sep` eingestellt.]:
+
+```{r}
+auflagen_long2 %>% 
+  pivot_wider(names_from = c(jahr, quartal), values_from = auflage, names_prefix = "auflage_", names_sep = "_")
+```
+
+### Spalten aufteilen mit `separate()`
+
+Schauen wir uns dieselben Daten nochmals in einer anderen Darstellung an. Mehrere Werte in einer Spalte -- gruselig, aber kommt vor:
+
+```{r}
+auflagen_gruselig <- tibble(
+  medium = c("Der Spiegel", "Stern", "Focus"),
+  auflagen_18_bis_20 = c("708077;701337;685799", 
+                         "539191;476097;422156", 
+                         "425737;373847;328587"),
+)
+
+auflagen_gruselig
+```
+
+Hier hilft uns die Funktion `separate()`, mit der wir mit dem Argument `col` eine Spalte zum Trennen, mit dem Argument `into` einen Vektor mit neuen Spaltennamen und dem Argument `sep` ein Trennzeichen, an dem die bisherigen Werte getrennt werden sollen, mitteilen.
+
+In unserem Fall möchten wir die Spalte `auflagen_18_bis_20` am Semikolon `;` aufteilen:
+
+```{r}
+auflagen_gruselig %>% 
+  separate(col = auflagen_18_bis_20, into = c("auflage_2018", "auflage_2019", "auflage_2020"), sep = ";")
+```
+
+Das hat schon gut funktioniert, nur ist der Objekttyp nun jeweils `character`. Mit dem zusätzlichen Argument `convert = TRUE` versucht `separate()`, den neuen Spalten direkt einen passenderen numerischen Objekttyp zu geben:
+
+```{r}
+auflagen_gruselig %>% 
+  separate(col = auflagen_18_bis_20, into = c("auflage_2018", "auflage_2019", "auflage_2020"), sep = ";",
+           convert = TRUE)
+```
+
+## Daten zusammenfügen
+
+In größeren Forschungsprojekten haben wir oftmals nicht nur einen Datensatz, sondern mehrere Datensätze -- etwa weil verschiedene Teildatensätze getrennt erhoben wurden oder weil diese auf unterschiedlichen Ebenen liegen. Für weitere Analysen sollen diese nun zusammengefügt werden.
+
+### Teildatensätze zusammenfügen mit `bind_rows()` und `bind_cols()`
+
+Beginnen wir mit einfachsten Fall, dem Zusammenfügen von gleichförmigen Datensätzen: wir wollen einem bestehenden Datensatz also entweder neue Zeilen (= neue Fälle) oder neue Spalten (=neue Variablen hinzufügen). Hier für bietet das Tidyverse die Funktionen `bind_rows()` und `bind_cols()`. Bei beiden werden als Argumente einfach die zu verbindenden Datensätze angegeben.
+
+Nehmen wir einmal an, wir hätten die Auflagendaten aus den vorherigen Beispielen getrennt für die Nachrichtenmedien erhoben:
+
+```{r}
+# Aufteilen des Datensatzes
+
+auflagen_spiegel <- auflagen_long %>% 
+  filter(medium == "Der Spiegel")
+
+auflagen_stern <- auflagen_long %>% 
+  filter(medium == "Stern")
+
+auflagen_focus <- auflagen_long %>% 
+  filter(medium == "Focus")
+```
+
+Vor uns liegen nun also drei Datensätze, die jeweils Daten eines Nachrichtenmediums enthalten:
+
+```{r}
+auflagen_spiegel
+auflagen_stern
+auflagen_focus
+```
+
+Praktischerweise sind die Datensätze gleichförmig: alle drei haben dieselben Variablen. Wir können diese also einfach mit `bind_rows()` untereinander kleben, um einen gemeinsamen Datensatz zu erstellen:
+
+```{r}
+auflagen_spiegel %>% 
+  bind_rows(auflagen_stern, auflagen_focus)
+```
+
+Fehlende Variablen in einem Teildatensatz werden automatisch durch fehlende Werte ersetzt:
+
+```{r}
+auflagen_spiegel %>% 
+  select(-auflage) %>% # Wir entfernen zu Demonstrationszwecken die Auflage-Spalte
+  bind_rows(auflagen_stern, auflagen_focus)
+```
+
+Hier haben wir den Vorteil, dass die Identifikationsvariable `medium` bereits vorhanden ist, sodass wir die Auflagendaten auch im vollständigen Datensatz problemlos zuordnen können. Was, wenn das nicht der Fall ist?
+
+```{r}
+# Wir entfernen zu Demonstrationszwecken die Medium-Variable
+auflagen_spiegel <- select(auflagen_spiegel, -medium)
+auflagen_stern <- select(auflagen_stern, -medium)
+auflagen_focus <- select(auflagen_focus, -medium)
+
+auflagen_spiegel
+```
+
+Zwar können wir die Teildatensätze nun anhand des Namens gut identifizieren, bekommen aber bei einem Gesamtdatensatz Probleme, die Auflagenzahlen zuzuordnen:
+
+```{r}
+auflagen_spiegel %>% 
+  bind_rows(auflagen_stern, auflagen_focus)
+```
+
+In solchen Fällen können wir die Datensätze beim "zusammenkleben" benennen und über das `.id`-Argument einen Spaltennamen für die Identifikationsvariable festlegen:
+
+```{r}
+bind_rows("Der Spiegel" = auflagen_spiegel,
+          "Stern" = auflagen_stern, 
+          "Focus" = auflagen_focus,
+          .id = "medium")
+```
+
+Ganz ähnlich funktioniert auch `bind_cols()`, nur dass wir dieses Mal Variablen, also Spalten hinzufügen. Erinnern wir uns an den Wide-Datensatz der Auflagendaten:
+
+```{r}
+auflagen_wide
+```
+
+Nun haben wir auch noch ein paar ältere Auflagendaten erhoben:
+
+```{r}
+auflagen_alt <- tibble(
+  medium = c("Der Spiegel", "Stern", "Focus"),
+  auflage_2016 = c(793087, 719290, 474285),
+  auflage_2017 = c(771066, 595729, 456020)
+)
+
+auflagen_alt
+```
+
+Wir ergänzen diese Variablen mittels `bind_cols()`:
+
+```{r}
+auflagen_wide %>% 
+  bind_cols(auflagen_alt)
+```
+
+Wie wir sehen, hat das ganz gut funktioniert -- die Mediumspalte ist nun doppelt vorhanden, aber mittels `select()` könnten wir diese schnell ausschließen. Generell ist aber bis auf in Ausnahmefällen vom Hinzufügen von Variablen mittel `bind_cols()` abzuraten, da die Prozedur sehr fehleranfällig ist -- sind beide Datensätze nicht gleich sortiert, haben Sie schnell Daten miteinander verbunden, die gar nicht zusammengehören. Ist eine Identifikations-Variable vorhanden, so gibt es deutlich sinnvollere und sicherere Funktionen:
+
+### Relationale Daten zusammenführen
+
+Nehmen wir an, dass wir ein Forschungsprojekt zu politischen Wochenmagazinen durchführen. Wir haben dazu neben den bereits bekannten Auflagenzahlen auch noch Daten zu den Magazinen selbst und einige Artikel erhoben und diese in den Datensätzen `auflagen`, `info` und `artikel` abgelegt. 
+
+Der Datensatz `auflagen` enthält die uns bereits bekannten Auflagenzahlen auf Ebene Medium pro Quartal und Jahr:
+
+```{r, echo=FALSE}
+auflagen <- auflagen_long2
+auflagen
+```
+
+Der Datensatz `info` enthält allgemeine Informationen zu den Magazinen auf Mediums-Ebene:
+
+```{r, echo=FALSE}
+info <- tibble(
+  medium = c("Der Spiegel", "Stern", "Focus"),
+  sitz = c("Hamburg", "Hamburg", "Berlin"),
+  erscheinungstag = c("Samstag", "Donnerstag", "Samstag"),
+  erstausgabe = lubridate::dmy(c("04-01-1947", "01-08-1948", "18-01-1993"))
+)
+
+info
+```
+
+Der Datensatz `artikel` schließlich enthält alle für das Forschungsprojekt relevanten Artikel auf Artikel-Ebene:
+
+```{r, echo=FALSE}
+artikel <- tibble(
+  titel = c("Ein spannender Artikel", "Noch ein Artikel", "Und noch ein Artikel", "Und noch einer"),
+  autor_innen = c("Max Mustermann", "Erika Musterfrau", "John Doe; Jane Doe", "Mario Rossi"),
+  medium = c("Stern", "Stern", "Der Spiegel", "Focus"),
+  ausgabe = c(1L, 1L, 1L, 1L),
+  jahr = c(2020L, 2020L, 2020L, 2020L),
+  seiten = c("20-22", "11", "17-25", "104-106")
+)
+
+artikel
+```
+
+Insgesamt haben wir also drei verschiedene Datensätze, deren Fälle allesamt auf unterschiedlichen Ebenen liegen. Allerdings hängen die Datensätze auch implizit zusammen: die Variable `medium` findet sich in allen drei Datensätzen; über sie können wir zwei oder alle drei Datensätze zusammenführen. Datensätze, die über Variablen miteinander verbunden werden können, nennt man _relationale_ Daten, sie stehen also in einer Beziehung zueinander.
+
+#### Schlüsselvariablen (Keys)
+
+Variablen, über die Datensätze zusammengefügt werden, bezeichnet man als Schlüsselvariablen, im Englischen auch _Keys_. Schlüsselvariablen identifzieren Fälle in einem Datensatz _eindeutig_. Je nach Datenaufbereitung kann hierzu eine einzige Variable ausreichen; manchmal sind aber auch Kombinationen aus mehreren Variablen nötig, um Fälle eindeutig zuzuordnen.
+
+Zudem werden zwei Typen von Schlüsselvariablen unterschieden:
+
+- als _primary key_ wird eine Variable bzw. eine Kombination von Variablen bezeichnet, die im _aktuellen_ Datensatz einen Fall eindeutig identifizieren.
+- als _foreign key_ wird eine Variable bzw. eine Kombination von Variablen bezeichnet, die in einem _anderen_ Datensatz Fälle eindeutig identifizieren.
+
+Im Beispieldatensatz `info` ist `medium` der _primary key_. Jeder Wert von `medium` kommt exakt einmal vor und identifiziert einen Fall (= eine Zeile) somit eindeutig:
+
+```{r, echo=FALSE}
+info
+```
+
+Wie sieht die Sache im Datensatz `artikel` aus:
+
+```{r, echo=FALSE}
+artikel
+```
+
+Hier wäre `titel` der naheliegendste _primary key_, da darüber alle Fälle eindeutig identifiziert werden können. `medium` taugt hier hingegen nicht als _primary key_, da der Wert `"Stern"` nicht eindeutig ist --  es gibt zwei Artikel vom Stern im Datensatz, entsprechend reicht die bloße Angabe `"Stern"` nicht aus, um einen Fall in `artikel` eindeutig
+zu identifizieren.
+
+`medium` kann hier aber als _foreign key_ für den Datensatz `info` dienen, da die Werte aus `medium` im Datensatz `artikel` sich eindeutig Fällen im Datensatz `info` zuordnen lassen -- jeder der drei einzigartigen Werte von `medium` im Datensatz `artikel` (`"Stern"`, `"Der Spiegel"` & `"Focus"`) kommt nur einmal in der Variable `medium` im Datensatz `info` vor.
+
+Da `medium` in `info` _primary key_ und in `artikel` _foreign key_ ist, bilden diese beiden Datensätze über die Schlüsselvariablen `medium` eine _Relation_. Wir können nun Daten aus dem Datensatz `info` dem Datensatz `artikel` zuordnen und beispielsweise für jeden Artikel in `artikel` die Variable `erscheinungstag` hinzufügen; für alle Spiegel-Artikel erhalten wir dann den Wert `"Samstag"`, für alle Stern-Artikel den Wert `"Donnerstag"`, usw.
+
+Bevor wir nun die Datensätze tatsächlich miteinander verbinden, schauen wir uns noch einen komplizierteren Fall an. Was ist der _primary key_ im Datensatz `auflagen`:
+
+```{r, echo=FALSE}
+auflagen
+```
+
+Aktuell existiert keine einzelne Identifikationsvariable, mit der wir einen Eintrag in `auflagen` eindeutig identifzieren können -- sowohl `medium` als auch `jahr` und `quartal` enthalten doppelte Werte.^[Tatsächlich sind die Werte in `auflage` aktuell noch eindeutig, aber Wertvariablen sind nicht gut als Schlüsselvariablen geeignet; sammeln wir noch mehr Auflagendaten aus früheren Jahren und von mehr Magazinen, steigt die Wahrscheinlichkeit, dass irgendwann auch mal ein doppelter Wert auftaucht.] Der _primary key_ ist in diesem Fall eine Kombination aus den drei Variablen `medium`, `jahr` und `quartal`, da jede der Merkmalskombinationen dieser drei Variablen nur ein einziges Mal auftritt.
+
+In solchen Fällen ist es sinnvoll, über eine laufende Nummer eine Variable zu erstellen, die als _primary key_ fungieren kann. Dies können wir schnell mit den uns bereits bekannten Funktionen umsetzen:
+
+```{r}
+auflagen %>% 
+  mutate(id = 1:nrow(auflagen))
+```
+
+#### Join-Operationen
+
+Um Datensätze nun miteinander zu verbinden, greifen wir auf `_join`-Funktionen zurück. Das Tidyverse orientiert sich dabei an Konzepten und Bezeichnungen, die auch in der Datenbanksprache [SQL](https://de.wikipedia.org/wiki/SQL) verwendet werden. Dabei werden zum Zusammenfügen vier Arten von _Joins_ unterschieden (im Folgenden gehen wir davon aus, dass die beiden Datensätze, die wir verbinden möchten, `x` und `y` heißen):
+
+- `inner_join()`: Alle Zeilen, die sowohl in `x` als auch in `y` vorkommen, und alle Spalten aus `x` und `y`
+- `left_join()`: Alle Zeilen, die in `x` vorkommen und alle Spalten aus `x` und `y`
+- `right_join()`: Alle Zeilen, die in `y` vorkommen und alle Spalten aus `x` und `y`
+- `full_join()`: Alle Zeilen aus `x` und `y` und alle Spalten aus `x` und `y`
+
+Man kann diese Unterschiede auch durch ein Venn-Diagramm verdeutlichen:
+
+![Join-Operationen. Quelle: [R for Data Science](https://r4ds.had.co.nz/)](img/10/join-venn.png)
+
+Daneben gibt es noch Join-Operationen, die weniger zum Zusammenfügen als zum Filtern von Datensätzen auf Basis von anderen Datensätzen zu gebrauchen sind, da dabei keine Spalten aus einem Datensatz in den anderen kopiert werden:
+
+- `anti_join()`: Alle Zeilen in `x`, die _nicht_ auch in `y` vorkommen, und alle Spalten aus `x` (nicht aber aus `y`)
+- `semi_join()`: Alle Zeilen in `x`, die auch in `y` vorkommen, und alle Spalten aus `x` (nicht aber aus `y`)
+
+In der Praxis benötigen wir vor allem `left_join()` und `inner_join()`, `anti_join()` wird uns aber bei der automatisierten Inhaltsanalyse wieder begegnen.
+
+Alle `_join()`-Funktionen benötigen als Argumente die beiden Datensätze, die zusammengefügt (bzw. gefiltert) werden sollen. Wird kein weiteres Argument angegeben, werden automatisch alle gleichnamigen Variablen in beiden Datensätzen als Schlüsselvariablen verwendet.
+
+```{r}
+artikel %>% 
+  left_join(info)
+```
+
+Wir sehen zunächst in der Konsole, dass die Join-Operation auf der Basis der Schlüsselvariable `medium` erfolgte, da diese als einzige in beiden Datensätzen zu finden ist. Das Ergebnis ist ein Datensatz, der alle Variablen aus beiden Datensätzen enthält und diese auf Basis der Schlüsselvariablen alle Spaltenwerte den richtigen Zeilen zugeordnet hat.
+
+Mit dem Argument `by` können wir die Schlüsselvariable(n) auch explizit angeben; dies ist vor allem dann praktisch, wenn die Schlüsselvariablen in beiden Datensätzen unterschiedlich heißen. Auch bei gleichnamigen Variablen ist aber dennoch sinnvoll, die Schlüsselvariablen explizit zu nennen, um etwaigen Problemen vorzubeugen:
+
+```{r}
+artikel %>% 
+  left_join(info, by = "medium")
+```
+
+Zu beachten ist, dass `left_join()` auch Ergebnisse liefert, wenn die Schlüsselvariablen in `y` nicht eindeutig ist. Dies ist der Fall, wenn wir beide Datensätze im obigen Beispiel vertauschen. Zur Erinnerung, `medium` im `artikel`-Datensatz enthält Mehrfachwerte:
+
+```{r}
+artikel
+```
+
+Welche der beiden `"Stern"`-Zeilen ordnet `left_join()` nun `info` zu? 
+
+```{r}
+info %>% 
+  left_join(artikel, by = "medium")
+```
+
+Die Antwort: beide Zeilen -- `left_join()` dupliziert also Zeilen in `x`, wenn es auf Basis der Schlüsselvariablen mehrere Entsprechungen in `y` gibt. Daher ist es nach einer Join-Operation immer sinnvoll zu prüfen, ob der resultierende Datensatz auch den gewünschten Umfang hat.
+
+## Übungsaufgaben
+
+Erstellen Sie für die folgenden Übungsaufgaben eine eigene Skriptdatei oder eine R-Markdown-Datei und speichern diese als `ue10_nachname.R` bzw. `ue10_nachname.Rmd` ab.
+
+---
+
+```{exercise, label="ue10a1"}
+Daten umstrukturieren:
+```
+
+Laden Sie den Datensatz `facebook_europawahl.csv`, der schon aus den vorigen Übungen bekannt ist. Wählen Sie zunächst die Variablen `id`, `party`, `timestamp` sowie `comments_count`, `shares_count` und `reactions_count` aus.
+
+Wir möchten diesen Datensatz nun auf eine "Medium-pro-Tag-und-Facebook-Metrik"-Ebene umstrukturieren, sodass für jeden Post (zu erkennen an der Variablen `id`) drei Zeilen existieren, in der jeweils einmal die Anzahl der Kommentare, die Anzahl der Shares sowie die Anzahl der Reactions steht. 
+
+Der resultierende Datensatz sollte fünf Variablen haben: die Identifikationsvariablen `id`, `party`, `timestamp` (aus dem alten Datensatz) und `metric` (gibt an, um welche der drei Facebook-Metriken es sich handelt) sowie die Wertvariable `value` (die Anzahl der jeweiligen Facebook-Metrik).
+
+---
+
+```{exercise, label="ue10a2"}
+Daten zusammenfügen:
+```
+
+Auf Moodle finden Sie den Datensatz `facebook_codings.csv`. Dieser enthält für die Facebook-Posts aus `facebook_europawahl.csv` manuelle Codierungen, ob bestimmte Themen in diesen Posts vorkommen oder nicht. Zudem ist die `id`-Variable der Facebook-Posts angegeben.
+
+Laden Sie auch diesen Datensatz in R und fügen ihn mit `facebook_europawahl` zusammen, sodass für jeden Post neben den API-Informationen (`timestamp`, `message`, Facebook-Metriken etc.) auch die manuellen Codierungen ersichtlich sind.

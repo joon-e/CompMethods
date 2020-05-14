@@ -284,7 +284,7 @@ Erstellen Sie für die folgenden Übungsaufgaben eine eigene Skriptdatei und spe
 
 ---
 
-```{exercise, label="ue4-1"}
+```{exercise, label="ue4a1"}
 Bedingungen:
 ```
 Wir haben in einer Studie das Nachrichtennutzungsverhalten erhoben und möchten dieses nun basierend auf zwei Variablen in einer neuen Variablen `news_category` kategorisieren:
@@ -314,7 +314,7 @@ news_category # Wenn alles geklappt hat, sollte "Online: SNS" herauskommen
 
 ---
 
-```{exercise, label="ue4-2"}
+```{exercise, label="ue4a2"}
 Iterationen:
 ```
 

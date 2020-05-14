@@ -71,7 +71,7 @@ Alle Funktionen haben dabei gemeinsam (und das trifft auf nahezu alle Funktionen
 
 ![Illustration von \@allison_horst: https://twitter.com/allison_horst](img/horst/dplyr_wrangling.png)
 
-### Variablen spaltenweise auswählen mit `select()`
+### Variablen spaltenweise auswählen mit `select()` {#select}
 
 Mit `select()` können wir bestimmte Spalten eines Datensatzes auswählen. Hierzu übergeben wir nach dem Datensatz einfach alle Variablen, die wir benötigen, direkt als Objektnamen -- in unserem Beispiel `id`, `URL`, `party` usw. -- ohne Anführungszeichen durch Kommas getrennt:^[Und natürlich müssen wir das Resultat der Funktionen immer einem Objekt zuweisen, wenn wir damit weiterarbeiten wollen -- zu Demonstrationszwecken reicht aber der reine Aufruf der Funktion.]
 
@@ -286,15 +286,15 @@ Erstellen Sie für die folgenden Übungsaufgaben eine eigene Skriptdatei oder ei
 
 ---
 
-```{exercise, label="ue8-1"}
+```{exercise, label="ue8a1"}
 Daten laden:
 ```
 
-Laden Sie die Datei `facebook_europawahl.csv` aus Moodle in Ihr Projektverzeichnis herunter und laden Sie den Datensatz.
+Laden Sie die Datei `facebook_europawahl.csv` aus Moodle in Ihr Projektverzeichnis herunter und laden Sie den Datensatz in R.
 
 ---
 
-```{exercise, label="ue8-2"}
+```{exercise, label="ue8a2"}
 Daten modifizieren und speichern:
 ```
 
@@ -308,10 +308,10 @@ Speichern Sie diesen Teildatensatz sowohl als CSV- als auch als RDS-Datei.
 
 ---
 
-```{exercise, label="ue8-3"}
+```{exercise, label="ue8a3"}
 Daten modifizieren und zusammenfassen:
 ```
 
 Nutzen Sie die oben vorgestellten Funktionen, um pro Partei Mittelwert und Standardabweichung der drei Facebook-Metriken (Kommentare, Shares, Reactions) aller Posts zu berechnen, die in der Woche vor der Wahl (also nach dem 19.05.2019) erschienen sind. 
 
-Tipp: Logische Operatoren funktionieren auch mit Datums- und Zeitvariablen; Text, der wie ein Datum aussieht, wir dabei automatisch in ein Datum bzw. eine Zeitangabe konvertiert.
+Tipp: Logische Operatoren funktionieren auch mit Datums- und Zeitvariablen; Text, der wie ein Datum aussieht, wird dabei automatisch in ein Datum bzw. eine Zeitangabe konvertiert.

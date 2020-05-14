@@ -1,4 +1,4 @@
-# Einführung in das Datenhandling {#datahandling-intro}
+# Einführung in das Datenhandling {#datahandlingintro}
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(tidyverse)
@@ -10,7 +10,7 @@ Das [Paretoprinzip](https://de.wikipedia.org/wiki/Paretoprinzip) -- 80% der Erge
 
 Wenn wir von Datensätzen sprechen, denken wir zumeist direkt an tabellarische Daten. In den kommenden Kapiteln werden wir auch zunächst lediglich mit tabellarischen Daten arbeiten. Daten können und werden aber auch in anderen Datenformaten repräsentiert, zum Beispiel als verschachtelte und hierarchisch strukturierte Daten (dieses Datenformat wird uns u.a. bei der Arbeit mit APIs begegnen) oder als unstrukturierte Textdokumente -- dazu an gegegeber Stelle mehr.
 
-### Tidy data
+### Tidy data {#tidydata}
 
 Dieselben Daten können in Tabellen unterschiedlich repräsentiert werden. Schauen wir uns dazu einen Datensatz an -- was könnten hier Probleme sein?
 

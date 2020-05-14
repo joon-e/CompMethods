@@ -550,7 +550,7 @@ Erstellen Sie für die folgenden Übungsaufgaben eine eigene Skriptdatei und spe
 
 ---
 
-```{exercise, label="ue2-1"}
+```{exercise, label="ue2a1"}
 Objekttypen und Datenstrukturen I:
 ```
 Erstellen Sie ein Objekt `myself`, das folgende Elemente enthält:
@@ -563,7 +563,7 @@ Welche Datenstruktur ist hierfür am sinnvollsten? Welche Objekttypen haben die 
 
 ---
 
-```{exercise, label="ue2-2"}
+```{exercise, label="ue2a2"}
 Vektorfunktionen, Objekttypen und -umwandlung:
 ```
 Führen Sie folgenden Code aus:
@@ -579,7 +579,7 @@ Beschreiben Sie in eigenen Worten, was hier in jeder Zeile passiert. Was bedeute
 
 ---
 
-```{exercise, label="ue2-3"}
+```{exercise, label="ue2a3"}
 Arbeiten mit Dataframes:
 ```
 Im Beispiel-Datensatz `mtcars` sind einige Daten zu verschiedenen KfZ-Modellen hinterlegt. Beantworten Sie die folgenden Fragen zum Datensatz mittels Funktionen:

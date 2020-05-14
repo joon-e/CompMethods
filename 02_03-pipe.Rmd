@@ -153,8 +153,8 @@ Erstellen Sie für die folgende Übungsaufgabe eine eigene Skriptdatei oder eine
 
 ---
 
-```{exercise, label="ue9-1"}
+```{exercise, label="ue9a1"}
 Pipes:
 ```
 
-Lösen Sie die Übungsaufgaben \@ref(exr:ue8-2) und \@ref(exr:ue8-3) erneut, aber verwenden Sie Pipes, um den Code lesbarer und mit weniger redundanten Zwischenobjekten zu gestalten. An welchen Stellen ist es sinnvoll bzw. weniger sinnvoll, Pipes zu verwenden?
+Lösen Sie die Übungsaufgaben \@ref(exr:ue8a2) und \@ref(exr:ue8a3) erneut, aber verwenden Sie Pipes, um den Code lesbarer und mit weniger redundanten Zwischenobjekten zu gestalten. An welchen Stellen ist es sinnvoll bzw. weniger sinnvoll, Pipes zu verwenden?
