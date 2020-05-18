@@ -36,7 +36,7 @@ auflagen1 %>%
   pivot_longer(-medium, names_to = "jahr", names_prefix = "auflage_", names_ptypes = list(jahr = integer()), values_to = "auflage")
 ```
 
-Hierbei handelt es sich _Long_ Data: alle Beobachtungen desselben Wertetyps, also z. B. die Auflagenzahlen, stehen in einer Spalte, die weiteren Spalten dienen zur Identifikation dieser Beobachtungen, hier also, für welches Jahr und für welches Medium diese gelten. Unsere Fallebene wäre also *Medium und Jahr*: jeweils eine Zeile pro Medium und Jahr.
+Hierbei handelt es sich um _Long_ Data: alle Beobachtungen desselben Wertetyps, also z. B. die Auflagenzahlen, stehen in einer Spalte, die weiteren Spalten dienen zur Identifikation dieser Beobachtungen, hier also, für welches Jahr und für welches Medium diese gelten. Unsere Fallebene wäre also *Medium und Jahr*: jeweils eine Zeile pro Medium und Jahr.
 
 Wide Data ist häufig intuitiver zu lesen, insbesondere wenn es sich um bivariate Verteilungen handelt, da die Darstellung einer Kreuztabelle gleicht. Tatsächlich würden wir diese erste tabellarische Darstellung aber nicht als _tidy_ bezeichnen, da derselbe Werte- bzw. Beobachtungstyp in unterschiedlichen Spalten steht.
 
@@ -75,10 +75,10 @@ auflagen_wide %>%
   pivot_longer(starts_with("auflage"), names_to = "jahr", values_to = "auflage", names_prefix = "auflage_")
 ```
 
-Schon fast perfekt! Das einzige Schönheitsfehler ist, dass die Variable `jahr` nun vom Typ `character` ist -- `pivot_longer()` weist diesen Typ allen Informationen zu, die aus den ursprünglichen Spaltennamen stammen. Sinnvoller wäre ein numerischer Objekttyp. Hier können wir dem Argument `names_ptypes` eine Liste übergeben, die für alle aus den ursprünglichen Spaltennamen generierten Variablen jeweils den gewünschten Objekttyp angibt:
+Schon fast perfekt! Das einzige Schönheitsfehler ist, dass die Variable `jahr` nun vom Typ `character` ist -- `pivot_longer()` weist diesen Typ allen Informationen zu, die aus den ursprünglichen Spaltennamen stammen. Sinnvoller wäre ein numerischer Objekttyp. Hier können wir dem Argument `names_ptypes` eine Liste übergeben (auch wenn dies nur eine Variable betrifft), die für alle aus den ursprünglichen Spaltennamen generierten Variablen jeweils den gewünschten Objekttyp angibt:
 
 ```{r}
-# Da nun alles passt, weiesen wir unseren neuen Long-Datensatz auch einem Objekt zu
+# Da nun alles passt, weisen wir unseren neuen Long-Datensatz auch einem Objekt zu
 auflagen_long <- auflagen_wide %>% 
   pivot_longer(starts_with("auflage"), names_to = "jahr", values_to = "auflage", 
                names_prefix = "auflage_", names_ptypes = list(jahr = integer()))
@@ -134,7 +134,7 @@ auflagen_long %>%
   pivot_wider(names_from = jahr, values_from = auflage)
 ```
 
-Da Spaltennamen, die nicht mit Buchstaben beginnen, suboptimal sind und wir nun nicht mehr direkt sehen können, dass es sich um Auflagen-Daten handelt, können und sollten wir mittels `names_prefix` auch wieder die ursprünglichen Spaltennamen herstellen:
+Da Spaltennamen, die nicht mit Buchstaben beginnen, suboptimal sind und wir nun nicht mehr direkt sehen können, dass es sich um Auflagen-Daten handelt, können und sollten wir mittels `names_prefix` auch wieder die ursprünglichen Spaltennamen herstellen^[Im Gegensatz zu `pivot_longer` entfernt `names_prefix` bei `pivot_wider` das Prefix nicht, sondern fügt dieses hinzu.]:
 
 ```{r}
 auflagen_long %>% 
@@ -192,7 +192,7 @@ In größeren Forschungsprojekten haben wir oftmals nicht nur einen Datensatz, s
 
 ### Teildatensätze zusammenfügen mit `bind_rows()` und `bind_cols()`
 
-Beginnen wir mit einfachsten Fall, dem Zusammenfügen von gleichförmigen Datensätzen: wir wollen einem bestehenden Datensatz also entweder neue Zeilen (= neue Fälle) oder neue Spalten (=neue Variablen hinzufügen). Hier für bietet das Tidyverse die Funktionen `bind_rows()` und `bind_cols()`. Bei beiden werden als Argumente einfach die zu verbindenden Datensätze angegeben.
+Beginnen wir mit dem einfachsten Fall, dem Zusammenfügen von gleichförmigen Datensätzen: wir wollen einem bestehenden Datensatz also entweder neue Zeilen (= neue Fälle) oder neue Spalten (=neue Variablen hinzufügen). Hierfür bietet das Tidyverse die Funktionen `bind_rows()` und `bind_cols()`. Bei beiden werden als Argumente einfach die zu verbindenden Datensätze angegeben.
 
 Nehmen wir einmal an, wir hätten die Auflagendaten aus den vorherigen Beispielen getrennt für die Nachrichtenmedien erhoben:
 
@@ -292,14 +292,17 @@ Nehmen wir an, dass wir ein Forschungsprojekt zu politischen Wochenmagazinen dur
 
 Der Datensatz `auflagen` enthält die uns bereits bekannten Auflagenzahlen auf Ebene Medium pro Quartal und Jahr:
 
-```{r, echo=FALSE}
+```{r}
+# Falls Sie direkt mitarbeiten möchten: 
+# Kopieren Sie bei den folgenden drei Code-Blöcken den Code
+# um die Beispieldatensätze zu erstellen
 auflagen <- auflagen_long2
 auflagen
 ```
 
 Der Datensatz `info` enthält allgemeine Informationen zu den Magazinen auf Mediums-Ebene:
 
-```{r, echo=FALSE}
+```{r}
 info <- tibble(
   medium = c("Der Spiegel", "Stern", "Focus"),
   sitz = c("Hamburg", "Hamburg", "Berlin"),
@@ -312,7 +315,7 @@ info
 
 Der Datensatz `artikel` schließlich enthält alle für das Forschungsprojekt relevanten Artikel auf Artikel-Ebene:
 
-```{r, echo=FALSE}
+```{r}
 artikel <- tibble(
   titel = c("Ein spannender Artikel", "Noch ein Artikel", "Und noch ein Artikel", "Und noch einer"),
   autor_innen = c("Max Mustermann", "Erika Musterfrau", "John Doe; Jane Doe", "Mario Rossi"),
@@ -406,7 +409,7 @@ artikel %>%
   left_join(info, by = "medium")
 ```
 
-Zu beachten ist, dass `left_join()` auch Ergebnisse liefert, wenn die Schlüsselvariablen in `y` nicht eindeutig ist. Dies ist der Fall, wenn wir beide Datensätze im obigen Beispiel vertauschen. Zur Erinnerung, `medium` im `artikel`-Datensatz enthält Mehrfachwerte:
+Zu beachten ist, dass `left_join()` auch Ergebnisse liefert, wenn die Schlüsselvariablen in `y` nicht eindeutig ist bzw. sind. Dies ist der Fall, wenn wir beide Datensätze im obigen Beispiel vertauschen. Zur Erinnerung, `medium` im `artikel`-Datensatz enthält Mehrfachwerte:
 
 ```{r}
 artikel

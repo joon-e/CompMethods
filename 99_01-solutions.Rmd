@@ -248,6 +248,10 @@ facebook_europawahl <- read_csv("facebook_europawahl.csv")
 
 Liegt der Datensatz in einem Unterordner, muss der Dateipfad entsprechend als Argument angepasst werden, z. b. `"data/facebook_europawahl.csv"`.
 
+```{r, echo=FALSE}
+facebook_europawahl <- read_csv("data/facebook_europawahl.csv")
+```
+
 ---
 
 __Lösung zur Übungsaufgabe \@ref(exr:ue8a2)__:
@@ -298,7 +302,7 @@ Dies führt augenscheinlich zunächst zum gleichen Ergebnis, hat aber ein Proble
 
 ```{r, results="hold"}
 # Fehlende Werte zählen:
-sum(is.na(df_ungrouped$total_count))
+sum(is.na(df_mit_tc$total_count))
 sum(is.na(df_mit_total2$total_count))
 
 ```
@@ -308,8 +312,8 @@ Wählen wir diese `+`-Variante, haben wir also 5 fehlende Werte in unserem `tota
 Nun können wir den Datensatz abspeichern:
 
 ```{r, eval=FALSE}
-write_csv(df_ungrouped, "data/df_reduziert.csv")
-saveRDS(df_ungrouped, "data/df_reduziert.rds")
+write_csv(df_mit_tc, "data/df_reduziert.csv")
+saveRDS(df_mit_tc, "data/df_reduziert.rds")
 ```
 
 ---
