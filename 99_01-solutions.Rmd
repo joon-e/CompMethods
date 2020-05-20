@@ -1,5 +1,10 @@
 # Lösungen der Übungsaufgaben {#loesungen}
 
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+```
+
+
 ## Kapitel 2: Objekte und Datenstrukturen {-}
 
 __Lösung zur Übungsaufgabe \@ref(exr:ue2a1)__: 
@@ -384,3 +389,46 @@ facebook_europawahl %>%
             SD_reactions = sd(reactions_count, na.rm = TRUE))
 ```
 
+## Kapitel 10: Daten umstrukturieren und zusammenfügen {-}
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue10a1)__:
+
+Da wir den Datensatz vom Wide- ins Long-Format transformieren, benötigen wir die Funktion `pivot_longer()`:
+
+```{r, message=FALSE}
+facebook_europawahl <- read_csv("data/facebook_europawahl.csv")
+
+facebook_europawahl %>% 
+  select(id, party, timestamp, comments_count, shares_count, reactions_count) %>% 
+  pivot_longer(c(comments_count, shares_count, reactions_count), names_to = "metric")
+```
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue10a2)__:
+
+Wir laden zunächst den zusätzlichen Datensatz:
+
+```{r, message=FALSE}
+facebook_codings <- read_csv("data/facebook_codings.csv")
+
+facebook_codings
+```
+
+Wie wir sehen, ist die `id`-Variable anders sortiert als im Datensatz `facebook_europawahl`. Wollen wir die Datensätze mittels `bind_cols()` zusammenfügen, müssten wir `facebook_codings` vorab mittels `arrange()` entsprechend `facebook_europawahl` sortieren.
+
+Sicherer und genauso simpel ist allerdings `left_join()`:
+
+```{r}
+joined_df <- facebook_europawahl %>% 
+  left_join(facebook_codings, by = "id")
+
+joined_df
+```
+
+Wir sehen, dass der neue Datensätze weiterhin 902 Zeilen hat, aber nun alle 38 Variablen aus beiden Datensätzen umfasst. Zur Sicherheit sollten wir überprüfen, ob doppelte Werte in der `id`-Variablen vorkommen, um auszuschließen, dass Fälle bei der Join-Operation verdoppelt wurden. Dafür können wir die `distinct()`-Funktion nutzen, die nur einzigartige Werte der angegebenen Variablen ausgibt:
+
+```{r}
+joined_df %>% 
+  distinct(id)
+```
+
+902 einzigartige Werte in `id` -- es wurden also keine Fälle verdoppelt oder sind weggefallen.

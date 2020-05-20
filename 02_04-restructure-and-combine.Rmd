@@ -42,7 +42,7 @@ Wide Data ist häufig intuitiver zu lesen, insbesondere wenn es sich um bivariat
 
 Viele Funktionen in R sind jedoch auf Long Data ausgelegt. Häufig müssen wir daher Wide Data in Long Data transformieren:
 
-### Wide Data in Long Data transformieren mit `pivot_longer()`
+### Wide Data in Long Data transformieren mit `pivot_longer()` {#pivotlonger}
 
 Mittels `pivot_longer()` können wir Wide Data in Long Data umwandeln. Als erstes Argument nutzen wir hierbei wie immer den Datensatz, den wir transformieren möchten, gefolgt von einem Vektor, der alle Spalten umfasst, die "länger" gemacht werden sollen.
 
