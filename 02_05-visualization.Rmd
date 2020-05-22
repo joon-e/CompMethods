@@ -10,7 +10,7 @@ Im Tidyverse übernimmt das Package `ggplot2` sämtliche Schritte der Datenvisua
 
 Auch wenn uns in den Medien häufig Datenvisualisierungen begegnen und wir im Studium auch schon selbst Datenvisualisierungen erstellt haben, lohnt es sich, die Entscheidungen, die hinter einer solchen Visualisierung stehen, zu verdeutlichen. Wir können solche Entscheidungen auf drei wesentliche Elemente einschränken:
 
-- _Endodings_ (bzw. _Aesthetics_): Welche Daten bzw. welche Variablen sollen in welche visuellen Elemente (z. B. X-Achse, Y-Achse, Farben) übertragen werden?
+- _Encodings_ (bzw. _Aesthetics_): Welche Daten bzw. welche Variablen sollen in welche visuellen Elemente (z. B. X-Achse, Y-Achse, Farben) übertragen werden?
 - _Geometrics_: Wie sollen diese visuellen Elemente in dem (zumeist) zweidimensionalen Raum, den uns eine grafische Darstellung zur Verfügung stellt, dargestellt werden (z. B. als Punkte, Linien, Balken)?
 - _Scales_: Auf welchen Skalen sollen die betreffenden Skalen abgebildet werden?
 
@@ -18,7 +18,7 @@ Nehmen wir als aktuelles Beispiel Ergebnisse aus dem _ARD Deutschlandtrend_:
 
 ![Quelle: Screenshot Das Erste tagesthemen, 22:30 Uhr, 07.05.2020](img/11/deutschlandtrend1.png)
 
-Wir können diese Grafik intuitiv vermutlich schnell erfassen und "lesen", ohne uns groß über diese Entscheidungen gedanken zu machen. Versuchen wir dennoch, diese Visualisierung und die dahinterstehenden Daten zu entschlüsseln:
+Wir können diese Grafik intuitiv vermutlich schnell erfassen und "lesen", ohne uns groß über diese Entscheidungen Gedanken zu machen. Versuchen wir dennoch, diese Visualisierung und die dahinterstehenden Daten zu entschlüsseln:
 
 - Die Grafik basiert auf zwei Variablen: eine Zeitvariable (in Monaten) sowie eine numerische Variable, in der die prozentuale Zustimmung zur Aussage "Die wirtschaftliche Lage in Deutschland ist gut" festgehalten ist. Diese beiden Variablen sind in verschiedenen visuellen Elementen _kodiert_ (&rarr; *Encodings*): die Zeit ist auf der X-Achse abgetragen, die Zustimmung auf der Y-Achse.
 - Die in diesen visuellen Elementen kodierten Werte werden nun durch geometrische Formen (&rarr; *Geometrics*) dargestellt: die einzelnen Wert-Kombinationen aus beiden Variablen (z. B. Mai 2017 / 81 Prozent) sind als Punkte im Koordinatensystem abgetragen und werden zusätzlich durch Linien verbunden.
@@ -32,7 +32,7 @@ Ziehen wir noch eine zweite Visualisierung aus derselben _tagesthemen_-Ausgabe h
 
 - in dieser Grafik sind erneut zwei Variablen kodiert: die kategoriale Variable Partei und die numerische Variable Wahlabsicht.^[Man könnte argumentieren, dass als dritte Variable zusätzlich noch die Veränderung der Wahlabsicht im Vergleich zum Vormonat ersichtlich ist; diese ist aber lediglich als (zusätzliche) Wertbeschriftung abgetragen, nicht jedoch im eigentlichen Diagrammbereich visuell kodiert.] Partei ist dabei gleich _doppelt_ visuell kodiert: zum einen auf der X-Achse, zum anderen auch farblich -- eine solche doppelte Kodierung erfolgt aus Gründen der Ästhetik und Lesbarkeit, fügt der Visualisierung aber keine weiteren Informationen hinzu^[Wir können das leicht überprüfen, indem wir uns die Grafik jeweils ohne die andere Kodierung feststellen: auch wenn alle Balken gleichfarbig wären, könnten wir ohne Probleme dieselben Schlüsse aus der Grafik ziehen; würde die Kodierung "X-Achse" wegfallen, wären die Parteien also nicht nebeneinander auf der Achse abgetragen, sondern in einem Balken übereinandergestapelt, würden wir die einzelnen Balkenabschnitte durch die Farben auseinanderhalten können.]. Wichtig ist, dass wir eine Variable zwar mehrfach kodieren, niemals aber dieselbe visuelle Kodierung für mehrere Variablen verwenden können. Die aktuelle Wahlabsicht ist auf der Y-Achse abgetragen.
 - als geometrische Form der Datenrepräsentation wurden Balken (bzw. Säulen) gewählt, deren Form und Aussehen entsprechend der visuellen Kodierungen durch Wahlabsicht (Höhe der Balken) und Partei (Farbe der Balken, Position auf der X-Achse) bestimmt wird.
-- bei der Skalierung der X-Achse wurde eine Anordnung der kategorialen Ausprägungen -- d.h., der Parteien -- nach dem Ergebnis der Bundestagswahl 2017 (und nicht etwa alphabetisch, oder absteigend nach aktueller Wahlabsicht etc.) gewählt. Die Y-Achse reicht von 0 bis zum Maximalwert der Daten (in diesem Fall also 39 Prozent); und auch die Farbskalierung folgt einer bewussten Entscheidung -- nämlich, dass den kategorialen Ausprägungen der Partei-Variablen die zuegehörige Parteifarbe zugeordnet wurde.
+- bei der Skalierung der X-Achse wurde eine Anordnung der kategorialen Ausprägungen -- d.h., der Parteien -- nach dem Ergebnis der Bundestagswahl 2017 (und nicht etwa alphabetisch, oder absteigend nach aktueller Wahlabsicht etc.) gewählt. Die Y-Achse reicht von 0 bis zum Maximalwert der Daten (in diesem Fall also 39 Prozent); und auch die Farbskalierung folgt einer bewussten Entscheidung -- nämlich, dass den kategorialen Ausprägungen der Partei-Variablen die zugehörige Parteifarbe zugeordnet wurde.
 
 Diese drei Schritte -- _Encoding_, _Geometrics_, _Scales_ -- stellen also die wesentliche Entscheidungen der Datenvisualisierung dar. Schauen wir uns nun an, wir diese Schritte in R umsetzen können.
 
@@ -237,7 +237,7 @@ facebook_europawahl %>%
 
 Alle weiteren, rein ästhetischen Einstellungen werden durch `theme_`-Funktionen ergänzt. Hier bietet `ggplot2` schon [einige Vorlagen](https://ggplot2.tidyverse.org/reference/ggtheme.html), um schnell das aussehen des gesamten Plots zu verändern. 
 
-Um vom grauen Standardhintergrund der Plots wegzukommen, können wir beispielsweise das `theme_linedraw()` anwenden:
+Um vom grauen Standardhintergrund der Plots wegzukommen, können wir beispielsweise das `theme_bw()` anwenden:
 
 ```{r}
 facebook_europawahl %>% 
@@ -265,7 +265,7 @@ Wir sehen: in so eine Grafik fließen bisweilen sehr viel Code und viel Tüftele
 
 Ein Hauptproblem zu Beginn der Nutzung von `ggplot()` ist es, die Daten überhaupt in das richtige Format, das die Funktion erwartet zu bekommen: `ggplot()` erwartet _Long Data_ (siehe Kapitel \@ref(pivotlonger)), wohingegen unsere Datensätze oft zunächst auf _Wide Data_ ausgelegt sind.
 
-Möchten wir beispielsweise pro Partei die Verteilung der jeweiligen Facebook-Metriken plotten, haben wir ein Problem: die jeweiligen Werte sind in drei verschiedenen Variablen gespeichert (`comments_count`, `shares_count` und `reactions_count`); wir können in der Aesthetic `y`, auf der wir in der Regel abhängige numerische Werte abtragemn, nur eine dieser drei Variablen kodieren. 
+Möchten wir beispielsweise pro Partei die Verteilung der jeweiligen Facebook-Metriken plotten, haben wir ein Problem: die jeweiligen Werte sind in drei verschiedenen Variablen gespeichert (`comments_count`, `shares_count` und `reactions_count`); wir können in der Aesthetic `y`, auf der wir in der Regel abhängige numerische Werte abtragen, nur eine dieser drei Variablen kodieren. 
 
 Hier kommt die Long-Tranformation ins Spiel, wie wir sie auch in Übungsaufgabe \@ref(exr:ue10a1) vorgenommen haben -- der so transformierte Datensatz hat die Werte der jeweiligen Facebook-Metriken in nur einer Variable gespeichert und betrachtet dafür die Art der Facebook-Metrik als eigene Variable:
 
