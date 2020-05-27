@@ -432,3 +432,79 @@ joined_df %>%
 ```
 
 902 einzigartige Werte in `id` -- es wurden also keine Fälle verdoppelt oder sind weggefallen.
+
+## Kapitel 10: Daten visualisieren
+
+Für alle Aufgaben benötigen wir das Tidyverse und den Datensatz `facebook_europawahl.csv`. Zudem filtern wir in diesem nur die im Bundestag vertretenen Parteien an:
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+
+bt_parteien <- c("alternativefuerde", "B90DieGruenen", "CDU", "CSU", "FDP", "linkspartei", "SPD")
+
+facebook_europawahl <- read_csv("data/facebook_europawahl.csv") %>% 
+  filter(party %in% bt_parteien)
+```
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue11a1)__:
+
+Als _Aesthetics_ weisen wir die Kommentarzahl (`comments_count`) der `x`-Achse, die Anzahl an Shares (`shares_count`) der `y`-Achse zu (oder andersum). Für Punktediagramme benötigen wie das _Geometric_ `geom_point()`:
+
+```{r}
+facebook_europawahl %>% 
+  ggplot(aes(x = comments_count, y = shares_count)) +
+  geom_point()
+```
+
+An der Warnmeldung sehen wir im Übrigen, dass 5 Posts nicht abgebildet werden -- hierbei handelt es sich um `NA`-Werte.
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue11a2)__:
+
+Eine Möglichkeit, sowohl Partei (`party`) als auch Typ des Posts (`type`) eine Aesthetic zuzuweisen -- z. B. `color` (Punkt- bzw. Linienfarbe) für die Partei, `shape` (Punktform) für die den Typ des Beitrags:
+
+```{r, warning=FALSE}
+facebook_europawahl %>% 
+  ggplot(aes(x = comments_count, y = shares_count, color = party, shape = type)) +
+  geom_point()
+```
+
+Eine andere Möglichkeit besteht darin, zusätzlich mit Facets zu arbeiten:
+
+```{r, warning=FALSE}
+facebook_europawahl %>% 
+  ggplot(aes(x = comments_count, y = shares_count, color = party)) +
+  geom_point() +
+  facet_wrap(~type)
+```
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue11a3)__:
+
+Einige Möglichkeiten zur Verbesserung und Verschönerung des Plots:
+
+- Verwendung eines _Themes_
+- Achsen-/Skalenbeschriftungen
+- Verwendung der tatsächlichen Parteifarben
+- Gleiche Skalierung von x- und y-Achse (da gleiche zugrundeliegende Einheit); der bisher noch unbekannte Befehl `coord_fixed()` sorgt dafür, dass Einheiten auf der x- und y-Achse gleich dargestellt werden:
+
+```{r, warning=FALSE}
+facebook_europawahl %>% 
+  ggplot(aes(x = comments_count, y = shares_count, color = party, shape = type)) +
+  geom_point() +
+  scale_y_continuous(name = "Anzahl der Shares", limits = c(0, 12000), breaks = seq(0, 12000, 2000)) +
+  scale_x_continuous(name = "Anzahl der Kommentare", limits = c(0, 12000), breaks = seq (0, 12000, 2000)) +
+  scale_color_manual(name = "Partei",
+                     values = c("CDU" = "#000000",
+                                "CSU" = "#6E6E6E",
+                                "SPD" = "#FE2E2E",
+                                "alternativefuerde" = "#81BEF7",
+                                "FDP" = "#FFFF00",
+                                "linkspartei" = "#DF01A5",
+                                "B90DieGruenen" = "#01DF01"),
+                     labels = c("alternativefuerde" = "AfD", 
+                                "linkspartei" = "Linke", 
+                                "B90DieGruenen" = "Grüne")) +
+  scale_shape_discrete(name = "Art des Beitrags") +
+  theme_bw() +
+  coord_fixed()
+```
+
