@@ -1,0 +1,420 @@
+# Arbeiten mit Textdaten
+
+Insbesondere wenn wir zu Medieninhalten forschen, sind wir häufig mit Textdaten konfrontiert. In diesem Kapitel wird daher ein Überblick über die wichtigsten Funktionen zur Arbeit mit `character`-Variablen gegeben sowie das Konzept der _regulären Ausdrücke_ eingeführt.
+
+Bevor damit beginnnen, nochmals eine kurze Wiederholung zu `character`-Objekten in R sowie ein neues Konzept.
+
+Zeichenketten (auch _Strings_ genannt) werden in R (ebenso wie in nahezu allen Programmiersprachen) durch Anführungszeichen definiert:
+
+```{r}
+string_objekt <- "Ich bin ein Text"
+string_vektor <- c("eins", "zwei", "drei")
+```
+
+Dabei ist es unerheblich, ob einfache oder doppelte Anführungszeichen verwendet werden:
+
+```{r}
+obst1 <- 'Apfel'
+obst2 <- "Banane"
+```
+
+Somit können auch Zeichenketten gespeichert werden, die (das jeweils andere) Anführungszeichen enthalten:
+
+```{r}
+zitat <- '"I love deadlines. I love the whooshing noise they make as they go by" - Douglas Adams'
+```
+
+Was machen wir, wenn beide Arten von Anführungszeichen in einem Textobjekt vorkommen sollen? In diesem Fall helfen uns Maskierungszeichen (*Escape Characters*) weiter, Zeichen, die einer Programmiersprache signalisieren, das nachfolgende Funktionszeichen als einfaches Zeichen ohne spezielle Funktion zu behandeln. In R (wie auch in den meisten anderen Sprachen) wird der Backslash `\` als Maskierungszeichen verwendet:
+
+```{r}
+maskierter_text <- "In diesem \"Text\" befinden sich weitere Anführungszeichen"
+```
+
+In der Konsolenausgabe zeigt R auch Maskierungszeichen an:
+
+```{r}
+maskierter_text
+```
+
+Möchten wir den _tatsächlichen_ Inhalt eines Textobjekts sehen, können wir die Funktion `writeLines()` verwenden:
+
+```{r}
+writeLines(maskierter_text)
+```
+
+Im Übrigen bedeutet dies auch, dass wir, wenn ein Backslash in einem String vorkommen soll, diesen durch einen vorangestellten Backslash maskieren müssen -- wir signalisieren R also durch das Maskierungszeichen `\`, dass der nachfolgende `\` _nicht_ als Maskierungszeichen behandelt werden soll:
+
+```{r}
+writeLines("\\")
+```
+
+## Einfache String-Operationen mit `stringr`
+
+Das Tidyverse enthält das Package `stringr`, das auf den Umgang mit Strings spezalisiert ist. Alle relevanten Funktionen beginnen mit dem Suffix `str_`.^[Viele der Funktionen aus `stringr` sind unter anderem Namen auch bereits in der Basisversion von R enthalten. Wir nutzen dennoch vorrangig die Funktionen aus `stringr`, da diese neben der einheitlichen Benennung auch eine einheitlichere Syntax aufweisen sowie viele kleine Detailkorrekturen und Hilfsfeatures beinhalten, die man in den Basis-Äquivalenten vermisst.]
+
+Wir laden daher zunächst wieder das Tidyverse-Package.
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+```
+
+Alle `str_`-Funktionen sind vektorisiert, werden also auf jedes Element eines (Text-)Vektors angwendet. Dadurch kann man sie auch gut auf Textvariablen in Datensätzen bzw. Tibbles anwenden, um etwa mit der `mutate()`-Funktion bestehende Variablen zu verändern oder neue Variablen zu erzeugen. Zur Demonstration der Funktionen wird aber der Einfachkeit halber mit einfachen Textvektoren gearbeitet. Das erste Argument der `str_`-Funktionen ist immer ein Textvektor.
+
+```{r}
+obst <- c("Apfel", "Mango", "Kumquat")
+```
+
+### Zeichenlänge bestimmen mit `str_length()`
+
+Mit `str_length()` zählen wir die Anzahl an Zeichen in einem String:^[Die R-Basis-Version dieser Funktion lautet `nchar()`.]
+
+```{r}
+str_length(obst)
+```
+
+### Strings zusammenfügen mit `str_c()` und `str_glue()`
+
+Mit `str_c()` lassen sich mehrere einzelne Strings zusammenfügen; dabei kann über das Argument `sep` eine Zeichenkette zum Trennen der Begriffe genutzt werden:^[In der Basis-Version: `paste()`]
+
+```{r}
+str_c("Guten", "Tag", sep = " ")
+```
+
+Wird ein Vektor mit mehr als einem Element übergeben, werden weitere Strings an jedes Vektorelement angehängt:
+
+```{r}
+str_c(obst, "Mus", sep = "-")
+```
+
+Soll stattdessen ein Vektor mit mehreren Strings in einen einzelnen String umgewandelt werden, muss über das Argument `collapse` eine Trennzeichenkette angegeben werden (wobei auch ein leerer String `""` übergeben werden kann):
+
+```{r}
+str_c(obst, collapse = ", ")
+```
+
+Für komplexere String-Verknüpfungen bietet sich die Funktion `str_glue()` an, mit der mittels geschweifter Klammern `{}` Objektnamen oder ganze R-Ausdrücke als Platzhalter definiert werden können:
+
+```{r}
+str_glue("{obst} hat {str_length(obst)} Buchstaben.")
+```
+
+### Teile von Strings auswählen mit `str_sub()`
+
+`str_sub()` (von Subset) kann genutzt werden, um einen Teil eines Strings auszuwählen, wobei die Start- und Endposition als zweites und drittes Argument übergeben werden:^[In der Basis-Version: `strsub()`.]
+
+```{r}
+# Die ersten zwei Buchstaben auswählen
+str_sub(obst, 1, 2)
+```
+
+Mit negativen Werten wird von hinten gezählt:
+
+```{r}
+# Die letzten beiden Buchstaben auswählen
+str_sub(obst, -2, -1)
+```
+
+Das kann natürlich auch kombiniert werden:
+
+```{r}
+# Entferne den Anfangsbuchstaben (wähle alle Zeichen vom zweiten bis zum letzten aus):
+str_sub(obst, 2, -1)
+```
+
+### Groß- und Kleinschreibung transformieren mit `str_to`-Funktionen
+
+`str_to_lower()` und `str_to_upper()` wandeln Strings komplett in Klein- bzw. Großbuchstaben um:^[In der Basis-Version: `tolower()` und `toupper`.]
+
+```{r}
+str_to_lower(obst)
+str_to_upper(obst)
+```
+
+Daneben gibt es noch `str_to_title()` (alle Anfangsbuchstaben groß) und `str_to_sentence()` (Anfangsbuchstaben des ersten Wortes groß, alles andere klein):
+
+```{r}
+str_to_title("in the beginning the Universe was created. this has made a lot of people very angry and been widely regarded as a bad move.")
+```
+
+### Überschüssigen Whitespace entfernen mit `str_trim()` und `str_squish`
+
+`str_trim()` entfernt alle Leerzeichen am Anfang und am Ende eines Strings. `str_squish()` entfernt auch mehrfache Leerzeichen innerhalb eines Strings:
+
+```{r}
+str_trim("   ein unsauberer  String   ")
+str_squish("   ein unsauberer  String   ")
+```
+
+![Illustration von \@allison_horst: https://twitter.com/allison_horst](img/horst/str_squish.png)
+
+## Reguläre Ausdrücke
+
+Gerade bei unbereinigten Daten ist es oft das Ziel, bestimmte Muster in Strings zu erkennen (wird beispielsweise eine bestimmte Person in einem Text genannt?) und/oder zu extrahieren. Hier kommen _reguläre Ausdrücke_ (auf Englisch: _regular expressions_ oder auch kurz *RegEx*) ins Spiel -- Zeichenketten, die Muster in Zeichenketten formal beschreiben.
+
+Reguläre Ausdrücke sehen für Laien oft aus wie Kauderwelsch und benötigen etwas Einübungszeit. Mit den Hilfsfunktionen `str_view()` (erste Übereinstimmung) und `str_view_all()` (alle Übereinstimmungen) können wir uns schnell anzeigen lassen, ob ein *RegEx*-Muster in einem String vorkommt oder nicht.
+
+### Exakte Übereinstimmungen
+
+Im einfachsten Fall suchen wir nach einer exakten Zeichenkette -- etwa um festzustellen, ob der Name `Trump` in aktuellen Schlagzeilen zur USA auftaucht:
+
+```{r}
+schlagzeilen <- c(
+  "Was hinter Trumps Obama-Obsession steckt",
+  "Trump droht US-Staaten mit Finanzstopp",
+  "USA verbieten Einreisen aus Brasilien"
+)
+
+str_view(schlagzeilen, "Trump")
+```
+
+### Anker
+
+Mit den Sonderzeichen `^` und `$` definieren wir, dass die zu suchende Zeichenkette sich am Anfang (`^`) bzw. am Ende (`$`) des Strings befindet. Um etwa nur Schlagzeilen zu finden, die mit `"Trump"` beginnen, suchen wir nach dem Muster `"^Trump"`:
+
+```{r}
+str_view(schlagzeilen, "^Trump")
+```
+
+Analog findet `n$` nur in der letzten Schlagzeile eine Übereinstimmung, da nur diese auf `"n"` endet:
+
+```{r}
+str_view(schlagzeilen, "n$")
+```
+
+Wie können wir dann nach dem Vorkommen eines Dollarsymbols suchen? Hier müssen wir -- wie auch bei allen folgenden Regex-Sonderzeichen -- wieder auf das Maskierungszeichen `\` zurückgreifen. Allerdings ist der Backslash `\` in R ja bereits als Maskierungszeichen für Strings im Allgemeinen -- und nicht als Maskierungszeichen für RegEx -- definiert. Wir müssen den `\` daher mit einem weiteren `\` maskieren, damit R die RegEx-Zeichenfolge `\$` erkennt (ja, das ist Anfangs sehr verwirrend): 
+
+```{r}
+str_view("A$AP ROCKY", "\\$")
+```
+
+### Mehrere Suchbegriffe
+
+Mit dem uns schon bekannten `ODER`-Symbol `|` können wir nach dem Vorkommen mehrerer Zeichenketten suchen:
+
+```{r}
+str_view(schlagzeilen, "Trump|USA|Vereinige Staaten")
+```
+
+### Quantifier
+
+Sogenannte Quantifier können dazu genutzt werden, um festzulegen, wie oft das zuvor angebene Muster in dem String vorkommen muss:
+
+- `*`: 0-mal oder öfter (sinnvoll, um optionale Bestandteile zu definieren)
+- `+`: 1-mal oder öfter
+_ `{n}`: Exakt `n`-mal
+- `{n,}`: Mindestens `n`-mal
+- `{n,m}`: Mindestens `n`-mal, maximal `m`-mal
+
+```{r}
+pflanzen <- c("Maulbeere", "Brennnessel")
+str_view(pflanzen, "e+")
+```
+
+```{r}
+str_view(pflanzen, "n{2}")
+```
+
+```{r}
+str_view(pflanzen, "n{1,3}")
+```
+
+_Quantifier_ beziehen sich standardmäßig auf ein einzelnes, vorangestelltes Zeichen. Soll eine längere Zeichenkette mit einem Quantifier versehen werden, kann diese in runde Klammern `()` gestellt werden:
+
+```{r}
+str_view(c("ein leckeres bonbon", "ein langer kassenbon"), "(bon){2}")
+```
+
+### Spezielle Zeichentypen
+
+Um bestimmte Zeichentypen zu _matchen_, stehen u. a. folgende Zeichen(folgen) zur Verfügung:
+
+- `.`: Alle Zeichen
+- `\d`: Alle Ziffern
+- `\w`: Alle alphanumerischen Zeichen (Klein- und Großbuchstaben, Ziffern, Unterstrich)
+- `\s`: Whitespace (Leerzeichen, Umbrüche)
+
+(Bei den drei letztgenannten muss in R der Backslash maskiert werden, also z. B. `"\\d"`).
+
+```{r}
+str_view(c("Schneewittchen und die 7 Zwerge",
+           "3 Haselnüsse für Aschenbrödel"),
+         "\\d")
+```
+
+Zudem können zu matchende Zeichentypen durch eckige Klammern selbst definiert werden -- `[abc]` beispielsweise matcht ein `a`, `b` oder `c`.
+
+```{r}
+str_view(c("abc", "cde", "xyz"),
+         "[abc]")
+```
+
+### RegEx-Zeichen kombinieren
+
+Natürlich können wir all diese Zeichen kombinieren, um komplexere Muster zu matchen. Mit dem Muster `"[\\w-]+\\s+\\d+[a-z]*"` erfassen wir beispielsweise typische deutsche Straßennamen mitsamt Hausnummern, die in Regel nach dem Muster "Straßenname Hausnummer" aufgebaut sind -- das sieht auf den ersten Blick sehr undurchsichtig aus, lässt sich aber wie folgt aufschlüsseln:
+
+- `\w` sucht nach allen alphanumerischen Zeichen; für R müssen wir den Backslash maskieren, schreiben also `\\w`.
+- Der Bindestrich `-` ist in diesen Zeichen nicht enthalten, wir fügen diesen also noch manuell hinzu und umschließen beides in eckigen Klammern `[]`. `[\\w-]` sucht also nach allen alphanumerischen Zeichen und dem Bindestrich `-`.
+- Wir geben nun an, dass wir diese Zeichen mindestens einmal vorfinden möchten, daher schließt an dieses Suchmuster das `+` an. Damit dürften wir so ziemlich alle deutschen Straßennamen abdecken.
+- Typischerweise folgt auf den Straßennamen ein Leerzeichen und dann die Hausnummer. Leerzeichen und andere Whitespace-Zeichen matchen wir mit `\s`, wobei auch hier ein weiterer `\` zum Maskieren benötigt wird. Damit wir auch Fälle erfassen, in denen (aus Versehen) zwei oder mehr Leerzeichen zwischen Straßenname und Hausnummer stehen, schließen wir erneut den Quantifier `+` an -- wir suchen also nach mindestens einem Leerzeichen.
+- Die Hausnummer besteht in der Regel aus einer oder mehrerer Ziffen; dies matchen wir mittels `\\d+`.
+- Manche Hausnummern haben zusätzlich noch einen Kleinbuchstaben, um unterschiedliche Gebäudeeinheiten zu unterscheiden. Mittels `[a-z]` legen wir fest, dass alle Kleinbuchstaben von `a` bis `z` gesucht werden sollen. Dieses Muster ist jedoch optional, da nicht alle Hausnummern darauf enden. Wir fügen also hier ein `*` an, das die vorangestellte Zeichenfolge _0-mal_ oder öfter matcht.
+
+```{r}
+adressen <- c(
+  "Oettingenstraße 67",
+  "Geschwister-Scholl-Platz  1",
+  "Schellingstraße 3a"
+)
+
+str_view(adressen, "[\\w-]+\\s+\\d+[a-z]*")
+```
+
+Ja, das sieht auf den ersten Blick aus wie Kauderwelsch und ist zu Beginn nicht sonderlich intuitiv; man gewöhnt sich aber daran. Und: für viele Anwendungsfälle (z. B. URLs oder Twitter-IDs aus einem Text extrahieren) findet man online schnell passende RegEx-Phrasen, die dann nur noch auf R angepasst (Maskierungszeichen!) und validiert werden müssen.
+
+## RegEx und `stringr`
+
+Schauen wir uns nach diesem eher abstrakten Überblick einige praktische Anwendungsbeispiele an, die Funktionen auf dem `stringr`-Package verwenden. 
+
+### Muster finden mit `str_detect()`
+
+`str_detect()` prüft für einen Textvektor, ob das angegebene Muster darin vorkommt, und gibt dies als logischen Vektor zurück:
+
+```{r}
+schlagzeilen <- c(
+  "Nach Feier: 140 Personen in Corona-Quarantäne",
+  "Wo die Auflagen gelockert werden",
+  "Corona-Lockerungen: Das ist seit Montag anders"
+)
+
+str_detect(schlagzeilen, "Corona")
+```
+
+Das kann z. B. auch dazu genutzt werden, schnell einen Datensatz zu filtern. Nehmen wir beispielsweise den Beispiel-Datensatz `starwars`, der zum Tidyverse-Package gehört und entsprechend mit `starwars` aufgerufen werden kann.
+
+```{r}
+starwars
+```
+
+Um schnell die Star-Wars-Figuren auszuwählen, deren Name eine Ziffer beinhaltet (C-3PO, R2D2 usw.), können wir `filter()` und `str_detect()` kombinieren:
+
+```{r}
+starwars %>% 
+  filter(str_detect(name, "\\d"))
+```
+
+### Muster zählen mit `str_count()`
+
+`str_count()` funktioniert analog zu `str_detect()`, nur dass kein logischer Vektor, sondern ein numerischer Vektor zurückgegeben wird, in dem gezählt wird, wie häufig das gesuchte Muster in den jeweiligen Strings vorkommt:
+
+```{r}
+str_count(c("Apfel", "Banane", "Mango"),
+           "n")
+```
+
+### Muster extrahieren mit `str_extract()`
+
+Neben dem Prüfen, ob ein bestimmtes Muster vorhanden ist, zählt das Extrahieren dieser Muster zu den häufigsten Anwendungsfällen. Das ist die Aufgabe der Funktion `str_extract()`:^[`str_extract()` extrahiert dabei immer die erste Übereinstimmung. Sollen alle Übereinstimmungen mit dem Muster aus einem String extrahier werden, kann die Funktion `str_extract_all()` verwendet werden, deren Ausgabe aber entsprechend etwas unhandlicher ist.]
+
+```{r}
+str_extract(c("Herr Müller", "Frau Meier"), "Herr|Frau")
+```
+
+Für ein etwas komplexeres Beispiel nehmen wir einmal an, wir finden folgenden Datensatz vor:
+
+```{r}
+test_ergebnis <- tibble(kandidat = c("A", "B", "C", "D", "E", "F"),
+                        punkte = c("1", "2", "0.32", ".555", "-22", "33 Punkte"))
+test_ergebnis
+```
+
+Für weitere Analysen wäre es natürlich deutlich angenehmer, wenn wir mit den Punktewerten auch rechnen könnten. Wir können diese mit einer RegEx extrahieren. Dafür müssen wir formalisieren, wie Punktezahlen in diesem Datensatz aufgebaut sein können:
+
+- zunächst steht ein optionales `-` für negative Werte; zur Erinnerung: mit einem Asterisk `*` legen wir fest, dass das vorangegange Zeichen mindestens 0-mal, d.h. optional vorkommen soll. Wir beginnen unsere RegEx-Zeichenfolge daher mit `"-*"`.
+- Dann folgt, ebenfalls optional, eine oder mehrere Ziffern. Wir benötigen also das (maskierte) Sonderzeichen `\\d` für Ziffern sowie erneut ein Asterisk `*`; unsere RegEx-Folge lautet nun `"-*\\d*`.
+- Nun folgt, erneut optional, ein Punkt `.` als Dezimaltrennzeichen. Da es sich bei dem Punkt um ein RegEx-Sonderzeichen handelt, müssen wir dieses doppelt maskieren^[Einmal, damit RegEx merkt, dass wir den Punkt nicht als RegEx-Sonderzeichen behandeln möchten, und einmal, damit R den Maskierungs-Backslash nicht als R-Maskierungszeichen erkennt.]: `\\.`. Auch dieser Punkt ist optional, wir hängen also erneut ein `*` an; unsere RegEx-Folge lautet nun `"-*\\d*\\.*`
+- Schließlich und zwingend kommt mindestens eine Ziffer in Zahlen vor. Wir benötigen also erneut das Sonderzeichen für Ziffern `\\d` und legen mit dem Sonderzeichen `+` fest, dass dieses mindestens einmal oder öfter vorkommen muss. Unsere finale RegEx-Folge lautet `"-*\\d*\\.*\\d+"`.
+
+Da `str_extract()` immer Text extrahiert, wandeln wir das Ergebnis noch in den Typ `numeric` um:
+
+```{r}
+test_ergebnis %>% 
+  mutate(punkte_numerisch = as.numeric(str_extract(punkte, "-*\\d*\\.*\\d+")))
+```
+
+### Muster ersetzen mit `str_replace` (bzw. `str_replace_all()`):
+
+Der dritte häufige Anwendungsfall ist, dass Muster ersetzt werden sollen. Dafür können `str_replace()` (ersetzt erste Übereinstimmung) und `str_replace_all'()` (ersetzt alle Übereinstimmungen) verwendet werden, wobei zunächst das zu ersetzende Muster, dann das _Replacement_ angegeben wird. Wurde beispielsweise das Dezimaltrennzeichen fälschlicherweise als Komma, nicht als Punkt eingelesen:
+
+```{r}
+str_replace_all(c("1,2", "2,3", "3,66"), ",", ".")
+```
+
+Bei mehreren Mustern und zugehörigen Replacements können wir einen benannten Vektor übergeben:
+
+```{r}
+str_replace_all(c("Hr Müller", "Fr Meier"),
+                c("Hr" = "Herr",
+                  "Fr" = "Frau"))
+```
+
+Eine praktische Übersicht über alle relevanten `stringr`-Funktionen sowie RegEx in R bietet dieses [Cheatsheat](https://github.com/rstudio/cheatsheets/raw/master/strings.pdf).
+
+## Übungsaufgaben
+
+Erstellen Sie für die folgenden Übungsaufgaben eine eigene Skriptdatei oder eine R-Markdown-Datei und speichern diese als `ue12_nachname.R` bzw. `ue12_nachname.Rmd` ab.
+
+---
+
+```{exercise, label="ue12a1"}
+Arbeiten mit Textdaten I:
+```
+
+Fügen Sie diesem Datensatz zu einem Experiment mittels `mutate()` eine neue Spalte hinzu, die lediglich die Gruppenkennung (`A`, `B` oder `C`) enthält:
+
+```{r}
+experiment <- tibble(experimentalgruppe = c("Gruppe A", "Gruppe B", "Gruppe A", "Gruppe C"))
+experiment
+```
+
+---
+
+```{exercise, label="ue12a2"}
+Arbeiten mit Textdaten II:
+```
+
+In der [Internet Movie Database](https://www.imdb.com/) verfügt jeder Film über eine eindeutige ID, die nach dem Schema `"tt[7 Ziffern]"` aufgebaut ist. Extrahieren Sie diese ID aus den folgenden URLS:
+
+```{r}
+imdb_urls <- c(
+  "https://www.imdb.com/title/tt6751668/?ref_=hm_fanfav_tt_4_pd_fp1",
+  "https://www.imdb.com/title/tt0260991/",
+  "www.imdb.com/title/tt7282468/reviews",
+  "https://m.imdb.com/title/tt4768776/"
+)
+```
+
+---
+
+```{exercise, label="ue3a3"}
+Arbeiten mit Textdaten III:
+```
+
+_Käpseles-Aufgabe_ (optional)
+
+`str_match` funktioniert ähnlich zu `str_extract()`, nur dass wir durch runde Klammern `()` Gruppen in einem RegEx-Muster definieren können, die dann getrennt extrahiert werden.
+
+Lesen Sie sich die Dokumentation zu `str_match()` durch und. Extrahieren Sie dann aus folgendem Vektor getrennt folgende Adressbestandteile:
+
+- Straßenname
+- Hausnummer
+- Postleitzahl
+- Stadt
+- Land
+
+```{r}
+adressen = c(
+    "Platz der Republik 1, D-11011 Berlin",
+    "Dr.-Karl-Renner-Ring 3, A-1017 Wien",
+    "Bundesplatz 3, CH-3005 Bern"
+  )
+```
