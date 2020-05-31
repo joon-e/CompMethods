@@ -433,7 +433,7 @@ joined_df %>%
 
 902 einzigartige Werte in `id` -- es wurden also keine Fälle verdoppelt oder sind weggefallen.
 
-## Kapitel 10: Daten visualisieren
+## Kapitel 10: Daten visualisieren {-}
 
 Für alle Aufgaben benötigen wir das Tidyverse und den Datensatz `facebook_europawahl.csv`. Zudem filtern wir in diesem nur die im Bundestag vertretenen Parteien an:
 
@@ -490,8 +490,8 @@ Einige Möglichkeiten zur Verbesserung und Verschönerung des Plots:
 facebook_europawahl %>% 
   ggplot(aes(x = comments_count, y = shares_count, color = party, shape = type)) +
   geom_point() +
-  scale_y_continuous(name = "Anzahl der Shares", limits = c(0, 12000), breaks = seq(0, 12000, 2000)) +
-  scale_x_continuous(name = "Anzahl der Kommentare", limits = c(0, 12000), breaks = seq (0, 12000, 2000)) +
+  scale_y_log10(name = "Anzahl der Shares", ) +
+  scale_x_log10(name = "Anzahl der Kommentare",) +
   scale_color_manual(name = "Partei",
                      values = c("CDU" = "#000000",
                                 "CSU" = "#6E6E6E",

@@ -2,7 +2,7 @@
 
 Insbesondere wenn wir zu Medieninhalten forschen, sind wir häufig mit Textdaten konfrontiert. In diesem Kapitel wird daher ein Überblick über die wichtigsten Funktionen zur Arbeit mit `character`-Variablen gegeben sowie das Konzept der _regulären Ausdrücke_ eingeführt.
 
-Bevor damit beginnnen, nochmals eine kurze Wiederholung zu `character`-Objekten in R sowie ein neues Konzept.
+Bevor wir damit beginnnen, nochmals eine kurze Wiederholung zu `character`-Objekten in R sowie ein neues Konzept.
 
 Zeichenketten (auch _Strings_ genannt) werden in R (ebenso wie in nahezu allen Programmiersprachen) durch Anführungszeichen definiert:
 
@@ -151,7 +151,7 @@ str_squish("   ein unsauberer  String   ")
 
 Gerade bei unbereinigten Daten ist es oft das Ziel, bestimmte Muster in Strings zu erkennen (wird beispielsweise eine bestimmte Person in einem Text genannt?) und/oder zu extrahieren. Hier kommen _reguläre Ausdrücke_ (auf Englisch: _regular expressions_ oder auch kurz *RegEx*) ins Spiel -- Zeichenketten, die Muster in Zeichenketten formal beschreiben.
 
-Reguläre Ausdrücke sehen für Laien oft aus wie Kauderwelsch und benötigen etwas Einübungszeit. Mit den Hilfsfunktionen `str_view()` (erste Übereinstimmung) und `str_view_all()` (alle Übereinstimmungen) können wir uns schnell anzeigen lassen, ob ein *RegEx*-Muster in einem String vorkommt oder nicht.
+Reguläre Ausdrücke sehen für Laien oft aus wie Kauderwelsch und benötigen etwas Einübungszeit. Mit den Hilfsfunktionen `str_view()` (erste Übereinstimmung in einem String) und `str_view_all()` (alle Übereinstimmungen in einem String) können wir uns schnell anzeigen lassen, ob ein *RegEx*-Muster in einem String vorkommt oder nicht.
 
 ### Exakte Übereinstimmungen
 
@@ -181,7 +181,7 @@ Analog findet `n$` nur in der letzten Schlagzeile eine Übereinstimmung, da nur 
 str_view(schlagzeilen, "n$")
 ```
 
-Wie können wir dann nach dem Vorkommen eines Dollarsymbols suchen? Hier müssen wir -- wie auch bei allen folgenden Regex-Sonderzeichen -- wieder auf das Maskierungszeichen `\` zurückgreifen. Allerdings ist der Backslash `\` in R ja bereits als Maskierungszeichen für Strings im Allgemeinen -- und nicht als Maskierungszeichen für RegEx -- definiert. Wir müssen den `\` daher mit einem weiteren `\` maskieren, damit R die RegEx-Zeichenfolge `\$` erkennt (ja, das ist Anfangs sehr verwirrend): 
+Wie können wir dann nach dem Vorkommen eines Dollarsymbols suchen? Hier müssen wir -- wie auch bei allen folgenden RegEx-Sonderzeichen -- wieder auf das Maskierungszeichen `\` zurückgreifen. Allerdings ist der Backslash `\` in R ja bereits als Maskierungszeichen für Strings im Allgemeinen -- und nicht als Maskierungszeichen für RegEx -- definiert. Wir müssen den `\` daher mit einem weiteren `\` maskieren, damit R die RegEx-Zeichenfolge `\$` erkennt (ja, das ist Anfangs sehr verwirrend): 
 
 ```{r}
 str_view("A$AP ROCKY", "\\$")
@@ -229,9 +229,9 @@ str_view(c("ein leckeres bonbon", "ein langer kassenbon"), "(bon){2}")
 Um bestimmte Zeichentypen zu _matchen_, stehen u. a. folgende Zeichen(folgen) zur Verfügung:
 
 - `.`: Alle Zeichen
-- `\d`: Alle Ziffern
-- `\w`: Alle alphanumerischen Zeichen (Klein- und Großbuchstaben, Ziffern, Unterstrich)
-- `\s`: Whitespace (Leerzeichen, Umbrüche)
+- `\d`: Alle Ziffern (und `\D` das Gegenteil, also _alles außer Ziffern_)
+- `\w`: Alle alphanumerischen Zeichen (Klein- und Großbuchstaben, Ziffern, Unterstrich; `\W` das Gegenteil)
+- `\s`: Whitespace (Leerzeichen, Umbrüche; `\S` das Gegenteil)
 
 (Bei den drei letztgenannten muss in R der Backslash maskiert werden, also z. B. `"\\d"`).
 
@@ -343,7 +343,7 @@ test_ergebnis %>%
 
 ### Muster ersetzen mit `str_replace` (bzw. `str_replace_all()`):
 
-Der dritte häufige Anwendungsfall ist, dass Muster ersetzt werden sollen. Dafür können `str_replace()` (ersetzt erste Übereinstimmung) und `str_replace_all'()` (ersetzt alle Übereinstimmungen) verwendet werden, wobei zunächst das zu ersetzende Muster, dann das _Replacement_ angegeben wird. Wurde beispielsweise das Dezimaltrennzeichen fälschlicherweise als Komma, nicht als Punkt eingelesen:
+Der dritte häufige Anwendungsfall ist, dass Muster ersetzt werden sollen. Dafür können `str_replace()` (ersetzt erste Übereinstimmung) und `str_replace_all()` (ersetzt alle Übereinstimmungen) verwendet werden, wobei zunächst das zu ersetzende Muster, dann das _Replacement_ angegeben wird. Wurde beispielsweise das Dezimaltrennzeichen fälschlicherweise als Komma, nicht als Punkt eingelesen:
 
 ```{r}
 str_replace_all(c("1,2", "2,3", "3,66"), ",", ".")
@@ -395,7 +395,7 @@ imdb_urls <- c(
 
 ---
 
-```{exercise, label="ue3a3"}
+```{exercise, label="ue12a3"}
 Arbeiten mit Textdaten III:
 ```
 
