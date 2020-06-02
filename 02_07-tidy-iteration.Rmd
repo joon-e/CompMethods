@@ -1,0 +1,79 @@
+# Iterationen im Tidyverse
+
+Zum Abschluss der Einführung in das Tidyverse setzen wir uns erneut mit Iterationen auseinander, die wir zuvor schon in Kapitel \@ref(iterations) kennengelernt haben.
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+Zunächst eine kurze Wiederholung: um Code mehrfach auszuführen, können wir `for`-Loops schreiben:
+
+```{r, eval=FALSE}
+for (element in vektor) {
+  # Body: Code, der ausgeführt wird
+}
+```
+
+Um z. B. die Zahlen von 1 bis 5 in die Konsole zu schreiben, iterieren wir über einen Vektor, der eben diese Zahlen enthält:
+
+```{r}
+for (i in 1:5) {
+  print(i)
+}
+```
+
+Das ist flexibel einsetzbar, hat aber den einen Nachteil, dass wir häufig über jedes Element eines Objekts iterieren möchten, wir dies aber explizit im Code angeben müssen. Nehmen wir beispielsweise den Beispiel-Datensatz `mtcars`, der lediglich numerische Variablen enthält:
+
+```{r}
+mtcars
+```
+
+Möchten wir nun den Mittelwert jeder Variablen berechnen, müssen wir in einem `for`-Loop explizit definieren, dass wir über jede Spalte des Vektors iterieren möchten. Eine Möglichkeit wäre die Funktion `seq_along()` zu nutzen, die einen Vektor mit den Spaltenindizes eines Datensatzes erstellt:
+
+```{r}
+mittelwerte <- c()
+
+for (i in seq_along(mtcars)) {
+  mittelwerte <- c(mittelwerte, mean(mtcars[[i]]))
+}
+
+mittelwerte
+```
+
+## Iterieren mit `map_`-Funktionen
+
+Hier kommen im Tidyverse die sogenannten `map_`-Funktionen ins Spiel. Diese wenden einen Funktion automatisch auf alle Elemente eines Objekts an -- bei einem Vektor auf Elemente dieses Vektors, bei einem Dataframe bzw. Tibble auf alle Spalten. Zudem wird mit dem Funktionsaufruf bereits das Ausgabe-Format definiert:
+
+- `map()`: Erzeugt eine Liste
+- `map_dbl()`: Erzeugt einen numerischen (`double`) Vektor
+- `map_chr()`: Erzeugt einen `character`-Vektor
+- `map_lgl()`: Erzeugt einen `logical`-Vektor
+- `map_dfr()`: Erzeugt einen Datensatz zeilenweise
+- `map_dfc()`: Erzeugt einen Datensatz spaltenweise
+
+Beim Aufruf werden immer zunächst das Objekt, über das iteriert werden soll, und dann die zu verwendende Funktion (ohne Klammern) genannt. Um etwa die Mittelwerte aller Variablen im Datensatz `mtcars` zu berechnen und in einem numerischen Vektor zu speichern, können wir den obigen `for`-Loop-Code abkürzen: 
+
+```{r}
+mittelwerte <- map_dbl(mtcars, mean)
+mittelwerte
+```
+
+Wenn wir als Ausgabeformat einen Datensatz haben wollen, rufen wir einfach die zugehörige `map_`-Funktion auf:
+
+```{r}
+map_dfr(mtcars, mean)
+```
+
+Weitere Funktionsargumente können nach dem zweiten Argument übergeben werden:
+
+```{r}
+map_dfr(mtcars, mean, na.rm = TRUE)
+```
+
+Und da immer zunächst das Objekt, über das iteriert werden soll, genannt wird, können wir `map_`-Funktionen auch einfach in Pipes integrieren:
+
+```{r}
+iris %>% 
+  select(-Species) %>% 
+  map_dfr(mean)
+```
