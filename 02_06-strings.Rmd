@@ -123,7 +123,7 @@ str_sub(obst, 2, -1)
 
 ### Groß- und Kleinschreibung transformieren mit `str_to`-Funktionen
 
-`str_to_lower()` und `str_to_upper()` wandeln Strings komplett in Klein- bzw. Großbuchstaben um:^[In der Basis-Version: `tolower()` und `toupper`.]
+`str_to_lower()` und `str_to_upper()` wandeln Strings komplett in Klein- bzw. Großbuchstaben um:^[In der Basis-Version: `tolower()` und `toupper()`.]
 
 ```{r}
 str_to_lower(obst)
