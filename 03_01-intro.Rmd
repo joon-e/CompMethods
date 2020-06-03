@@ -1,0 +1,13 @@
+# Einführung
+
+Die schiere Masse und stete Verfügbarkeit digitaler Kommunikationsdaten -- beispielsweise digitale Verhaltensspuren der Nutzer*innen von sozialen Medien oder umfassende Textarchive von Nachrichtenmedien -- machen das Web zu einer unerschöpflichen Datenquelle für die Sozialwissenschaft im Allgemeinen und die Kommunikationswissenschaft im Speziellen. Wir werden uns daher nun damit auseinandersetzen, wie wir Zugang zu diesen Daten erhalten und wie wir diese Daten abrufen können. Die beiden wichtigsten Zugangswege dafür sind:
+
+1. _Web Scraping_: Hier rufen wir Webseiten auf und extrahieren die für uns relevanten Daten. Dieser Zugangsweg eignet sich besonders für statische Webseiten wie z. b. Nachrichtenwebsites^[Natürlich sind auch die Inhalte auf diesen Webseiten veränderlich. Statisch meint hier, dass die Inhalte nicht für jede\*n Nutzer\*in eigens "erzeugt" werden.], stößt jedoch auf Probleme bei dynamischen Webinhalten.
+2. _(Web-)APIs_ (*A*pplication *P*rogramming *I*nterface): Hier nutzen wir Programmierschnittstellen, die für den standardisierten Austausch von Daten entwickelt wurden, also auf standardisierte Anfragen ebenso standardisiert Daten zurückgeben.
+
+Bevor wir diese Zugangswege in R ausprobieren, zunächst eine kurze Einführung in Terminologie und Funktionsweise _des Internets_.
+
+## HTTP und Anfragemethoden
+
+
+

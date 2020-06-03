@@ -40,8 +40,6 @@ for (i in seq_along(mtcars)) {
 mittelwerte
 ```
 
-## Iterieren mit `map_`-Funktionen
-
 Hier kommen im Tidyverse die sogenannten `map_`-Funktionen ins Spiel. Diese wenden einen Funktion automatisch auf alle Elemente eines Objekts an -- bei einem Vektor auf Elemente dieses Vektors, bei einem Dataframe bzw. Tibble auf alle Spalten. Zudem wird mit dem Funktionsaufruf bereits das Ausgabe-Format definiert:
 
 - `map()`: Erzeugt eine Liste
@@ -77,3 +75,5 @@ iris %>%
   select(-Species) %>% 
   map_dfr(mean)
 ```
+
+In den kommenden Kapiteln werden wir hierfür einige Anwendungsbeispiele kennenlernen.
