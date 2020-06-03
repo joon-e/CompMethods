@@ -433,7 +433,7 @@ joined_df %>%
 
 902 einzigartige Werte in `id` -- es wurden also keine Fälle verdoppelt oder sind weggefallen.
 
-## Kapitel 10: Daten visualisieren {-}
+## Kapitel 11: Daten visualisieren {-}
 
 Für alle Aufgaben benötigen wir das Tidyverse und den Datensatz `facebook_europawahl.csv`. Zudem filtern wir in diesem nur die im Bundestag vertretenen Parteien an:
 
@@ -507,4 +507,75 @@ facebook_europawahl %>%
   theme_bw() +
   coord_fixed()
 ```
+
+## Kapitel 12: Objekte und Datenstrukturen {-}
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue12a1)__: 
+
+```{r}
+experiment <- tibble(experimentalgruppe = c("Gruppe A", "Gruppe B", "Gruppe A", "Gruppe C"))
+```
+
+Ziel war es, lediglich die Gruppenkennung in einer neuen Spalte hinzuzufügen. Dafür gibt es viele verschiedene Möglichkeiten, z. B.:
+
+- `str_sub()`: Lediglich das letzte Zeichen als Substring auswählen
+
+```{r}
+experiment %>% 
+  mutate(gruppe_kurz = str_sub(experimentalgruppe, -1, -1))
+```
+
+- `str_replace()`: `"Gruppe "` durch einen leeren String `""` ersetzen:
+
+```{r}
+experiment %>% 
+  mutate(gruppe_kurz = str_replace(experimentalgruppe, "Gruppe ", ""))
+```
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue12a2)__:
+
+```{r}
+imdb_urls <- c(
+  "https://www.imdb.com/title/tt6751668/?ref_=hm_fanfav_tt_4_pd_fp1",
+  "https://www.imdb.com/title/tt0260991/",
+  "www.imdb.com/title/tt7282468/reviews",
+  "https://m.imdb.com/title/tt4768776/"
+)
+```
+
+Zur Extraktion der IDs bietet sich `str_extract()` an mit RegEx an. Mit dem RegEx-String `"tt\\d{7}"` matchen wir jegliche IMDb-ID, die immer dem Schema `"tt"`, gefolgt von 7 Ziffern folgen:
+
+```{r}
+imdb_urls %>% 
+  str_extract("tt\\d{7}")
+```
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue12a3)__:
+
+```{r}
+adressen = c(
+    "Platz der Republik 1, D-11011 Berlin",
+    "Dr.-Karl-Renner-Ring 3, A-1017 Wien",
+    "Bundesplatz 3, CH-3005 Bern"
+  )
+```
+
+Sinnvoll ist es, nach und nach die einzelnen Adress-Bestandteile auszuwählen. 
+
+- Der Straßenname ist dabei der komplizierteste Part, da er aus Groß- und Kleinbuchstaben, Bindestrichen, Leerzeichen und Punkten bestehen kann. Eine Möglichkeit ist es daher, all diese Zeichen als eigene Übereinstimmungsgruppe zu definieren: `[A-Za-z-\\s\\.]+`. Da keine Ziffern im Straßennamen vorkommen, können wir das jedoch abkürzen, indem wir für den Straßennamen alles matchen, was _keine_ Ziffer ist: `\\D+`. Durch Klammern können wir angegeben, dass dies der erste Bestandteil der Adresse ist, den wir extrahieren möchten: `"(\\D+)"`.
+- Es folgt (in diesem Beispiel) stets Whitespace und die Hausnummer, was wir mit `\\s\\d+` matchen können. Da wir das Leerzeichen nicht extrahieren möchten, ziehen wir die nächsten Klammern lediglich um das `\\d+`: `"(\\D+)\\s(\\d+)"`.
+- Es folgen nun ein Komma, Whitespace und ein oder zwei Großbuchstaben für den Ländercode; letztere können wir beispielsweise mit `[A-Z]{1,2}` matchen. Erneut wollen wir nur die 1-2 Großbuchstaben extrahieren: `"(\\D+)\\s(\\d+),\\s([A-Z]{1,2})"`.
+- Nun kommt ein Bindestrich und die 4-5-stellige Postleitzahl: `"(\\D+)\\s(\\d+),\\s([A-Z]{1,2})-(\\d{4,5})"`.
+- Schließlich folgt noch ein Whitespace und die Stadt, die wir z. B. schnell mittels `\\D+` (alles außer Ziffern) matchen können: `"(\\D+)\\s(\\d+),\\s([A-Z]{1,2})-(\\d{4,5})\\s(\\D+)"`
+
+Diesen String können wir nun `str_match()` übergeben:
+
+```{r}
+adr_string <- "(\\D+)\\s(\\d+),\\s([A-Z]{1,2})-(\\d{4,5})\\s(\\D+)"
+
+adressen %>% 
+  str_match(adr_string)
+```
+
+Als Resultat erhalten wir eine Matrix, in der in der ersten Spalten der komplette gematchte String sowie in den folgenden Spalten die einzelnen gematchten Bestandteile, definiert durch runde Klammern `()` stehen.
 
