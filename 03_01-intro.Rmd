@@ -1,13 +1,98 @@
-# Einführung
+# Einführung und Terminologie {#intro-to-web-data}
 
-Die schiere Masse und stete Verfügbarkeit digitaler Kommunikationsdaten -- beispielsweise digitale Verhaltensspuren der Nutzer*innen von sozialen Medien oder umfassende Textarchive von Nachrichtenmedien -- machen das Web zu einer unerschöpflichen Datenquelle für die Sozialwissenschaft im Allgemeinen und die Kommunikationswissenschaft im Speziellen. Wir werden uns daher nun damit auseinandersetzen, wie wir Zugang zu diesen Daten erhalten und wie wir diese Daten abrufen können. Die beiden wichtigsten Zugangswege dafür sind:
+Die schiere Masse und stete Verfügbarkeit digitaler Kommunikationsdaten -- beispielsweise digitale Verhaltensspuren der Nutzer*innen von sozialen Medien oder umfassende Textarchive von Nachrichtenmedien -- machen das Web zu einer unerschöpflichen Datenquelle für die Sozialwissenschaften im Allgemeinen und die Kommunikationswissenschaft im Speziellen. Wir werden uns daher nun damit auseinandersetzen, wie wir Zugang zu diesen Daten erhalten und wie wir diese Daten abrufen können. Die beiden wichtigsten Zugangswege dafür sind:
 
 1. _Web Scraping_: Hier rufen wir Webseiten auf und extrahieren die für uns relevanten Daten. Dieser Zugangsweg eignet sich besonders für statische Webseiten wie z. b. Nachrichtenwebsites^[Natürlich sind auch die Inhalte auf diesen Webseiten veränderlich. Statisch meint hier, dass die Inhalte nicht für jede\*n Nutzer\*in eigens "erzeugt" werden.], stößt jedoch auf Probleme bei dynamischen Webinhalten.
 2. _(Web-)APIs_ (*A*pplication *P*rogramming *I*nterface): Hier nutzen wir Programmierschnittstellen, die für den standardisierten Austausch von Daten entwickelt wurden, also auf standardisierte Anfragen ebenso standardisiert Daten zurückgeben.
 
 Bevor wir diese Zugangswege in R ausprobieren, zunächst eine kurze Einführung in Terminologie und Funktionsweise _des Internets_.
 
-## HTTP und Anfragemethoden
+## HTTP, Anfragemethoden und Statuscodes {#http}
 
+Der Daten- und Nachrichtenaustausch im Internet wird über Protokolle geregelt, die festlegen, wie die Kommunikation zwischen einem _Client_ (z. B. einem Webbrowser auf unserem Computer) und einem _Server_ abläuft. Das wichtigste ist HTTP (*H*yper*t*ext *T*ransfer *P*rotocol), das uns allen von der URL-Eingabe von Webseiten im Browser bekannt ist und vorrangig für Webseiten verwendet wird.
 
+Die Kommunikation zwischen Client und Server ist dabei eine Abfolge von Anfragen (*Requests*) und Antworten (*Responses*), wobei sowohl Requests und Responses jeweils in einen _Header_ (Metainformationen über die Nachricht, z. B. der Inhaltstyp) und einen _Body_ (die eigentliche Nachricht) unterteilt werden können. Wir können uns das in etwa wie einen Paketversand vorstellen: der Header ist dann vergleichbar zum Sendeschein, enthält also Informationen über den Inhalt und Zustand des Pakets (z. B. auch, ob dieses korrekt zugestellt werden konnte oder warum dies nicht der Fall war), der Body ist das zugehörige Paket mit dem Inhalt, der uns eigentlich interessiert.
 
+Für Anfragen stehen verschiedene HTTP-Anfragemethoden zur Verfügung, von denen die gebräuchlichste _GET_ heißt, mit der ein Client eine auf dem Server liegende Ressource anfordert. Mit der Anfragemethode _POST_ überträgt ein Client Daten an einen Server übertragen, zum Beispiel wenn wir ein Formular auf einer Webseite ausfüllen.
+
+Wenn wir etwa in einen Browser die _URL_ `https://www.ifkw.uni-muenchen.de/index.html` eingeben, dann schickt unser Browser als Client einen _GET_-Request an den Server `ifkw.uni-muenchen.de/`, die Ressource `index.html` zurückzusenden. War die Anfrage erfolgreich, enthält die Antwort im Header den Statuscode `200 (OK)` (= alles in Ordnung) und im Body eben die Datei `index.html`, die dann von unserem Browser dargestellt wird (siehe auch nächstes Unterkapitel). War die Anfrage nicht erfolgreich, enthält der Header der Antwort ebenso Informationen darüber, was schiefgelaufen ist, etwa den Statuscode `404 (Not found)` (Ressource nicht gefunden, wir weil wir uns beispielsweise bei der URL vertippt haben) oder den Statuscode `403 (Forbidden)`, weil uns die Zugangsberechtigung zu dieser Ressource fehlt. 
+
+Die Kommunikation von Browsern mit Webservern mag das naheliegendste Beispiel dafür sein, aber letztlich läuft nahezu jede Kommunikation von Programmen über das Internet so ab, egal welches Programm wir dafür verwenden. Entsprechend können wir dank bestimmter Packages auch mit R solche HTTP-Anfragen stellen und die Antworten verarbeiten -- aber dazu in Kürze mehr.
+
+## Webseiten und HTML {#html}
+
+Das Grundgerüst von Webseiten ist _HTML_ (*H*yper*t*ext *M*arkup *L*anguage), eine Auszeichnungssprache^[Mit Markdown (siehe Kapitel \@ref(markdown)) haben wir bereits eine andere Auszeichnungssprache kennengelernt.], mit der Textelemente (also Zeichen, Wörter oder ganze Abschnitte) mit Eigenschaften versehen und so für die Darstellung als Webseite formatiert bzw. mit zusätzlichen Funktionen (z. B. Links) ausgestattet werden:
+
+```
+<html>
+<body>
+  <div class="main">
+    <h1>Eine Überschrift</h1>
+    <p>Ein Absatz.</p>
+    <p>Noch ein Absatz, in dem Worte <strong>fettgedruckt</strong> sowie <a href="link.html">verlinkt</a> sind.</p>
+  </div>
+</body>
+</html>
+
+```
+
+Webseiten sind also zunächst einmal Textdokumente, die mittels Auszeichung in HTML von Browsern als Webseiten interpretiert und dargestellt werden. Hinzu kommen Skripte in der Programmiersprache JavaScript, mit denen vor allem interaktive Elemente erzeugt werden, sogenannte Stylesheets in CSS (dazu gleich mehr) und etwaige Multimediadateien, z. B. Bilder, die via HTML eingebunden werden:
+
+![Die IfKW-Webseite als HTML-Quellcode...](img/14/ifkw_quellcode.png)
+
+![...und ihre Darstellung im Browser](img/14/ifkw_browser.png)
+
+Eine Webseite besteht aus vielen verschiedenen HTML-Elementen, die auch ineinander verschachtelt sein können. Ein HTML-Element besteht aus folgenden Bestandteilen:
+
+- ein _Tag_, das das Element begrenzt und durch `<tagname>` geöffnet und durch `</tagname>` geschlossen wird
+- optionale _Attribute_, die im eröffnenden Tag durch `schlüssel = "wert"`-Paare angelegt werden
+- der _Text_ des Elements
+
+Zwei Beispiele:
+
+`<p>Hier steht etwas Text</p>` definiert ein Absatz-Element mit dem `<p>`-Tag (für *P*aragraph), das den Text `Hier steht etwas Text` enthält. 
+
+`<p>Hier steht ein <a href="verlinkte-seite.html">Link</a></p>` erzeugt einen Absatz, in dem der Text `Hier steht ein Link` enthalten ist, wobei das Wort Link durch das `<a>`-Tag (für *A*nchor) mit dem Attribut `href="verlinkte-seite.html"` in einen Link umgewandelt wird, der auf die Datei `verlinkte-seite.html` verweist.
+
+### HTML-Tags
+
+Es gibt sehr viele verschiedene HTML-Tags. Einige der wichtigsten sind:
+
+Table: (\#tab:htmltags) Wichtige HTML-Tags
+
+| Tag                 | Bedeutung                                                                                          |
+|---------------------|----------------------------------------------------------------------------------------------------|
+|       `<head>`      | Head der Seite mit Metainformationen (Sprache, Kodierung etc.); wird nicht dargestellt             |
+|       `<body>`      | "Körper" der Seite; enthält den gesamten eigentlichen Inhalt                                       |
+|        `<p>`        | Absatz                                                                                             |
+|        `<a>`        | Link; das Link ziel wird über das Attribut `href` festgelegt                                       |
+|  `<strong>` / `<b>` | Fettdruck                                                                                          |
+|    `<em>` / `<i>`   | Kursivsetzung                                                                                      |
+| `<h1>`, `<h2>` etc. | Überschrift der ersten, zweiten usw. Ebene                                                         |
+|      `<table>`      | Tabelle                                                                                            |
+|        `<ol>`       | Geordnete Liste (Einträge werden nummeriert)                                                       |
+|        `<ul>`       | Ungeordnete Liste (Einträge werden Punkte/Striche/etc. gekennzeichnet)                             |
+|        `<li>`       | Listeneintrag                                                                                      |
+|       `<div>`       | Container (wird zum Abgrenzen und Formatieren ganzer Webseiten-Bereiche genutzt)                   |
+|       `<span>`      | Inline-Container (wird zum Abgrenzen und Formatieren von Zeichen und Wörtern im Textfluss genutzt) |
+
+Eine umfassende Übersicht über alle HTML-Tags gibt es z. B. [hier](https://www.w3schools.com/tags/ref_byfunc.asp).
+
+### CSS, Klassen und IDs
+
+Tags definieren die Funktion einzelner HTML-Elemente, ändern aber bis auf einige Voreinstellungen zunächst wenig am Aussehen der einzelnen Elemente. Zwar könnten Elemente auch individuell über das `style`-Attribut _gestyled_ werden; in der Praxis ist das aber wenig effizient, da häufig gleiche Elemente auch gleich aussehen sollen (z. B. alle Links auf der Seite dieselbe Farbe, dieselbe Reaktion beim Überfahren des Links etc. haben sollen), und das auch über mehrere HTML-Seiten hinweg . 
+
+Hier kommen sogenannte Stylesheets im _CSS_-Format (für *C*ascading *S*tyle*s*heets) ins Spiel, mit denen in einer von den einzelnen HTML-Seiten separaten Datei das Aussehen von HTML-Elementen festgelegt wird. Hierzu werden in einer Stylesheet-Datei für einzelne HTML-Tags, Klassen oder IDs (die über die Attribute `class` bzw. `id` HTML-Tags zugewiesen werden)^[Mehrere HTML-Elemente können dieselbe Klasse haben, die ID hingegen muss für jedes Element einzigartig sein.] Regeln definiert, die deren Aussehen bestimmen:
+
+```
+.blueOnRed {
+  color: "blue";
+  background-color: "red";
+}
+```
+
+Hier legen wir für die Klasse `blueOnRed` (der `.` identifiziert Klassen, `#` IDs) fest, dass Elemente mit dieser Klasse einen roten Hintergrund `background-color: "red"` sowie blaue Schrift `color: "blue"` aufweisen sollen. Wir können diese Klasse nun HTML-Elementen mit dem Attribut `class` zuweisen: `<p class="blueOnRed">Dieser Text erscheint auf einer Webseite nun blau auf rotem Hintergrund</p>`. Ein HTML-Element kann auch mehrere Klassen (und eine oder mehrere IDs) gleichzeitig zugewiesen bekommen.
+
+Dies ist nun nicht nur praktisch für Webdesigner, sondern auch für uns, wenn wir mittels Web Scraping nur bestimmte Bestandteile von Webseiten automatisiert erfassen möchten. So ist es z. B. naheliegend, dass Artikelbestandteile auf einer Nachrichtenseite zugehörige Klassen haben, etwa der gesamte Artikel immer in einem `<div class="artikel">`-Element steht, die Überschrift des Artikels in einem `<h2>` innerhalb dieses `<div>`-Elements steht, die Artikel-AutorInnen immer in einem `<p class="author">`-Element stehen usw. 
+
+Wir können diese Elemente daher über ihre Klassen, die HTML-Tags oder eine Kombination aus allem identifizieren, ansteuern und speichern. Dies machen wir im nächsten Kapitel.

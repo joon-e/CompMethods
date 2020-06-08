@@ -33,7 +33,7 @@ Wir könnten dieselben Daten aber auch so darstellen:
 
 ```{r, echo=FALSE}
 auflagen1 %>% 
-  pivot_longer(-medium, names_to = "jahr", names_prefix = "auflage_", names_ptypes = list(jahr = integer()), values_to = "auflage")
+  pivot_longer(-medium, names_to = "jahr", names_prefix = "auflage_", names_transform = list(jahr = as.integer), values_to = "auflage")
 ```
 
 Hierbei handelt es sich um _Long_ Data: alle Beobachtungen desselben Wertetyps, also z. B. die Auflagenzahlen, stehen in einer Spalte, die weiteren Spalten dienen zur Identifikation dieser Beobachtungen, hier also, für welches Jahr und für welches Medium diese gelten. Unsere Fallebene wäre also *Medium und Jahr*: jeweils eine Zeile pro Medium und Jahr.
@@ -75,13 +75,13 @@ auflagen_wide %>%
   pivot_longer(starts_with("auflage"), names_to = "jahr", values_to = "auflage", names_prefix = "auflage_")
 ```
 
-Schon fast perfekt! Das einzige Schönheitsfehler ist, dass die Variable `jahr` nun vom Typ `character` ist -- `pivot_longer()` weist diesen Typ allen Informationen zu, die aus den ursprünglichen Spaltennamen stammen. Sinnvoller wäre ein numerischer Objekttyp. Hier können wir dem Argument `names_ptypes` eine Liste übergeben (auch wenn dies nur eine Variable betrifft), die für alle aus den ursprünglichen Spaltennamen generierten Variablen jeweils den gewünschten Objekttyp angibt:
+Schon fast perfekt! Das einzige Schönheitsfehler ist, dass die Variable `jahr` nun vom Typ `character` ist -- `pivot_longer()` weist diesen Typ allen Informationen zu, die aus den ursprünglichen Spaltennamen stammen. Sinnvoller wäre ein numerischer Objekttyp. Hier können wir dem Argument `names_transform` eine Liste übergeben (auch wenn dies nur eine Variable betrifft), die für alle aus den ursprünglichen Spaltennamen generierten Variablen jeweils den gewünschten Objekttyp angibt:
 
 ```{r}
 # Da nun alles passt, weisen wir unseren neuen Long-Datensatz auch einem Objekt zu
 auflagen_long <- auflagen_wide %>% 
   pivot_longer(starts_with("auflage"), names_to = "jahr", values_to = "auflage", 
-               names_prefix = "auflage_", names_ptypes = list(jahr = integer()))
+               names_prefix = "auflage_", names_transform = list(jahr = as.integer))
 
 auflagen_long
 ```
@@ -110,7 +110,7 @@ Nun haben in den Spaltennamen gleich zwei Informationen: das Jahr und das jeweil
 ```{r}
 auflagen_long2 <- auflagen_wide2 %>% 
   pivot_longer(starts_with("auflage"), names_to = c("jahr", "quartal"), values_to = "auflage", 
-               names_prefix = "auflage_", names_sep = "_", names_ptypes = list(jahr = integer()))
+               names_prefix = "auflage_", names_sep = "_", names_transform = list(jahr = as.integer))
 
 auflagen_long2
 ```

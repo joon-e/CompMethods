@@ -59,7 +59,7 @@ output: html_document
 
 Je nach Ausgabeformat können hier noch weitere Optionen angegeben werden, beispielsweise ob automatisch ein Inhaltsverzeichnis erzeugt werden soll. Auch hier reichen die Standardeinstellungen fürs erste jedoch vollkommen aus.
 
-### Freitext in Markdown
+### Freitext in Markdown {#markdown}
 
 Freier Text kann jeder Stelle in das Dokument eingefügt werden. Dabei nutzt das Format die Formatierungssyntax _Markdown_ (daher auch der Dateiformatname), mit der sich Text schnell mittels bestimmter Symbole formatieren lässt. Die Grundidee dahinter ist, dass man sich beim Schreiben auf das Schreiben konzentriert und alle wesentlichen Formatierungen im Nachhinein automatisiert auf Basis von Vorlagen erfolgen. Einige Formatierungsoptionen sind:
 

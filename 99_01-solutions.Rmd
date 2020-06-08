@@ -508,7 +508,7 @@ facebook_europawahl %>%
   coord_fixed()
 ```
 
-## Kapitel 12: Objekte und Datenstrukturen {-}
+## Kapitel 12: Arbeiten mit Textdaten {-}
 
 __Lösung zur Übungsaufgabe \@ref(exr:ue12a1)__: 
 
@@ -578,4 +578,3 @@ adressen %>%
 ```
 
 Als Resultat erhalten wir eine Matrix, in der in der ersten Spalten der komplette gematchte String sowie in den folgenden Spalten die einzelnen gematchten Bestandteile, definiert durch runde Klammern `()` stehen.
-
