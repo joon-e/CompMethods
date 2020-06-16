@@ -1,5 +1,10 @@
+# RStudio
 .Rhistory
 .RData
 .Rproj.user
-_book/
-rsconnect/
+
+# Bookdown
+_bookdown_files
+_book
+packages.bib
+images/dedication.lyx
