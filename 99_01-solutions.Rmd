@@ -578,3 +578,92 @@ adressen %>%
 ```
 
 Als Resultat erhalten wir eine Matrix, in der in der ersten Spalten der komplette gematchte String sowie in den folgenden Spalten die einzelnen gematchten Bestandteile, definiert durch runde Klammern `()` stehen.
+
+## Kapitel 15: Web Scraping {-}
+
+Für die Lösungen wird das Package `polite` in Kombination mit `rvest` verwendet. Die Extraktion der HTML-Elemente unterscheidet sich jedoch nicht, wenn nur `rvest` verwendet wird.
+
+```{r, message=FALSE, warning=FALSE}
+library(polite)
+library(rvest)
+```
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue15a1)__: 
+
+Wir besuchen zunächst [den Artikel](https://www.sueddeutsche.de/sport/hsv-kiel-hecking-ausgleich-1.4931360) und finden über SelectorGadget oder die Untersuchen-Funktion heraus, dass
+
+- der Artikel in der CSS-Klasse `.sz-article` steht
+- die gesuchten Inhalte in den CSS-Klassen `.css-11lvjqt` (Datum und Uhrzeit), `.css-1keap3i` (Kicker), `.css-1kuo4az` (Überschrift) und `.css-1psf6fc` (Lead) stehen.
+
+Nun stellen wir uns mit `bow()` dem Server vor (wenn nur `rvest` genutzt wird, wird dieser Schritt übersprungen):
+
+```{r}
+url <- "https://www.sueddeutsche.de/sport/hsv-kiel-hecking-ausgleich-1.4931360"
+sz1 <- bow(url)
+```
+
+Und scrapen die Seite (analog zu `read_html()` in `rvest`):
+
+```{r}
+html_content <- scrape(sz1)
+```
+
+Nun extrahieren wir die gewünschten Elemente:
+
+```{r}
+html_content %>% 
+  html_nodes(".css-11lvjqt, .css-1keap3i, .css-1kuo4az, .css-1psf6fc") %>% 
+  html_text() %>% 
+  str_squish()
+```
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue15a2)__: 
+
+Ein Problem ist hier, dass viele Links auf der Seite stehen, wir aber nur einen abgreifen möchten. Dies können wir erreichen, indem wir zunächst lediglich den Artikel selbst über die Klasse `.sz-article` auswählen, dann nur die Textabsätze mit dem HTML-Tag `p` und schließlich Links mit dem HTML-Tag `a`:
+
+```{r}
+html_content %>% 
+  html_nodes(".sz-article") %>% 
+  html_nodes("p") %>% 
+  html_nodes("a") %>% 
+  html_attr("href")
+```
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue15a3)__: 
+
+Wir wandeln den obigen Code in eine Funktion um:
+
+```{r}
+scrape_sz <- function(url) {
+  # Vorstellen
+  sz <- bow(url)
+  
+  # Scrapen
+  html_content <- scrape(sz)
+  
+  # Interessierende HTML-Elemente extrahieren
+  info <- html_content %>% 
+    html_nodes(".css-11lvjqt, .css-1keap3i, .css-1kuo4az, .css-1psf6fc") %>% 
+    html_text() %>% 
+    str_squish()
+  
+  # In Tibble umwandeln
+  info_tibble <- tibble(
+    release = info[1],
+    kicker = info[2],
+    headline = info[3],
+    lead = info[4]
+  )
+
+  # Tibble zurückgeben
+  return(info_tibble)
+}
+
+```
+
+Und testen dies am zweiten Artikel:
+
+```{r}
+scrape_sz("https://www.sueddeutsche.de/sport/stuttgart-hsv-2-bundesliga-castro-1.4921867")
+```
+
