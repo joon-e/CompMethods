@@ -7,4 +7,13 @@
 _bookdown_files
 _book
 packages.bib
-images/dedication.lyx
+
+# Cache
+cache
+
+# Connections
+rsconnect
+
+# Knitr
+*.log
+*.tex

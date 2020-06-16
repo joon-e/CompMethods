@@ -1,0 +1,199 @@
+# APIs
+
+_APIs_ (*A*pplication *P*rogramming *I*nterface, zu deutsch Anwendungsprogrammierschnittstelle oder nur Programmierschnittstelle) sind Schnittstellen, mit denen Software-Anwendungen mit anderen Anwendungen kommunizieren und Daten austauschen können. Wenn wir im Webkontext von APIs sprechen, meinen wir damit in der Regel sogenannte _RESTful Web APIs_^[für *Re*presentation *S*tate *T*ransfer. Mehr dazu [hier](https://de.wikipedia.org/wiki/Representational_State_Transfer)], die auf eine HTTP-Anfrage mit definierten Parametern Daten zurückgeben. Die Webseite [ProgrammableWeb](https://www.programmableweb.com/category/all/apis) bietet einen umfassenden Überblick über solche APIs.
+
+## Grundlagen
+
+Jede API funktioniert anders, nimmt eigene Parameter an, gibt Daten eigens strukturiert zurück und erfordert die Einarbeitung in die jeweilige Dokumentation der API; zugleich ist das Grundprinzip aber gleich:
+
+- wir senden eine HTTP-Anfrage (siehe Kapitel \@ref(http)) an die URL der API, wobei wir mittels Query-Parametern spezifieren, was wir wissen möchten
+- die API gibt als Antwort die Daten in einem Textformat (häufig [JSON](https://de.wikipedia.org/wiki/JavaScript_Object_Notation), [XML](https://de.wikipedia.org/wiki/Extensible_Markup_Language) oder [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat))) zurück.
+
+Wir setzen uns daher zunächst mit diesen Grundprinzipien auseinander.
+
+### URLs, Querys und Parameter
+
+Die Nutzung einer API unterscheidet sich zunächst nicht wesentlich davon, eine URL in einen Webbrowser einzugeben: in beiden Fällen senden wir (bzw. eine Software, also z. B. der Webbrowser oder RStudio)^[In aller Regel nutzen diese Programme wiederum das Programm [cURL](https://de.wikipedia.org/wiki/CURL), das somit das am häufigsten installierte und verwendete Programm der Welt sein dürfte.] eine Anfrage (meistens einen GET-Request) an einen Server und erhalten daraufhin eine Datei zurück -- z. B. eine HTML-Datei, die dann vom Browser intepretiert und angezeigt wird. 
+
+Server lassen sich so konfigurieren, dass die URL auch Parameter beinhalten kann, die die Anfrage spezifizieren. Sehen wir uns das an einem Alltagsbeispiel an: wenn wir nach "ifkw" googeln, dann sollte die Adresszeile im Browser in etwa so aussehen: `https://www.google.de/search?safe=off&...q=ifkw...`. Wir können diese URL in ihre Bestandteile aufteilen:
+
+- das `https` bezeichnet das _Schema_ und gibt in diesem Fall an, dass wir das Netzwerkprotokoll HTTPS (eine sicherere Variante von HTTP) verwenden möchten
+- `www.google.de` ist der _Host_, also letztlich der Computer, der die Ressourcen, die wir anfragen möchten, beherbergt
+- `/search` gibt den _Pfad_ an, unter dem die Ressource zu finden ist
+- das `?` schließlich leitet den _Query-String_ ein, der benannte Parameter enthält (in der Form `name=wert` und verbunden durch `&`), die vom Server im Rahmen der Anfrage verarbeitet werden
+
+Im Falle unserer Google-Suche sehen wir unter anderem den Parameter `q=ifkw` -- das `q` steht in diesem Fall für Query, also Suchanfrage, und ist auf unsere spezifische Suchanfage `ifkw` gesetzt. Wir können diesen Paramter daher nutzen, um auch ohne die Suchmaske direkt über die Adresszeile des Browsers eine Google-Suchanfrage zu starten, indem wir beispielsweise [`https://www.google.de/search?q=ifkw`](https://www.google.de/search?q=ifkw) eingeben. Wenn wir direkt die zweite Ergebnisseite anzeigen möchten, können wir den Parameter `start` hinzufügen und auf `10` setzen, Google also mitteilen, dass wir erst beim zehnten Suchresultat beginnen möchten: [`https://www.google.de/search?q=ifkw&start=10`](https://www.google.de/search?q=ifkw&start=10).
+
+Google verarbeitet also die Parameter, die wir in der URL angeben, und gibt basierend darauf die entsprechende Ressource zurück -- in diesem Fall also eine HTML-Datei mit der zugehörigen Suchergebnisseite. Nicht anders funktionieren auch APIs -- wir senden eine Anfrage und definieren über Parameter genauer, was wir erhalten bzw. machen möchten.
+
+### JSON
+
+In der Regel geben Web-APIs keine HTML-Dateien zurück, sondern nutzen andere Datenformate. Eines der am häufigsten verwendeten ist _JSON_ (*J*ava*S*cript *O*bject *N*otation und gesprochen wie der englische Vorname Jason), ein flexibel einsetzbares, als reine Textdatei speicherbares und zugleich sehr einfach lesbares Datenformat. Vermutlich reicht bereits die Beispieldatei im [Wikipedia-Eintrag](https://de.wikipedia.org/wiki/JavaScript_Object_Notation), um die Grundzüge zu verstehen:
+
+```
+{
+  "Herausgeber": "Xema",
+  "Nummer": "1234-5678-9012-3456",
+  "Deckung": 2e+6,
+  "Waehrung": "EURO",
+  "Inhaber":
+  {
+    "Name": "Mustermann",
+    "Vorname": "Max",
+    "maennlich": true,
+    "Hobbys": ["Reiten", "Golfen", "Lesen"],
+    "Alter": 42,
+    "Kinder": [],
+    "Partner": null
+  }
+}
+```
+
+Wir erkennen zum einen die unterschiedlichen Objekttypen (String, Numerisch, Logisch; siehe auch Kapitel \@ref(objecttypes)), die ganz ähnlich wie in R definiert werden (Strings durch `""`, Zahlen durch rein numerische Werte, logische Werte durch `true`/`false`); zum anderen sehen wir, dass wir Werte benennen und beliebig tief ineinander verschachteln können. 
+
+In R könnten wir die obige Beispieldatei als Liste speichern, die benannte Vektoren ebenso wie weitere Listen enthält -- und genau das erledigen dann auch Packages für uns, die JSON-Dateien (bzw. Strings, die wie JSON aussehen) automatisch in R-Listen umwandeln. 
+
+### Zugangsvoraussetzungen und Rate Limits
+
+Nicht jede API lässt sich von jedem nutzen: wirklich offene APIs sind in der Minderheit, in der Regel ist zumindest ein Account beim jeweiligen Anbieter -- also z. B. ein Twitter-Account für die Twitter-API -- erforderlich. Viele Plattformen und Anbieter gewähren nur über einen Entwickler-Account, für den man sich extra registrieren, bewerben oder auch zahlen muss, Zugang zu ihrer API. Auch dies wird von Anbieter zu Anbieter unterschiedlich gehandhabt. Tatsächlich ist es so, dass insbesondere Social-Media-Plattformen den Zugang zu ihren APIs für die Wissenschaft in den vergangenen Jahren erschwert haben.^[Etwas Lesestoff: [After the ‘APIcalypse’: social media platforms and their fight against critical scholarly research](https://www.tandfonline.com/doi/abs/10.1080/1369118X.2019.1637447)]
+
+Zudem begrenzen die meisten Anbieter den Zugang zu ihren APIs aus Sicherheitsgründen über sogenanntes _Rate Limiting_. Das bedeutet, dass ein Account in einem bestimmten Zeitintervall nur eine bestimmte Anzahl an Anfragen stellen darf (z. B. 15 Anfragen alle 15 Minuten), um eine Überlastung des Servers oder missbräuchlichen Datenabruf zu verhindern. Entsprechend sollte beim Schreiben von API-Anfragen darauf geachtet werden, dass durch diese keine Rate Limits überschritten werden, da sonst lediglich der HTTP-Code `429 Too Many Requests` und eine Fehlermeldung zurückgegeben werden.
+
+## API-Anfragen in R ausführen mit `httr`
+
+Um eigene API-Anfragen in R zu stellen, benötigen wir vorrangig das Package `httr`. Dieses gehört zum erweiterten Tidyverse, sollte also bereits installiert sein, muss aber separat geladen werden. Zudem laden wir das Package `jsonlite`, das den Umgang mit JSON-Dateien in R erleichtert. Auch dieses Package wird über das Tidyverse mitinstalliert, muss aber separat geladen werden:
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(httr)
+library(jsonlite)
+```
+
+Als Beispiel nutzen wir die [Pushshift Reddit API](https://github.com/pushshift/api), ein privates Projekt, das offenen API-Zugang zu [Reddit](https://www.reddit.com/) ermöglicht. Unter obigem Link ist die API beschrieben. Das wichtigste in Kürze:
+
+- Die Stamm-URL der API ist `https://api.pushshift.io`
+- Die API bietet zwei _Endpoints_, `/reddit/search/comment` und `/reddit/search/submission`; wir können uns Endpoints einfach als unterschiedliche Pfade vorstellen, die in Kombination mit der Stamm-URL für unterschiedliche Funktionen der API zuständig sind. Um _Submissions_ (also Beiträge) auf Reddit abzurufen, nutzen wir also die URL `https://api.pushshift.io/reddit/search/submission`, für Kommentare unter diesen Submissions die URL `https://api.pushshift.io/reddit/search/comment`
+- Parameter, die wir für die API verwenden können, unterscheiden sich je Endpoint und sind daher einmal für [Kommentare](https://github.com/pushshift/api#user-content-search-parameters-for-comments) und einmal für [Submissions](https://github.com/pushshift/api#user-content-search-parameters-for-submissions)
+- Wir erfahren außerdem noch weitere Details, z. B. dass standardmäßig die 25 neuesten Submissions bzw. Kommentare zurückgegeben werden
+
+Mit diesem Wissen können wir unsere erste API-Anfrage schreiben. Hierzu rufen wir die 10 neuesten Beiträge des Subreddits [r/politics](https://www.reddit.com/r/politics/) (einem Subreddit für politische Nachrichten aller Art) ab, die im Beitragstitel das Wort "Corona" enthalten. Aus der [API-Dokumentation für Submissions](https://github.com/pushshift/api#user-content-search-parameters-for-submissions) erfahren wir, dass wir über die Parameter `subreddit`, `title` und `size` das zu durchsuchende Subreddit bzw. Begriffe, die im Titel vorkommen müssen, sowie die Anzahl der Beiträge angeben können.
+
+`httr` umfasst Funktionen für alle typischen HTTP-Anfragetypen. In den meisten Fällen möchten wir Daten abrufen, stellen also eine GET-Anfrage. Hierzu nutzen wir die gleichnamige Funktion `GET()`, für die wir:
+
+- mit dem Argument `url` als String die Stamm-URL angeben, hier also `"https://api.pushshift.io"`
+- mit dem Argument `path` als String den Pfad zu unserem gewünschten Endpoint angeben, hier also `"/reddit/search/submission"`
+- mit dem Argument `query` eine Liste mit Query-Parametern übergeben können, hier also die Angaben zu `subreddit`, `title` und `size`^[Bei zugangsbeschränkten APIs muss hier häufig ein Anmeldeschlüssel mit übergeben werden.]
+
+Und natürlich sollten wir das Resultat einem R-Objekt zuweisen, um damit weiterarbeiten zu können -- ich verwende den Namen `resp` (für Response):
+
+```{r}
+resp <- GET(url = "https://api.pushshift.io",
+            path = "/reddit/search/submission",
+            query = list(
+              subreddit = "politics",
+              title = "corona",
+              size = 10
+              ))
+```
+
+Ein nächster sinnvoller Schritt ist die Funktion `stop_for_status()`, die den HTTP-Code der Response überprüft und eine Fehlermeldung ausgibt, wenn etwas schiefgelaufen ist -- zur Erinnerung, der Code `200` bedeutet "Alles okay", und in diesem Fall bleibt die Funktion ohne sichtbares Ergebis. 
+
+```{r}
+stop_for_status(resp)
+```
+
+Im _Environment_-Bereich von RStudio sehen wir, dass es sich bei unserem neuen Objekt `resp` um eine Liste handelt. Wir sollten uns also zunächst die Struktur dieser Liste mit der `str()`-Funktion ansehen. Das `max.level`-Argument gibt an, dass wir in diesem Fall nur die erste Listenebene betrachten möchten
+
+```{r}
+str(resp, max.level = 1)
+```
+
+Die Response enthält also 10 Unterpunkte, darunter die gesamte URL, mit der wir unsere API-Anfrage getätigt haben, den bereits überprüften HTTP-Status-Code, eine Liste mit `headers`-Informationen usw. Über den Eintrag `content-type` in den `headers` können wir z. B. den Inhaltstyp der Antwort ausgeben -- in diesem Fall wie erwartet eine JSON-Datei.
+
+```{r}
+resp$headers$`content-type`
+```
+
+Für uns von Interesse ist natürlich der Inhalt, `content`, der Anfrage. Diesen können wir der Funktion `content()` extrahieren, wobei wir zusätzlich angeben, dass der Inhalt als Text ausgeben werden soll.
+
+```{r}
+resp_content <- content(resp, "text")
+substr(resp_content, 1, 200)
+```
+
+Das Resultat ist ein sehr langer Textstring, der, wie wir bereits wissen, im JSON-Standard ist, mit dem wir aber vorerst nicht viel anfangen können. Hier kommt nun das Package `jsonlite` ins Spiel, mit dessen Funktion `fromJSON` wir JSON-Textdateien in R-Objekte umwandeln können (man nennt dies auch _Parsing_):
+
+```{r}
+parsed_content <- fromJSON(resp_content)
+```
+
+Auch hierbei handelt es sich wieder um eine Liste, deren Struktur wir mit `str()` untersuchen können:
+
+```{r}
+str(parsed_content, max.level = 1)
+```
+
+In diesem Fall haben wir nur einen weiteren Eintrag unter `data`, der einen `data.frame` enthält. `10 obs.` deutet darauf hin, dass die Fälle wohl unsere 10 Reddit-Beiträge darstellen. Extrahieren wir also diesen Dataframe aus dem Objekt (und wandeln ihn in ein Tibble um):
+
+```{r}
+reddit_tibble <- parsed_content$data %>% 
+  as_tibble()
+```
+
+Mit `names()` können wir uns nun einen Überblick über die enthaltenen Variablen verschaffen:
+
+```{r}
+names(reddit_tibble)
+```
+
+Und tatsächlich, wir haben Informationen über die zehn aktuellsten Beiträge im Subreddit _r/politics_, die den Begriff "Corona" im Titel enthalten, abgerufen und können nun z. B. den Titel des Beitrags und den zugehörigen Link anzeigen:
+
+```{r}
+reddit_tibble %>% 
+  select(title, url)
+```
+
+Dies zum allgemeinen Vorgehen. In der Realität würden wir hier natürlich lange noch nicht aufhören. Was wenn wir uns nicht auf zehn Beiträge (oder 500, das Maximum, das die Pushshift Reddit API pro Anfrage vorsieht) beschränken möchten? Wir könnten in diesem Fall beispielsweise das Erstellungsdatum der Beiträge extrahieren, den Minimalwert speichern (also das Erstellungsdatum des ältesten Beitrags) und eine erneute Anfrage starten, dabei jedoch nur Beiträge abrufen, die vor diesem Datum erstellt wurden (also die 500 nächstälteren Beiträge) -- und dann, unter Berücksichtigung des Rate Limits, einen Loop schreiben, der diese Schritte so lange wiederholt, bis keine weiteren Beiträge zurückgegeben werden.
+
+Erneut gilt: jede API ist anders aufgebaut und erfordert daher spezifische Einarbeitung. Die Grundschritte sind aber immer nahezugleich: Dokumentation lesen, Anfrage mit `httr` stellen und dann schrittweise vorarbeiten, bis die gewünschten Daten vorhanden sind.
+
+## API-Wrapper nutzen
+
+Die gute Nachricht: in vielen Fällen müssen wir uns nicht die Mühe machen, unsere eigenen Anfragen von Grund auf selbst zu schreiben. Für viele größere APIs gibt es sogenannte Wrapper-Packages, die die gängigen API-Anfragen in simplere Funktionen "verpacken". Um die Twitter-APIs zu nutzen, können wir beispielsweise auf das Package [rtweet](https://rtweet.info/) zurückgreifen. 
+
+```{r, message=FALSE, warning=FALSE}
+library(rtweet)
+```
+
+Um das Package nutzen können, benötigen wir einen Twitter-Account und müssen bei der ersten Verwendung einer Funktion einmalig eine Twitter-App authorisieren (hierzu öffnet sich automatisch ein Browser-Pop-Up), die die Kommunikation zwischen R und Twitter befähigt.
+
+Danach können wir ohne große Zwischenschritte z. B. die fünf aktuellsten Tweets von Donald Trump abrufen:
+
+```{r, echo=FALSE}
+token <- create_token("rtweet access",
+                      consumer_key = Sys.getenv("TWITTER_C_KEY"),
+                      consumer_secret = Sys.getenv("TWITTER_C_SECRET"),
+                      access_token = Sys.getenv("TWITTER_A_KEY"),
+                      access_secret = Sys.getenv("TWITTER_A_SECRET"))
+```
+
+
+```{r trumptweet}
+trump_tweets <- get_timeline("realDonaldTrump", n = 5)
+```
+
+Das Resultat ist bereits ein Tibble, das mit 90 Variablen sehr viele Informationen über die einzelnen Tweets enthält. Wir sehen z. B., dass Trump offenbar gerne von seinem iPhone aus twittert:
+
+```{r}
+trump_tweets %>% 
+  select(text, source)
+```
+
+Dank der großartigen R-Community ist die Arbeit mit gängigen APIs also erstaunlich einfach, zumindest sobald man die Zugangskriterien erfüllt. Es gilt also:
+
+- zunächst schauen, ob bereits ein Wrapper-Package für die gewünschte API vorhanden ist
+- erst dann mühsam eigene Anfragen schreiben
+
+## Übungsaufgaben
+
+Aufgrund der Vielfalt an APIs gibt es diese Woche keine Übungsaufgaben im gewöhnlichen Sinne. Recherchieren Sie stattdessen in Ihrer Projektgruppe, welche APIs für Ihr Forschungsprojekt relevant sind, wie die Zugangsvoraussetzungen dafür sind und ob es etwaige R-Packages gibt, die Sie verwenden können.
