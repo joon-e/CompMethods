@@ -54,7 +54,7 @@ Zwei Beispiele:
 
 `<p>Hier steht ein <a href="verlinkte-seite.html">Link</a></p>` erzeugt einen Absatz, in dem der Text `Hier steht ein Link` enthalten ist, wobei das Wort Link durch das `<a>`-Tag (für *A*nchor) mit dem Attribut `href="verlinkte-seite.html"` in einen Link umgewandelt wird, der auf die Datei `verlinkte-seite.html` verweist.
 
-### HTML-Tags
+### HTML-Tags {#htmltags}
 
 Es gibt sehr viele verschiedene HTML-Tags. Einige der wichtigsten sind:
 
@@ -65,7 +65,7 @@ Table: (\#tab:htmltags) Wichtige HTML-Tags
 |       `<head>`      | Head der Seite mit Metainformationen (Sprache, Kodierung etc.); wird nicht dargestellt             |
 |       `<body>`      | "Körper" der Seite; enthält den gesamten eigentlichen Inhalt                                       |
 |        `<p>`        | Absatz                                                                                             |
-|        `<a>`        | Link; das Link ziel wird über das Attribut `href` festgelegt                                       |
+|        `<a>`        | Link; das Linkziel wird über das Attribut `href` festgelegt                                        |
 |  `<strong>` / `<b>` | Fettdruck                                                                                          |
 |    `<em>` / `<i>`   | Kursivsetzung                                                                                      |
 | `<h1>`, `<h2>` etc. | Überschrift der ersten, zweiten usw. Ebene                                                         |
@@ -75,6 +75,7 @@ Table: (\#tab:htmltags) Wichtige HTML-Tags
 |        `<li>`       | Listeneintrag                                                                                      |
 |       `<div>`       | Container (wird zum Abgrenzen und Formatieren ganzer Webseiten-Bereiche genutzt)                   |
 |       `<span>`      | Inline-Container (wird zum Abgrenzen und Formatieren von Zeichen und Wörtern im Textfluss genutzt) |
+|       `<img>`       | Bilddatei; die Zieldatei wird über das Attribut `src` festgelegt                                   |
 
 Eine umfassende Übersicht über alle HTML-Tags gibt es z. B. [hier](https://www.w3schools.com/tags/ref_byfunc.asp).
 

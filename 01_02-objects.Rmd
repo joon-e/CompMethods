@@ -102,7 +102,7 @@ Es gibt außerdem unterschiedliche Konventionen, um mehrere Wörter in Objektnam
 
 Was auch immer Sie wählen - wichtig ist vor allem, dass Sie einheitlich vorgehen.^[Aufmerksamen Leser*innen dürfte zudem aufgefallen sein, dass _kebab-case_ in R nicht möglich ist.] 
 
-## Objekttypen
+## Objekttypen {#objecttypes}
 
 Bisher haben wir lediglich Zahlen Objekten zugewiesen. Natürlich können Daten aber auch in anderen Formen vorliegen; wir sprechen daher von verschiedenen _Objekttypen_.^[Tatsächlich ist die Sache etwas komplexer: es gibt in R einige wenige Kernobjekttypen, die wiederum mit bestimmten Attributen versehen werden können, um daraus zusätzliche Objekttypen abzuleiten. So kann etwa eine Zahlenfolge mit einem zusätzlichen Attribut als Datumsangabe interpretiert werden. Für unsere Zwecke spielt diese Unterscheidung jedoch keine Rolle.]
 

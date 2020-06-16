@@ -136,7 +136,7 @@ Daneben gibt es noch `str_to_title()` (alle Anfangsbuchstaben groß) und `str_to
 str_to_title("in the beginning the Universe was created. this has made a lot of people very angry and been widely regarded as a bad move.")
 ```
 
-### Überschüssigen Whitespace entfernen mit `str_trim()` und `str_squish`
+### Überschüssigen Whitespace entfernen mit `str_trim()` und `str_squish` {#squish}
 
 `str_trim()` entfernt alle Leerzeichen am Anfang und am Ende eines Strings. `str_squish()` entfernt auch mehrfache Leerzeichen innerhalb eines Strings:
 
