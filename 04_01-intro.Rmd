@@ -1,0 +1,79 @@
+# Einführung und Grundbegriffe {#acaintro}
+
+Besonders in den Sozialwissenschaften hat die automatisierte Inhaltsanalyse großer Textmengen in den vergangenen Jahren stark an Bedeutung gewonnen, da mit den zugehörigen Verfahren ganz neue Datenbestände -- oder endlich in gebührendem Umfang -- analysiert werden können. Zugleich haben sich in den vergangenen Jahren einige Packages als Standardwerkzeug in R empfehlen können und somit einige Prozesse vereinheitlicht.
+
+Zu den beiden relevantesten Packages für die automatisierte Inhaltsanalyse zählen `quanteda` (für *Qu*titative *An*alysis of *Te*xtual *Da*ta) und `tidytext` (in Anlehnung an das Tidyverse), die insbesondere das Handling von Textdaten sowie die vorbereitenden Schritte (auch als *Preprocessing* bezeichnet) für spezifischere Verfahren deutlich erleichtern. Quanteda hat dabei den größeren Funktionsumfang und wird daher auch unser Primärpackage in den nächsten Kapiteln sein. Tidytext enthält zwar auch Funktionen für die zentralsten Handlings- und Vorbereitungsschritte, zeigt seinen Wert aber vor allem in der Konvertierung von Textdaten in _tidy data_ und wird somit für uns insbesondere dann relevant, wenn Ergebnisse z. B. mittels `ggplot2` visualisiert werden sollen.
+
+Zunächst installieren wir beide Packages:
+
+```{r eval=FALSE}
+install.packages(c("quanteda", "tidytext"))
+```
+
+Und natürlich müssen wir diese auch mit dem bekannten `library()`-Befehl laden. Wir laden zudem erneut das Tidyverse:
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(tidytext)
+library(quanteda)
+```
+
+Als Beispiel-Datensatz verwenden wir Tweets von Donald Trump und Joe Biden, die diese dieses Jahr (bis einschließlich 17. Juni) abgesetzt haben.^[Datensatz via Kaggle ([Trump](https://www.kaggle.com/austinreese/trump-tweets),  [Biden](https://www.kaggle.com/rohanrao/joe-biden-tweets)]). Die Daten sind über Moodle als `trump_biden_tweets_2020.csv` verfügbar.
+
+```{r message=FALSE}
+tweets <- read_csv("data/trump_biden_tweets_2020.csv")
+tweets
+```
+
+Wie wir sehen, ist die Fallebene der einzelne Tweet. Für jeden Tweet haben wir eine numerische `id`, den `account` (`realDonaldTrump` oder `JoeBiden`), den `link` zum Tweet, den Text des Tweets (`content`), Veröffentlichungsdatum und -uhrzeit (`date`) sowie die Anzahl der `retweets` und `favorites`. Insgesamt liegen uns 3734 Tweets, davon 2413 von Trump und 1321 von Joe Biden, vor.
+
+Wir setzen uns nun zunächst mit einigen Grundbegriffen und -konzepten auseinander, bevor wir in den kommenden Kapiteln unterschiedliche Analyseverfahren an den Daten ausprobieren.
+
+## Korpora und Dokumente
+
+Ziel der Inhaltsanalyse ist die Untersuchung mehrerer Textdokumente, wobei es sich dabei um Bücher, Artikel, Redetranskripte etc., in unserem Fall um Tweets, handeln kann. Die Sammlung aller Dokumente, die wir in unsere Analyse einbeziehen möchten, wird als _Korpus_ bezeichnet. 
+
+In Quanteda gibt es für Korpora einen spezifischen Objekttypen, den wir mit der Funktion `corpus()` erzeugen können. Wenn wir hierfür einen Dataframe bzw. ein Tibble an Texten verwenden möchten, geben wir mit den Argumenten `docid_field` die Spalte an, in der die ID des Dokuments steht, und identifzieren den Text des jeweiligen Dokuments über das Argument `text_field`:
+
+```{r}
+tweets_corpus <- corpus(tweets, docid_field = "id", text_field = "content")
+```
+
+Das so erzeugte `corpus`-Objekt enthält für jedes Dokument einen Eintrag. Alle anderen Variablen aus dem Ursprungsdatensatz werden automatisch als sogenannte `docvars` hinterlegt und können jederzeit über die Funktion `docvars()` abgerufen werden.
+
+```{r}
+tweets_corpus
+```
+
+`corpus`-Objekte verfügen über eine eigene `summary()`-Methode, mit der wir uns bereits erste Statistiken über jedes Dokument im Korpus und die zugehörigen Docvars ausgeben lassen können:
+
+```{r}
+summary(tweets_corpus, n = 5) %>% # Anzeige auf die ersten 5 Dokumente beschränken
+  as_tibble() 
+```
+
+Wir bereiten unseren Textkorpus nun für weitere Analysen vor; die folgenden Schritte werden dabei auch als *Preprocessing* bezeichnet.
+
+## Tokenization, Stopwords und n-Gramme
+
+Unter _Tokenization_ versteht man die Aufspaltung eines Textstrings in kleinere Bestandteile. In den meisten Fällen wird als Token das einzelne Wort gewählt, wir können aber beispielsweise Texte auch in Sätze oder einzelne Zeichen aufteilen. Sehen wir uns die obige Ausgabe nochmals an, so sehen wir, dass für jeden Tweet bereits die Anzahl der Tokens (in diesem Fall also Wörter) sowie der Types (einzigartige Wörter) und Sentences (Sätze) angegeben ist.
+
+Die meisten Verfahren, die wir noch kennenlernen werden, arbeiten nach dem sogenannten [Bag-of-Words](https://en.wikipedia.org/wiki/Bag-of-words_model)-Modell, womit Texte als -- bildlich gesprochen -- Wortbeutel betrachtet werden, in denen die einzelnen Wörter und deren Anzahl eine Rolle spielen, nicht jedoch deren syntaktischen und grammatikalischen Zusammenhänge. Für all diese Verfahren müssen Texte daher zunächst in einzelne Wörter tokenisiert werden. In Quanteda erledigen wir dies mit der Funktion `tokens()`, die standardmäßig nach Wörtern tokenisiert:
+
+```{r}
+tweet_tokens <- tokens(tweets_corpus)
+tweet_tokens
+```
+
+Wie wir sehen, wurden die Tweets in einzelne Wörter (und Symbole) aufgeteilt. Der Standard-Tokenizer von Quanteda ist hier insofern komfortabel, als dass Mentions und Hashtags (siehe z. B. Tweet 3) beibehalten werden. Allerdings sind auch noch Bestandteile enthalten, die wir im Sinne des Bag-of-Words-Ansatzes nicht benötigen. Darunter fallen beispielsweise Satzzeichen, Ziffern und Symbole sowie URLs. Wir können diese Bestandteile beim Tokenisieren durch entsprechende `remove_`-Argumente entfernen.
+
+```{r}
+tweet_tokens <- tokens(tweets_corpus, 
+                       remove_punct = TRUE,   # Entfernt Satzzeichen
+                       remove_numbers = TRUE, # Entfernt Ziffern
+                       remove_symbols = TRUE, # Entfernt Symbole (darunter auch Emojis)
+                       remove_url = TRUE)     # Entfernt URLs
+tweet_tokens
+```
+
+bestimmte Worttypen, die keinen Informationsgewinn für uns bedeuten, da sie vielfach in allen Texten vorkommen, z. B. Konjunktionen. Letztere Worttypen bezeichnet man auch als _Stopwords_.
