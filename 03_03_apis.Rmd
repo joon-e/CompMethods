@@ -87,7 +87,7 @@ Mit diesem Wissen können wir unsere erste API-Anfrage schreiben. Hierzu rufen w
 Und natürlich sollten wir das Resultat einem R-Objekt zuweisen, um damit weiterarbeiten zu können -- ich verwende den Namen `resp` (für Response):
 
 ```{r}
-resp <- GET(url = "https://api.pushshift.io",
+resp <- httr::GET(url = "https://api.pushshift.io",
             path = "/reddit/search/submission",
             query = list(
               subreddit = "politics",
@@ -118,7 +118,7 @@ Für uns von Interesse ist natürlich der Inhalt, `content`, der Anfrage. Diesen
 
 ```{r}
 resp_content <- content(resp, "text")
-substr(resp_content, 1, 200)
+str_sub(resp_content, 1, 200) # Aus Anzeigegründen nur die ersten 200 Zeichen ausgeben
 ```
 
 Das Resultat ist ein sehr langer Textstring, der, wie wir bereits wissen, im JSON-Standard ist, mit dem wir aber vorerst nicht viel anfangen können. Hier kommt nun das Package `jsonlite` ins Spiel, mit dessen Funktion `fromJSON` wir JSON-Textdateien in R-Objekte umwandeln können (man nennt dies auch _Parsing_):
@@ -169,7 +169,7 @@ Um das Package nutzen können, benötigen wir einen Twitter-Account und müssen 
 
 Danach können wir ohne große Zwischenschritte z. B. die fünf aktuellsten Tweets von Donald Trump abrufen:
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval=FALSE}
 token <- create_token("rtweet access",
                       consumer_key = Sys.getenv("TWITTER_C_KEY"),
                       consumer_secret = Sys.getenv("TWITTER_C_SECRET"),
@@ -178,8 +178,12 @@ token <- create_token("rtweet access",
 ```
 
 
-```{r trumptweet}
+```{r trumptweet, eval=FALSE}
 trump_tweets <- get_timeline("realDonaldTrump", n = 5)
+```
+
+```{r, echo=FALSE}
+trump_tweets <- readRDS("data/trump_tweets.rds")
 ```
 
 Das Resultat ist bereits ein Tibble, das mit 90 Variablen sehr viele Informationen über die einzelnen Tweets enthält. Wir sehen z. B., dass Trump offenbar gerne von seinem iPhone aus twittert:
