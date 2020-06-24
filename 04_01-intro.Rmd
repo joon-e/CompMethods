@@ -18,7 +18,7 @@ library(tidytext)
 library(quanteda)
 ```
 
-Als Beispiel-Datensatz verwenden wir Tweets von Donald Trump und Joe Biden, die diese dieses Jahr (bis einschließlich 17. Juni) abgesetzt haben.^[Datensatz via Kaggle ([Trump](https://www.kaggle.com/austinreese/trump-tweets),  [Biden](https://www.kaggle.com/rohanrao/joe-biden-tweets)]). Die Daten sind über Moodle als `trump_biden_tweets_2020.csv` verfügbar.
+Als Beispiel-Datensatz verwenden wir Tweets von Donald Trump und Joe Biden, die diese dieses Jahr (bis einschließlich 17. Juni) abgesetzt haben.^[Datensatz via Kaggle ([Trump](https://www.kaggle.com/austinreese/trump-tweets),  [Biden](https://www.kaggle.com/rohanrao/joe-biden-tweets))]. Die Daten sind über Moodle als `trump_biden_tweets_2020.csv` verfügbar.
 
 ```{r message=FALSE}
 tweets <- read_csv("data/trump_biden_tweets_2020.csv")
@@ -75,5 +75,109 @@ tweet_tokens <- tokens(tweets_corpus,
                        remove_url = TRUE)     # Entfernt URLs
 tweet_tokens
 ```
+Unsere so erstellten Tokens lassen sich nun noch weiter verfeinern. Falls Groß-/Kleinschreibung nicht explizit zum Forschungsinteresse gehört, ist es sinnvoll, alle Tokens in Kleinschreibung zu konvertieren, sodass beispielsweise `"trump"`, `"Trump"` und `"TRUMP"` als derselbe Token gezählt werden. Hierfür wenden wir auf die Tokens die Funktion `tokens_tolower()` an:
 
-bestimmte Worttypen, die keinen Informationsgewinn für uns bedeuten, da sie vielfach in allen Texten vorkommen, z. B. Konjunktionen. Letztere Worttypen bezeichnet man auch als _Stopwords_.
+```{r}
+tweet_tokens_LC <- tweet_tokens %>% 
+  tokens_tolower()
+
+tweet_tokens_LC
+```
+In  der Regel möchten wir mittels automatisierter Verfahren Wörter bzw. Tokens herausarbeiten, die in gewisser Weise distinkt für bestimmte Dokumente bzw. Gruppen von Dokumenten in dem untersuchten Korpus sind. Das heißt auch, dass bestimmte Worttypen keinen Informationsgewinn für uns liefern, da sie vielfach in allen Texten vorkommen, z. B. Artikel,  Konjunktionen und Präpositionen. Man bezeichnet diese Wörter auch als _Stopwords_. Quanteda enthält etablierte Stopwords-Sammlungen für unterschiedliche Sprachen, die wir über die Funktion `stopwords()` abrufen können:
+
+```{r}
+stopwords("english")
+```
+Über die Funktion `tokens_remove()` können wir eigens definierte Tokens aus den erstellten Tokens entfernen, eben beispielsweise Stoppwörter. Zu beachten ist, dass dadurch bestimmte Zusammenhänge in den Texten nicht mehr erkennbar sind; wie oben jedoch angesprochen, folgen die meisten automatischen Verfahren dem Bag-of-Words-Modell, sodass diese Zusammenhänge keine Berücksichtigung finden würden. Allerdings kann für bestimmte Dokumente jeglicher Inhalt verloren gehen, wie hier im Beispiel der fünfte Tweet zeigt:
+
+```{r}
+tweet_tokens_reduced <- tweet_tokens_LC %>% 
+  tokens_remove(stopwords("english"))
+tweet_tokens_reduced
+```
+Weitere häufig durchgeführte Preprocessing-Schritte sind _Stemming_ oder _Lemmatization_. Beim Stemming werden Wörter um Prefixe und Suffixe bereinigt und somit auf ihren Wortstamm reduziert (z. B. werden aus "Beispiel", "Beispiele" und "[des] Beispiels" jeweils "Beispiel"). Dies wird meist über Algorithmen erreicht, die auf eher heuristischen Regeln basieren, beispielsweise alle "-ing"-Endung etc. abschneiden. So können z. B. Singular- und Plurarlformen desselben Wortes auf einen gemeinsamen Stamm reduziert werden und anschließend als derselbe Token behandelt werden; allerdings scheitern diese Algorithmen häufig an unregelmäßigen Verben oder auch Eigennamen und die Interpretation einzelner Tokens kann bisweilen erschwert werden. Über die Funktion `tokens_wordstem()` bietet Quanteda verschiedene Stemming-Algorithmen an
+
+```{r}
+tweet_tokens_reduced %>% 
+  tokens_wordstem()
+```
+_Lemmatization_ (bzw. Lemmatisierung) ist die anspruchsvollere Variante und führt Tokens auf ihren morphologischen Wortstamm (d.h., die Form, in der das jeweilige Wort im Wörterbuch zu finden ist) zurück (so würden also "ist", "bin", "bist" etc. allesamt auf "sein" zurückgeführt werden). Lemmatization ist daher die deutlich validere Variante, allerdings auch entsprechend aufwändiger und nur durch -- oftmals auch selbst erstellte -- _Dictionaries_ zu bewältigen, in denen für alle relevanten Wörter die jeweilige morphologische Grundform hinterlegt ist und anhand derer dann Tokens ersetzt werden (in Quanteda mit der Funktion `tokens_replace()`). Wir werden diese beiden Preprocessing-Schritte jedoch vorerst nicht anwenden, da sich oftmals auch ohne sie bereits recht gute Ergebnisse erzielen lassen.
+
+Um auch im Bag-of-Words-Ansatz Zusammenhänge zwischen Begriffen abbilden zu können, können weitere _n-Gramme_ definiert werden. _n-Gramme_ bezeichnen die Anzahl an aufeinanderfolgenden Text-Fragmenten, die beim Tokenisieren berücksichtigt werden sollen. Trennen wir unseren Text also in einzelne Wörter, betrachten wir Unigramme. Wir können jedoch auch angeben, das zusätzlich Bigramme (Abfolgen von zwei Wörtern), Trigramme (Abfolgen von drei Wörtern) etc. berücksichtigt werden sollen. Dies ist sinnvoll, wenn wir annehmen, dass auch Wortkombinationen distinkt für bestimmte Dokumente sind (sich beispielsweise die Trump-Tweets nicht nur durch "MAGA", sondern auch "Crooked Hillary" auszeichnen.). 
+
+In Quanteda können wir nach der initalen Tokenisierung auch weitere n-Gramme mit der Funktion `tokens_ngrams` erstellen lassen:
+
+```{r}
+tweet_tokens_bigrams <- tweet_tokens_reduced %>% 
+  tokens_ngrams(n = c(1, 2)) # Erzeuge Uni- und Bigramme
+tweet_tokens_bigrams
+```
+## Dokument-Feature-Matrizen (DFMs)
+
+Die meisten Verfahren, die wir kennenlernen werden, arbeiten mit sogenannten _Dokument-Feature-Matrizen_, kurz _DFM_, als Input. Hierfür wird eine Matrix erstellt, die in den Zeilen alle Dokumente im Korpus und in Spalten _alle_ erzeugten Tokens enthält und in den Zellen dann festhält, wie häufig das jeweilige Token (bzw. Feature) im jeweiligen Dokument vorkommt. Wir erzeugen DFMs in Quanteda durch die Funktion `dfm()`:
+
+```{r}
+tweets_dfm <- dfm(tweet_tokens_bigrams)
+tweets_dfm
+```
+Wie wir sehen erzeugt dies eine sehr große Matrix: die 3743 Tweets im Korpus enthalten insgesamt 48046 einzigartige Features (in unserem Fall Uni- und Bigramme). Wir sehen außerdem bereits in dieser abgeschnittenen Ansicht, dass die meisten Zellen eine 0 enthalten, d. h. pro Dokument kommt der Großteil der Features _nicht_ vor. Den Anteil der leeren Zellen (bzw. 0-Zellen) wird auch als _Sparsitiy_ der DFM bezeichnet -- in unserem Fall enthalten also 99,9% aller Zellen eine 0.
+
+Diese DFM können wir nutzen, um bereits erste einfache Analysen durchzuführen. Die Funktion `topfeatures()` extrahiert beispielsweise die am häufigsten vorkommenden Features:
+
+```{r}
+topfeatures(tweets_dfm)
+```
+Etwas aussagekräftiger wird das Ergebnis, wenn wir mit dem Argument `groups` die Ausgabe gruppieren. Praktischerweise haben wir ja in den Docvars den Account gespeichert, sodass wir nun die Top-Features getrennt für Trump und Biden ausgeben lassen können:
+
+```{r}
+topfeatures(tweets_dfm, groups = "account")
+```
+Wir sehen: Joe Biden twittert offenbar vor allem über Donald Trump, wohingegen der sich vor allem wohlbekannter Trumpisms ("great", "big", "fake") bedient.
+
+Mittels `dfm_select()` können wir die DFM zudem anhand von RegEx-Mustern (siehe Kapitel \@ref(regex)) filtern und z. B. lediglich Mentions (beginnen mit `@`) auswählen:
+
+```{r}
+dfm_mentions <- dfm_select(tweets_dfm, "@*")
+topfeatures(dfm_mentions, groups = "account")
+```
+Im kommenden Kapitel werden wir basierend auf diesen Grundlagen uns detaillierter mit Text- und Wortmetriken auseinandersetzen, um Unterschiede und Gemeinsamkeiten in den Tweets der beiden Kandidaten zu analysieren.
+
+## Übungsaufgaben
+
+Erstellen Sie für die folgenden Übungsaufgaben eine eigene Skriptdatei oder eine R-Markdown-Datei und speichern diese als `ue17_nachname.R` bzw. `ue17_nachname.Rmd` ab.
+
+Laden Sie den Datensatz `facebook_europawahl.csv` und filtern Sie lediglich Posts der im Bundestag vertretenen Parteien. 
+
+---
+
+```{exercise, label="ue17a1"}
+Korpus erstellen:
+```
+
+Erstellen Sie mit Quanteda einen Korpus für die Facebook-Posts.
+
+---
+
+```{exercise, label="ue17a2"}
+Tokenization:
+```
+
+Erstellen Sie Tokens für den Korpus. Dabei sollen:
+
+- alle URLs, Symbole, Satzzeichen und Ziffern entfernt werden
+- die Tokens in Kleinschreibung umgewandelt werden
+- deutsche Stoppwörter entfernt werden
+- Uni-, Bi- und Trigramme erstellt werden
+
+---
+
+```{exercise, label="ue17a3"}
+DFMs:
+```
+
+Erstellen Sie eine DFM auf Basis der oben erzeugten Tokens. Beantworten Sie anhand der DFM folgende Fragen:
+
+- Was sind die häufigsten Features je Partei?
+  - Hat es sich gelohnt, neben Uni- auch Bi- und Trigramme zu betrachten?
+  - Fallen Ihnen Probleme auf?
+- Was sind die häufigsten Hashtags über alle Posts hinweg und nach Partei getrennt betrachtet?

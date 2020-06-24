@@ -147,7 +147,7 @@ str_squish("   ein unsauberer  String   ")
 
 ![Illustration von \@allison_horst: https://twitter.com/allison_horst](img/horst/str_squish.png)
 
-## Reguläre Ausdrücke
+## Reguläre Ausdrücke {#regex}
 
 Gerade bei unbereinigten Daten ist es oft das Ziel, bestimmte Muster in Strings zu erkennen (wird beispielsweise eine bestimmte Person in einem Text genannt?) und/oder zu extrahieren. Hier kommen _reguläre Ausdrücke_ (auf Englisch: _regular expressions_ oder auch kurz *RegEx*) ins Spiel -- Zeichenketten, die Muster in Zeichenketten formal beschreiben.
 
