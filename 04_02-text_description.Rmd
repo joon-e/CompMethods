@@ -1,0 +1,176 @@
+# Textdeskription und einfache Textvergleiche {#textdescription}
+
+Nachdem wir im vergangenen Kapitel die Grundlagen und -begriffe der automatisierten Inhaltsanalyse kennengelernt haben, setzen wir uns nun etwas intensiver mit der deskriptiven Analyse von Texten auseinander und werden auch einige einfache Möglichkeiten betrachten, Texte bzw. Dokumente miteinander zu vergleichen.
+
+Wir arbeiten erneut mit den Tweets von Trump und Biden und führen daher zunächst die uns bereits bekannten Schritte zur Aufbereitung des Tweet-Korpus durch:
+
+```{r message=FALSE, warning=FALSE}
+# Setup
+library(tidyverse)
+library(tidytext)
+library(quanteda)
+
+# Daten einlesen
+tweets <- read_csv("data/trump_biden_tweets_2020.csv")
+
+# Korpus erzeugen
+tweets_corpus <- corpus(tweets, docid_field = "id", text_field = "content")
+
+# Tokens erzeugen
+tweets_tokens <- tokens(tweets_corpus, 
+                       remove_punct = TRUE,   
+                       remove_numbers = TRUE,
+                       remove_symbols = TRUE, 
+                       remove_url = TRUE) %>% 
+  tokens_tolower() %>% 
+  tokens_remove(stopwords("english"))
+
+# DFM erzeugen
+tweets_dfm <- dfm(tweets_tokens)
+```
+
+## Worthäufigkeiten
+
+Wir haben bereits im vergangenen Kapitel gesehen, dass wir anhand der DFM schon simple Worthäufigkeiten auszählen können. Allgemein erhalten wir in Quanteda die absoluten Feature-Häufigkeiten mit `featfreq()`.
+
+An dieser Stelle sei außerdem auf die Funktion `tidy()` aus dem Tidytext-Package verwiesen, die Output vieler Quanteda-Funktionen automatisch in _tidy data_ konvertieren kann und uns somit den weiteren Umgang mit den Daten erleichert:
+
+```{r message=FALSE, warning=FALSE}
+featfreq(tweets_dfm) %>% 
+  tidy() %>%       # In tidy data konvertieren 
+  arrange(desc(x)) # Absteigend nach Anzahl sortieren
+```
+
+Quanteda bietet außerdem einige rudimentäre Möglichkeiten, Textdaten zu visualisieren. Erinnert sich noch jemand an den Trend, alles in Wortwolken zu visualisieren? Mit `textplot_wordcloud()` erzeugen wir eine solche:
+
+```{r}
+textplot_wordcloud(tweets_dfm, max_words = 100)
+```
+
+An dieser Stelle ist es sinnvoll, eine zweite DFM zu erstellen, die nicht auf den einzelnen Dokumenten (= einzelne Tweets), sondern auf den beiden Accounts basiert. Dies führt dazu, dass alle Tweets eines Accounts als ein langes Dokument betrachtet werden, ermöglicht uns aber bereits einfache Vergleiche zwischen den beiden Accounts. Dies erreichen wir im `dfm()`-Befehl mit dem Argument `groups`, wobei wir basierend auf unseren Docvars gruppieren können:
+
+```{r}
+tweets_dfm_grouped <- dfm(tweets_tokens, groups = "account")
+tweets_dfm_grouped
+```
+Diese DFM hat also nur noch zwei Zeilen (= zwei Dokumente, eines pro Account) und summiert die Feature-Häufigkeiten über alle Tweets, getrennt nach Account, hinweg. 
+
+Wir können nun die Wortwolke auch für unsere beiden Accounts getrennt erzeugen lassen, indem wir das Argument `comparison = TRUE` verwenden -- mit der alten DFM auf Tweet-Ebene würde hier für jedes Dokument (Tweet) getrennt eine Wolke erzeugt werden, was natürlich kaum sinnvoll darstellbar und interpretierbar wäre.
+
+```{r}
+textplot_wordcloud(tweets_dfm_grouped, 
+                   max_words = 100, 
+                   comparison = TRUE, 
+                   color = c("blue", "red"))
+```
+
+## Konkordanzen (Keywords in context)
+
+Durch den Bag-of-Word-Approach verlieren wir den Kontext, in dem Begriffe fallen. Daher kann es oft sinnvoll sein, für ausgewählte Schlüsselbegriffe auch die zugehörigen Textstellen samt Kontext auszugeben. Dies wird auch als Konkordanz bezeichnet.
+
+In Quanteda können wir über die Funktion `kwic()` (für *K*ey*w*ords *i*n *c*ontext) solche Konkordanzen ausgeben lassen. Dies kann anhand eines Korpus- oder eines Token-Objekts geschehen; da wir die Tokens bereits um Stoppwörter bereinigt haben, ist es hier sinnvoller den Korpus zu nutzen, damit sich der Kontext im ursprünglichen Satzzusammenhang erschließen lässt. Als zweites Argument benötigen wir noch das Suchmuster, nach dem gesucht werden soll -- in der Regel also ein bestimmter Schlüsselbegriff (`kwic()` ist per Default _case-insesitive_, ignoriert also Groß- und Kleinschreibung, sodass wir mit "news" auch "News" und "NEWS" finden):
+
+```{r}
+kwic(tweets_corpus, "news") %>% 
+  as_tibble()
+```
+
+Zu den Informationen, die wir erhalten, zählen die Dokument-ID, die Textstelle (in Tokens) in diesem Dokument, ab dem unser Begriff auftritt, sowie der vorherige und nachfolgende Satzkontext (per Default bis zu 5 Wörter, kann mit dem `window`-Argument angepasst werden).
+
+Das Suchmuster kann einen RegEx-Ausdruck beinhalten, um beispielsweise schnell nach allen Hashtags zu suchen:
+
+```{r}
+kwic(tweets_corpus, "#*") %>% 
+  as_tibble()
+```
+
+## Kollokationen
+
+Als Kollokation wird das gemeinsame Auftreten von zwei oder mehr Wörtern bezeichnet. Wir können uns solche Kollokationen mit `textstat_collocations()` ausgeben lassen, wobei auch hier entweder ein Korpus- oder ein Token-Objekt angegeben werden muss. Hier zunächst mit dem Korpus:
+
+```{r}
+textstat_collocations(tweets_corpus) %>% 
+  as_tibble() %>% 
+  arrange(desc(count))
+```
+
+Das sagt uns also noch nicht sonderlich viel über die Dokumente aus, da die häufigsten Kollokationen aus Stoppwörtern ("of the", "in the" etc.) bestehen. Wir können dies umgehen, indem wir die bereits um diese Wörter bereinigten Tokens übergeben:
+
+```{r}
+textstat_collocations(tweets_tokens) %>% 
+  as_tibble() %>% 
+  arrange(desc(count))
+```
+
+Eine andere Möglichkeit besteht darin, nicht nach der absoluten Häufigkeit, sondern nach dem ebenfalls berechneten Lambda-Koeffizienten zu sortieren. Dieser fällt, vereinfacht gesagt, umso höher aus, je wahrscheinlicher exakt diese Kombination aus Wörtern ist (so gehören etwa sowohl "donald trump" als auch "president trump" zu den absolut am häufigsten vorhandenen Kollokationen; diese weisen aber ein geringeres Lambda auf, da "trump" sowohl mit "donald" als auch mit "president" auftritt und entsprechend die Wahrscheinlichkeit geringer ist als bei Wortpaaren, die nahezu immer in dieser Kombination in diesem Korpus auftreten, z. B. "oval office"). Mit dem `min_count`-Argument können wir festlegen, dass die jeweilige Kollokation mindestens x mal im Korpus vorkommen muss:
+
+```{r}
+textstat_collocations(tweets_corpus, min_count = 10) %>% 
+  as_tibble() %>% 
+  arrange(desc(lambda))
+```
+
+Zwar werden in der Regel Kollokationen von zwei Wörtern untersucht, mit dem `size`-Argument können wir aber auch das gemeinsame Auftreten von mehr als zwei Wörtern ausgeben lassen:
+
+```{r}
+textstat_collocations(tweets_tokens, size = 4) %>% 
+  as_tibble() %>% 
+  arrange(desc(count))
+```
+
+## Kookkurenzen
+
+Während bei Kollokationen zwei oder mehr Wörter genau in dieser Wortfolge gemeinsam auftreten müssen, untersucht man mittels Kookkurenzen das gemeinsame Auftreten von Wörtern (oder anderen lexikalischen Einheiten) innerhalb einer höher geordneten Einheit, z. B. in einem Dokument. Hierfür wird zunächst eine Co-occurence-Matrix aufgestellt, die für jeden Token prüft, wie oft dieser mit jeweils allen anderen Tokens im Korpus gemeinsam in einem Dokument auftritt. Das Ergebnis ist also eine Matrix, die genausoviele Zeilen wie Spalten (= alle Tokens im Korpus) aufweist. Wir können diese Matrix mit der Funktion `fcm()` (für *f*eature *c*o-occurence *m*atrix) erstellen:
+
+```{r}
+tweets_com <- fcm(tweets_tokens)
+tweets_com
+```
+Auch hier können wir wieder die `tidy()`-Funktion aus dem Tidytext-Package nutzen, um schnell die häufigsten Kookkurenzen zu erhalten -- zu beachten ist hier, dass die Reihenfolge der Wörter keine Rolle spielt:
+
+```{r}
+tweets_com %>% 
+  tidy() %>% 
+  arrange(desc(count))
+```
+
+## Textkomplexität
+
+um die Komplexität von Texten zu quantifizieren, gibt es mehrere Herangehensweisen, wobei insbesondere die folgenden beiden weit verbreitet sind:
+
+- _Lesbarkeit_: Hier wird quantifiziert, wie einfach ein Text lesbar ist. Das wohl bekannteste Lesbarkeitsmaß ist der [Flesch Reading Ease (FRE)](https://de.wikipedia.org/wiki/Lesbarkeitsindex#Flesch-Reading-Ease), bei dem die durchschnittliche Satzlänge in Wörtern und die durchschnittliche Silbenzahl pro Wort miteinander verrechnet werden. In Quanteda können zahlreiche Lesbarkeitsmaße mit der Funktion `textstat_readability()` berechnet werden -- für kurze Tweets sind solche Berechnungen aber weniger sinnvoll, weshalb dies hier ausgespart wird.
+- _Lexikalische Diversität_: Hier wird quantifiziert, wie vielfältig (*'lexically rich'*) ein Text ist. Das wohl bekannteste Maß ist das _Type-Token-Ratio (TTR)_, wobei einfach die Anzahl an Types, also einzigartigen Tokens, durch die Anzahl an Token geteilt wird. Ein hohes TTR steht demnach für einen großen Wortschatz, wohingegen ein geringes TTR dafür spricht, dass sich viele Wörter häufig wiederholen. Allerdings ist zu beachten, dass das TTR von der Textlänge beeinflusst wird, da es naturgemäß immer schwieriger wird, keine Wörter mehrfach zu verwenden, je länger ein Text ist. Mit der Funktion `textstat_lexdiv()` lassen sich neben dem TTR (Default-Maß) daher auch noch einige andere Maße berechnen.
+
+```{r}
+textstat_lexdiv(tweets_dfm_grouped)
+```
+
+## Keyness
+
+Während die bisherigen Auswertungen und Maße auch zur Beschreibung von einzelnen Texten bzw. Dokumenten oder gesamten Korpora verwendet werden können, lernen wir nun ein erstes Vergleichsmaß kennen. Mit _Keyness_ wird quantifiziert, wie distinkt ein Begriff für einen Text im Vergleich zu allen anderen Texten im Korpus ist. Es geht also nicht nur darum, dass ein Wort häufig in einem Text vorkommt, sondern zugleich eher selten in den Vergleichstexten ist und somit besonders gut geeignet ist, um den Zieltext zu identifzieren. Wörter mit hoher Keyness können entsprechend als _Keyword_ für diesen Text bezeichnet werden.
+
+Keyness-Maße werden berechnet, indem die Worthäufigkeiten im Zieltext mit den erwarteten Worthäufigkeiten im Vergleichskorpus in einem statistischen Test (z. B. Chi²-Test oder Likelihood-Ratio-Test) verglichen werden. In Quanteda können wir die Keyness mit der Funktion `textstat_keyness()` berechnen, wobei eine DFM als erstes Argument sowie mit dem Argument `target` das Zieldokument angegeben wird (alle anderen Dokumente dienen dann jeweils als Vergleichsdokumente). Per Default wird der Chi²-Test genutzt, andere Testverfahren können über das `measure`-Argument angefordert werden.
+
+Um besonders distinkte Begriffe für Joe Biden bzw. Donald Trump auszuwerten, müssen wir wieder die gruppierte DFM nutzen, sodass alle Tweets eines Accounts als "ein" Dokument gezählt werden:
+
+```{r}
+textstat_keyness(tweets_dfm_grouped, target = "JoeBiden") %>% 
+  as_tibble()
+
+textstat_keyness(tweets_dfm_grouped, target = "realDonaldTrump") %>% 
+  as_tibble()
+```
+
+Ein mittels `textstat_keyness()` erzeugtes Objekt kann zudem der Funktion `textplot_keyness()` übergeben werden, um die Keywords auch grafisch darzustellen:
+
+```{r}
+textstat_keyness(tweets_dfm_grouped, target = "realDonaldTrump") %>% 
+  textplot_keyness(n = 10)
+```
+
+```{r}
+tweets_dfm %>% 
+  dfm_tfidf() %>% 
+  topfeatures()
+```
+
