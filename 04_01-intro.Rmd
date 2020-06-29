@@ -2,7 +2,7 @@
 
 Besonders in den Sozialwissenschaften hat die automatisierte Inhaltsanalyse großer Textmengen in den vergangenen Jahren stark an Bedeutung gewonnen, da mit den zugehörigen Verfahren ganz neue Datenbestände -- oder endlich in gebührendem Umfang -- analysiert werden können. Zugleich haben sich in den vergangenen Jahren einige Packages als Standardwerkzeug in R empfehlen können und somit einige Prozesse vereinheitlicht.
 
-Zu den beiden relevantesten Packages für die automatisierte Inhaltsanalyse zählen `quanteda` (für *Qu*titative *An*alysis of *Te*xtual *Da*ta) und `tidytext` (in Anlehnung an das Tidyverse), die insbesondere das Handling von Textdaten sowie die vorbereitenden Schritte (auch als *Preprocessing* bezeichnet) für spezifischere Verfahren deutlich erleichtern. Quanteda hat dabei den größeren Funktionsumfang und wird daher auch unser Primärpackage in den nächsten Kapiteln sein. Tidytext enthält zwar auch Funktionen für die zentralsten Handlings- und Vorbereitungsschritte, zeigt seinen Wert aber vor allem in der Konvertierung von Textdaten in _tidy data_ und wird somit für uns insbesondere dann relevant, wenn Ergebnisse z. B. mittels `ggplot2` visualisiert werden sollen.
+Zu den beiden relevantesten Packages für die automatisierte Inhaltsanalyse zählen `quanteda` (für *Qu*antitative *An*alysis of *Te*xtual *Da*ta) und `tidytext` (in Anlehnung an das Tidyverse), die insbesondere das Handling von Textdaten sowie die vorbereitenden Schritte (auch als *Preprocessing* bezeichnet) für spezifischere Verfahren deutlich erleichtern. Quanteda hat dabei den größeren Funktionsumfang und wird daher auch unser Primärpackage in den nächsten Kapiteln sein. Tidytext enthält zwar auch Funktionen für die zentralsten Handlings- und Vorbereitungsschritte, zeigt seinen Wert aber vor allem in der Konvertierung von Textdaten in _tidy data_ und wird somit für uns insbesondere dann relevant, wenn Ergebnisse z. B. mittels `ggplot2` visualisiert werden sollen.
 
 Zunächst installieren wir beide Packages:
 
@@ -18,14 +18,14 @@ library(tidytext)
 library(quanteda)
 ```
 
-Als Beispiel-Datensatz verwenden wir Tweets von Donald Trump und Joe Biden, die diese dieses Jahr (bis einschließlich 17. Juni) abgesetzt haben.^[Datensatz via Kaggle ([Trump](https://www.kaggle.com/austinreese/trump-tweets),  [Biden](https://www.kaggle.com/rohanrao/joe-biden-tweets))]. Die Daten sind über Moodle als `trump_biden_tweets_2020.csv` verfügbar.
+Als Beispiel-Datensatz verwenden wir Tweets von Donald Trump und Joe Biden, die diese dieses Jahr (bis einschließlich 24. Juni) abgesetzt haben, bereinigt um Retweets. Die Daten sind über Moodle als `trump_biden_tweets_2020.csv` verfügbar.
 
 ```{r message=FALSE}
 tweets <- read_csv("data/trump_biden_tweets_2020.csv")
 tweets
 ```
 
-Wie wir sehen, ist die Fallebene der einzelne Tweet. Für jeden Tweet haben wir eine numerische `id`, den `account` (`realDonaldTrump` oder `JoeBiden`), den `link` zum Tweet, den Text des Tweets (`content`), Veröffentlichungsdatum und -uhrzeit (`date`) sowie die Anzahl der `retweets` und `favorites`. Insgesamt liegen uns 3734 Tweets, davon 2413 von Trump und 1321 von Joe Biden, vor.
+Wie wir sehen, ist die Fallebene der einzelne Tweet. Für jeden Tweet haben wir eine numerische `id`, den `account` (`realDonaldTrump` oder `JoeBiden`), den `link` zum Tweet, den Text des Tweets (`content`), Veröffentlichungsdatum und -uhrzeit (`date`) sowie die Anzahl der `retweets` und `favorites`. Insgesamt liegen uns 4153 Tweets, davon 2654 von Trump und 1499 von Joe Biden, vor.
 
 Wir setzen uns nun zunächst mit einigen Grundbegriffen und -konzepten auseinander, bevor wir in den kommenden Kapiteln unterschiedliche Analyseverfahren an den Daten ausprobieren.
 
@@ -65,7 +65,7 @@ tweet_tokens <- tokens(tweets_corpus)
 tweet_tokens
 ```
 
-Wie wir sehen, wurden die Tweets in einzelne Wörter (und Symbole) aufgeteilt. Der Standard-Tokenizer von Quanteda ist hier insofern komfortabel, als dass Mentions und Hashtags (siehe z. B. Tweet 3) beibehalten werden. Allerdings sind auch noch Bestandteile enthalten, die wir im Sinne des Bag-of-Words-Ansatzes nicht benötigen. Darunter fallen beispielsweise Satzzeichen, Ziffern und Symbole sowie URLs. Wir können diese Bestandteile beim Tokenisieren durch entsprechende `remove_`-Argumente entfernen.
+Wie wir sehen, wurden die Tweets in einzelne Wörter (und Symbole) aufgeteilt. Der Standard-Tokenizer von Quanteda ist hier insofern komfortabel, als dass Mentions und Hashtags (siehe z. B. Tweet 6) beibehalten werden. Allerdings sind auch noch Bestandteile enthalten, die wir im Sinne des Bag-of-Words-Ansatzes nicht benötigen. Darunter fallen beispielsweise Satzzeichen, Ziffern und Symbole sowie URLs. Wir können diese Bestandteile beim Tokenisieren durch entsprechende `remove_`-Argumente entfernen.
 
 ```{r}
 tweet_tokens <- tokens(tweets_corpus, 
@@ -88,6 +88,7 @@ In  der Regel möchten wir mittels automatisierter Verfahren Wörter bzw. Tokens
 ```{r}
 stopwords("english")
 ```
+
 Über die Funktion `tokens_remove()` können wir eigens definierte Tokens aus den erstellten Tokens entfernen, eben beispielsweise Stoppwörter. Zu beachten ist, dass dadurch bestimmte Zusammenhänge in den Texten nicht mehr erkennbar sind; wie oben jedoch angesprochen, folgen die meisten automatischen Verfahren dem Bag-of-Words-Modell, sodass diese Zusammenhänge keine Berücksichtigung finden würden. Allerdings kann für bestimmte Dokumente jeglicher Inhalt verloren gehen, wie hier im Beispiel der fünfte Tweet zeigt:
 
 ```{r}
@@ -95,12 +96,14 @@ tweet_tokens_reduced <- tweet_tokens_LC %>%
   tokens_remove(stopwords("english"))
 tweet_tokens_reduced
 ```
+
 Weitere häufig durchgeführte Preprocessing-Schritte sind _Stemming_ oder _Lemmatization_. Beim Stemming werden Wörter um Prefixe und Suffixe bereinigt und somit auf ihren Wortstamm reduziert (z. B. werden aus "Beispiel", "Beispiele" und "[des] Beispiels" jeweils "Beispiel"). Dies wird meist über Algorithmen erreicht, die auf eher heuristischen Regeln basieren, beispielsweise alle "-ing"-Endung etc. abschneiden. So können z. B. Singular- und Plurarlformen desselben Wortes auf einen gemeinsamen Stamm reduziert werden und anschließend als derselbe Token behandelt werden; allerdings scheitern diese Algorithmen häufig an unregelmäßigen Verben oder auch Eigennamen und die Interpretation einzelner Tokens kann bisweilen erschwert werden. Über die Funktion `tokens_wordstem()` bietet Quanteda verschiedene Stemming-Algorithmen an
 
 ```{r}
 tweet_tokens_reduced %>% 
   tokens_wordstem()
 ```
+
 _Lemmatization_ (bzw. Lemmatisierung) ist die anspruchsvollere Variante und führt Tokens auf ihren morphologischen Wortstamm (d.h., die Form, in der das jeweilige Wort im Wörterbuch zu finden ist) zurück (so würden also "ist", "bin", "bist" etc. allesamt auf "sein" zurückgeführt werden). Lemmatization ist daher die deutlich validere Variante, allerdings auch entsprechend aufwändiger und nur durch -- oftmals auch selbst erstellte -- _Dictionaries_ zu bewältigen, in denen für alle relevanten Wörter die jeweilige morphologische Grundform hinterlegt ist und anhand derer dann Tokens ersetzt werden (in Quanteda mit der Funktion `tokens_replace()`). Wir werden diese beiden Preprocessing-Schritte jedoch vorerst nicht anwenden, da sich oftmals auch ohne sie bereits recht gute Ergebnisse erzielen lassen.
 
 Um auch im Bag-of-Words-Ansatz Zusammenhänge zwischen Begriffen abbilden zu können, können weitere _n-Gramme_ definiert werden. _n-Gramme_ bezeichnen die Anzahl an aufeinanderfolgenden Text-Fragmenten, die beim Tokenisieren berücksichtigt werden sollen. Trennen wir unseren Text also in einzelne Wörter, betrachten wir Unigramme. Wir können jedoch auch angeben, das zusätzlich Bigramme (Abfolgen von zwei Wörtern), Trigramme (Abfolgen von drei Wörtern) etc. berücksichtigt werden sollen. Dies ist sinnvoll, wenn wir annehmen, dass auch Wortkombinationen distinkt für bestimmte Dokumente sind (sich beispielsweise die Trump-Tweets nicht nur durch "MAGA", sondern auch "Crooked Hillary" auszeichnen.). 
@@ -112,6 +115,9 @@ tweet_tokens_bigrams <- tweet_tokens_reduced %>%
   tokens_ngrams(n = c(1, 2)) # Erzeuge Uni- und Bigramme
 tweet_tokens_bigrams
 ```
+
+(Es werden hier immer nur die ersten Elemente bzw. Tokens des jeweiligen Textvektors angezeigt; in Tweet 4 sehen wir aber auch einige der erzeugten Bigramme.)
+
 ## Dokument-Feature-Matrizen (DFMs)
 
 Die meisten Verfahren, die wir kennenlernen werden, arbeiten mit sogenannten _Dokument-Feature-Matrizen_, kurz _DFM_, als Input. Hierfür wird eine Matrix erstellt, die in den Zeilen alle Dokumente im Korpus und in Spalten _alle_ erzeugten Tokens enthält und in den Zellen dann festhält, wie häufig das jeweilige Token (bzw. Feature) im jeweiligen Dokument vorkommt. Wir erzeugen DFMs in Quanteda durch die Funktion `dfm()`:
@@ -120,27 +126,30 @@ Die meisten Verfahren, die wir kennenlernen werden, arbeiten mit sogenannten _Do
 tweets_dfm <- dfm(tweet_tokens_bigrams)
 tweets_dfm
 ```
-Wie wir sehen erzeugt dies eine sehr große Matrix: die 3743 Tweets im Korpus enthalten insgesamt 48046 einzigartige Features (in unserem Fall Uni- und Bigramme). Wir sehen außerdem bereits in dieser abgeschnittenen Ansicht, dass die meisten Zellen eine 0 enthalten, d. h. pro Dokument kommt der Großteil der Features _nicht_ vor. Den Anteil der leeren Zellen (bzw. 0-Zellen) wird auch als _Sparsitiy_ der DFM bezeichnet -- in unserem Fall enthalten also 99,9% aller Zellen eine 0.
+Wie wir sehen erzeugt dies eine sehr große Matrix: die 4153 Tweets im Korpus enthalten insgesamt 49341 einzigartige Features (in unserem Fall Uni- und Bigramme). Wir sehen außerdem bereits in dieser abgeschnittenen Ansicht, dass die meisten Zellen eine 0 enthalten, d. h. pro Dokument kommt der Großteil der Features _nicht_ vor. Den Anteil der leeren Zellen (bzw. 0-Zellen) wird auch als _Sparsitiy_ der DFM bezeichnet -- in unserem Fall enthalten 99.9% aller Zellen eine 0.
 
 Diese DFM können wir nutzen, um bereits erste einfache Analysen durchzuführen. Die Funktion `topfeatures()` extrahiert beispielsweise die am häufigsten vorkommenden Features:
 
 ```{r}
 topfeatures(tweets_dfm)
 ```
+
 Etwas aussagekräftiger wird das Ergebnis, wenn wir mit dem Argument `groups` die Ausgabe gruppieren. Praktischerweise haben wir ja in den Docvars den Account gespeichert, sodass wir nun die Top-Features getrennt für Trump und Biden ausgeben lassen können:
 
 ```{r}
 topfeatures(tweets_dfm, groups = "account")
 ```
-Wir sehen: Joe Biden twittert offenbar vor allem über Donald Trump, wohingegen der sich vor allem wohlbekannter Trumpisms ("great", "big", "fake") bedient.
 
-Mittels `dfm_select()` können wir die DFM zudem anhand von RegEx-Mustern (siehe Kapitel \@ref(regex)) filtern und z. B. lediglich Mentions (beginnen mit `@`) auswählen:
+Wir sehen: Joe Biden twittert offenbar vor allem über Donald Trump, wohingegen der sich vor allem wohlbekannter Trumpisms ("great", "big", "fake news") bedient.
+
+Mittels `dfm_select()` können wir die DFM zudem anhand von RegEx-Mustern (siehe Kapitel \@ref(regex)) filtern und z. B. lediglich Mentions (beginnen mit `@`) auswählen, um zu sehen, auf wen sich beiden Kandidaten mit ihren Tweets am häufigsten beziehen:
 
 ```{r}
 dfm_mentions <- dfm_select(tweets_dfm, "@*")
 topfeatures(dfm_mentions, groups = "account")
 ```
-Im kommenden Kapitel werden wir basierend auf diesen Grundlagen uns detaillierter mit Text- und Wortmetriken auseinandersetzen, um Unterschiede und Gemeinsamkeiten in den Tweets der beiden Kandidaten zu analysieren.
+
+Im kommenden Kapitel werden wir uns basierend auf diesen Grundlagen detaillierter mit Text- und Wortmetriken auseinandersetzen, um Unterschiede und Gemeinsamkeiten in den Tweets der beiden Kandidaten zu analysieren.
 
 ## Übungsaufgaben
 
