@@ -667,3 +667,68 @@ Und testen dies am zweiten Artikel:
 scrape_sz("https://www.sueddeutsche.de/sport/stuttgart-hsv-2-bundesliga-castro-1.4921867")
 ```
 
+## Kapitel 17: Automatisierte Inhaltsanalyse: Einführung und Grundbegriffe {-}
+
+Für alle Aufgaben benötigen wir Quanteda und müssen den Facebook-Datensatz wie gewohnt filtern:
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(quanteda)
+
+bt_parteien <- c("alternativefuerde", "B90DieGruenen", "CDU", "CSU", "FDP", "linkspartei", "SPD")
+
+facebook_europawahl <- read_csv("data/facebook_europawahl.csv") %>% 
+  filter(party %in% bt_parteien)
+```
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue17a1)__: 
+
+Wir erstellen das Korpus-Objekt mit der `corpus()`-Funktion.
+
+```{r}
+fb_corpus <- corpus(facebook_europawahl, docid_field = "id", text_field = "message")
+```
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue17a2)__: 
+
+Die einzelnen Schritte zur Tokenisierung können wir in eine Pipe packen:
+
+```{r}
+fb_tokens <- tokens(fb_corpus,                 # Erzeuge Tokens
+                       remove_punct = TRUE,  
+                       remove_numbers = TRUE, 
+                       remove_symbols = TRUE,
+                       remove_url = TRUE) %>% 
+  tokens_tolower() %>%                         # Kleinschreibung
+  tokens_remove(stopwords("german")) %>%       # Deutsche Stoppwörter entfernen
+  tokens_ngrams(n = c(1, 2, 3))                # Erzeuge Uni-, Bi- und Trigramme
+```
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue17a3)__: 
+
+Zunächst erstellen wir die DFM:
+
+```{r}
+fb_dfm <- dfm(fb_tokens)
+```
+
+Die Top-Features pro Partei:
+
+```{r}
+topfeatures(fb_dfm, groups = "party")
+```
+Das sich darunter fast keine Trigramme (außer eine Hashtag-Kominbation bei der FDP) befinden, ziehen wir daraus vorerst keinen Mehrwert. Die Zeichenkette `\U0001f1ea\U0001f1fa` verweist auf Fehler bei der Bereinigung der Texte -- hierbei handelt es sich um den Code für das Europaflaggen-Emoji, der eigentlich durch `remove_symbols = TRUE` hätte entfernt werden sollen. Hier sollte also manuell nachgebessert werden.
+
+Um die Hashtags zu analysieren, erstellen wir eine DFM, die nur diese enthält:
+
+```{r}
+dfm_hashtags <- dfm_select(fb_dfm, "#*") # Wählt alle Hashtags aus
+```
+
+Wir können uns nun wieder mittels `topfeatures()` die häufigsten Hashtags ausgeben lassen:
+
+```{r}
+topfeatures(dfm_hashtags) # allgemein
+topfeatures(dfm_hashtags, groups = "party") # getrennt nach Partei
+```
+
