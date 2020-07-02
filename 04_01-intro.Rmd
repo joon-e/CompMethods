@@ -142,7 +142,7 @@ topfeatures(tweets_dfm, groups = "account")
 
 Wir sehen: Joe Biden twittert offenbar vor allem über Donald Trump, wohingegen der sich vor allem wohlbekannter Trumpisms ("great", "big", "fake news") bedient.
 
-Mittels `dfm_select()` können wir die DFM zudem anhand von RegEx-Mustern (siehe Kapitel \@ref(regex)) filtern und z. B. lediglich Mentions (beginnen mit `@`) auswählen, um zu sehen, auf wen sich beiden Kandidaten mit ihren Tweets am häufigsten beziehen:
+Mittels `dfm_select()` können wir die DFM zudem anhand Mustern filtern und z. B. lediglich Mentions (beginnen mit `@`) auswählen, um zu sehen, auf wen sich beiden Kandidaten mit ihren Tweets am häufigsten beziehen:^[per Default erkennt `dfm_select()` sogenannte ["glob-style wildcards"](https://en.wikipedia.org/wiki/Glob_(programming)), mit denen etwa ein Asterisk `*` als einfacher Platzhalter definiert werden kann. Um RegEx-Muster (siehe Kapitel \@ref(regex)) zu nutzen, muss `valuetype="regex"` angegeben werden.]
 
 ```{r}
 dfm_mentions <- dfm_select(tweets_dfm, "@*")

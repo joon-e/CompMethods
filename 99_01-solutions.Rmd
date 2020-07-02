@@ -717,7 +717,7 @@ Die Top-Features pro Partei:
 ```{r}
 topfeatures(fb_dfm, groups = "party")
 ```
-Das sich darunter fast keine Trigramme (außer eine Hashtag-Kominbation bei der FDP) befinden, ziehen wir daraus vorerst keinen Mehrwert. Die Zeichenkette `\U0001f1ea\U0001f1fa` verweist auf Fehler bei der Bereinigung der Texte -- hierbei handelt es sich um den Code für das Europaflaggen-Emoji, der eigentlich durch `remove_symbols = TRUE` hätte entfernt werden sollen. Hier sollte also manuell nachgebessert werden.
+Das sich darunter fast keine Trigramme (außer eine Hashtag-Kominbation bei der FDP) befinden, ziehen wir daraus vorerst keinen Mehrwert. Die Zeichenkette `\U0001f1ea\U0001f1fa` verweist auf Fehler bei der Bereinigung der Texte -- hierbei handelt es sich um den Code für das Europaflaggen-Emoji, der eigentlich durch `remove_symbols = TRUE` hätte entfernt werden sollen. Auch einige URL-Bestandteile wurden nicht korrekt entfernt, ebenso gibt es ein paar falsche Worttrennungen, z. B. wenn ein Gendersternchen enthalten war. Hier sollte also manuell nachgebessert werden. 
 
 Um die Hashtags zu analysieren, erstellen wir eine DFM, die nur diese enthält:
 

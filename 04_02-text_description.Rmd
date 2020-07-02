@@ -165,12 +165,21 @@ Ein mittels `textstat_keyness()` erzeugtes Objekt kann zudem der Funktion `textp
 
 ```{r}
 textstat_keyness(tweets_dfm_grouped, target = "realDonaldTrump") %>% 
-  textplot_keyness(n = 10)
+  textplot_keyness(n = 10, color = c("red", "blue"))
 ```
 
-```{r}
-tweets_dfm %>% 
-  dfm_tfidf() %>% 
-  topfeatures()
+## Übungsaufgaben
+
+Erstellen Sie für die folgende Übungsaufgabe eine eigene Skriptdatei oder eine R-Markdown-Datei und speichern diese als `ue18_nachname.R` bzw. `ue18_nachname.Rmd` ab.
+
+Laden Sie den Datensatz `facebook_europawahl.csv` und filtern Sie lediglich Posts der im Bundestag vertretenen Parteien.
+
+---
+
+```{exercise, label="ue18a1"}
+Textdeskription:
 ```
 
+Führen Sie selbstständig eine Textdeskription der Facebook-Posts (und die dazu notwendigen Vorbereitungsschritte) durch. Welche Verfahren bieten sich dafür an? Welche Probleme fallen Ihnen dabei auf?
+
+Betrachten Sie abschließend Keywords für mindestens drei der im Datensatz vorhandenen Parteien. Beschreiben Sie zudem Möglichkeiten, wie man die Ergebnisse (noch) aussagekräftiger gestalten könnte.  
