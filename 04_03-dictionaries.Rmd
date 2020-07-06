@@ -1,0 +1,219 @@
+# Diktionärbasierte Ansätze {#dictionaries}
+
+Diktionärsbasierte Ansätze verfolgen das Ziel, latente Konstrukte in (Teilmengen von) Textkorpora durch das (vermehrte) Auftreten bestimmter, dem jeweiligen Konstrukt zugeordneter Begriffe zu messen. Kurz gesagt, wird ein Textkorpus anhand einer Liste von Begriffen (Diktionär oder Lexikon), die ein oder mehrere Konstrukte (z. B. die emotionale Polarität, den Populismusgrad etc.) abbilden sollen, ausgezählt -- je höher die Anzahl bzw. der Anteil der einem Konstrukt zugeordneten Begriffe, desto stärker ist das jeweilige Konstrukt ausgeprägt. 
+
+In den einfachsten (aber auch häufigsten) Fällen handelt es sich bei den verwendeten Diktionären um aus Unigrammen zusammengestellte _kategoriale Lexika_, die also einzelne Wörter einem bestimmten Konstrukt zuordnen (z. B. "Volk" zum Konstrukt "Populismus"), wobei alle enthaltenen Wörter gleich gewichtet werden. Entsprechend handelt es sich um ein relativ simples Verfahren, das Kontext und Grammatik ausblendet; die Klassifikation einzelner, kurzer Text-Dokumente ist daher recht fehleranfällig, etwa wenn eine Negation nicht als solche erkannt wird (taucht beispielsweise in unserem Lexikon zum Konstrukt "Zufriedenheit" das Wort "glücklich" auf, werden "Ich bin glücklich" als auch "Ich bin nicht glücklich" den gleichen Zufriedenheits-Score erhalten). Gute, etablierte Lexika erzielen jedoch trotz dieser Einschränkungen in der Regel und gerade bei größeren Textmengen zufriedenstellende Ergebnisse. Zudem können und sollten die im Folgenden vorgestellten Techniken für die jeweilige Umsetzung noch verfeinert und verbessert werden, beispielsweise durch Gewichtung, der Berücksichtigung von Bigrammen (um beispielsweise Negationen zu erfassen) etc.
+
+Wir werden uns die technische Umsetzung diktionärbasierter Ansätze in diesem Kapitel erneut anhand des aus den vorherigen Kapiteln bekannten Tweet-Korpus ansehen, wobei wir uns die Grundlagen zunächst anhand eines eigens erstellten Diktionärs aneignen, bevor wir mit der Sentiment-Analyse einen häufigen Anwendungsfall betrachten. Abschließend wird noch auf die Verwendung gewichteter Lexika eingegangen.
+
+Zur Vorbereitung laden wir die uns schon bekannten Packages sowie den Tweet-Datensatz und erzeugen ein Korpus-Objekt. Beim Laden des Tweet-Datensatzes wird zudem eine neue Variable `day` erzeugt, die das Datum (ohne Uhrzeit) festhält -- da wir für jeden Tweet das exakte Erscheinungsdatum in der Form `YYYY/MM/DD hh::mm::ss` in der Variable `date` vorliegen haben, können wir hierzu einfach die ersten zehn Zeichen dieser Variable extrahieren. Diese neue Variable erleichtert uns im Folgenden die Auswertung auf Tagesebene.
+
+```{r, warning=FALSE, message=FALSE}
+# Setup
+library(tidyverse)
+library(tidytext)
+library(quanteda)
+
+# Daten einlesen
+tweets <- read_csv("data/trump_biden_tweets_2020.csv") %>% 
+  mutate(day = str_sub(date, 1, 10))
+
+# Korpus erzeugen
+tweets_corpus <- corpus(tweets, docid_field = "id", text_field = "content")
+```
+
+## Grundlagen
+
+Donald Trump ist nicht zuletzt für seinen, nunja, _markanten_ Redestil bekannt, der sich neben dem unverwechselbaren Sprachfluss auch durch die häufige Verwendung bestimmter Wörter, Floskeln und Neologismen ("bigly") auszeichnet. Wir möchten nun prüfen, ob sich auch in seinen Tweets vermehrt diese _Trumpisms_ finden. Um dieses Konstrukt zu messen, erstellen wir also zunächst ein Wörterbuch, das häufig von Trump verwendete Wörter sammelt. Praktischerweise wird uns diese Arbeit durch [diesen Artikel in The Atlantic](https://www.theatlantic.com/magazine/archive/2018/03/how-to-talk-trump/550934/) abgenommen. 
+Wir erstellen zunächst einen Textvektor, der die Begriffe enthält (bereinigt um einige uneindeutige Begriffe sowie alle Nicht-Unigramme). Um den Aufwand möglichst gering zu halten, nutzen wir die Funktion `str_split()` aus dem uns bekannten `stringr`-Package (siehe Kapitel \@ref(stringr)), mit der wir einen Textstring schnell anhand einer Trennzeichenkette (in diesem Fall `" / "`) in einzelne Bestandteile aufteilen können. Das Resultat ist ein `character`-Vektor mit insgesamt 90 Trumpisms.
+
+```{r}
+trump_words <- str_split("amazing / beautiful / best / big league / brilliant / elegant / fabulous / fantastic / fine / good / great / happy / honest / incredible / nice / outstanding / phenomenal / powerful / sophisticated / special / strong / successful / top / tremendous / unbelievable / boring / crooked / disgusting / dishonest / dopey / dumb / goofy / horrible  / obsolete / overrated / pathetic / ridiculous / rude / sad / scary / stupid / terrible / unfair / weak / worst / big / huge / major / many / massive / numerous / staggering / substantial / tough / vast / absolutely / badly / basically / certainly / extremely / frankly / greatly / highly / incredibly / totally / truly / unbelievably / very / viciously / way / candy / chaos / choker / clown / disaster / dope / dummy / fool / hatred / idiocy / incompetence / joke / lightweight / loser / lowlife / moron / phonies / problem / terror / weakness",
+                       pattern = " / ", 
+                       simplify = TRUE)
+```
+
+Um dieses Begriffsliste in Quanteda verwenden zu können, müssen wir ein Dictionary-Objekt erstellen. Hierzu gibt es die Quanteda-Funktion `dictionary()`, der wir eine Liste mit den enthaltenen Konstrukten übergeben, wobei der Name eines jeden Listeneintrags ein Konstrukt abdeckt, dem die entsprechenden Begriffe zugeordnet werden. In unserem Fall haben wir nur ein Konstrukt, `trumpisms`:
+
+```{r}
+trumpisms_dictionary <- dictionary(list(trumpisms = trump_words))
+trumpisms_dictionary
+```
+
+Die Auszählung erweist sich denkbar einfach und geschieht innerhalb der uns bereits bekannten `dfm()`-Funktion. Geben wir mit dem Argument `dictionary` ein Diktionär an, werden die enthaltenen Kategorien ausgezählt und als einzelne Spalten in der resultierenden DFM angegeben; alle nicht im Diktionär enhaltenen Begriffe werden schlichtweg ignoriert. Wir können uns an dieser Stelle also auch die bisher durchgeführte, schrittweise Tokenisierung sparen -- `dfm()` funktioniert auch mit einem Korpus-Objekt, konvertiert alle Texte in Kleinschreibung und tokenisiert diese automatisch, Stoppwörter etc. sind in unserem Diktionär nicht enhalten und werden daher eh ignoriert.
+
+```{r}
+dfm(tweets_corpus, dictionary = trumpisms_dictionary, groups = "account")
+```
+
+Das Resultat ist eine sehr überschaubare 2x1-DFM: Joe Biden nutzt in seinen Tweets insgesamt 442 Trumpisms, Donald Trump hingegen 2233. Es sieht also danach aus, dass die gewählten Begriffe tatsächlich recht typisch für Trumps Sprach- und auch Tweet-Stil sind.
+
+Allerdings ist die absolute Häufigkeitsauszählung an dieser Stelle nur bedingt für einen Vergleich geeignet, da Trump auch insgesamt deutlich mehr twittert -- von Trump liegen uns 2654, von Biden lediglich 1499 Tweets für das erste Halbjahr 2020 vor. Hier ist es also sinnvoll, die DFM vor der Auszählung zu gewichten. Dies erledigen wir mit der Funktion `dfm_weight()`, wobei unterschiedliche Gewichtungsvarianten mit dem Argument `scheme` (siehe Funktionsdokumentation) gewählt werden können. Mit `scheme = "prop"` gewichten wir jedes Feature nach der Gesamtzahl aller Features in einem Dokument. 
+
+Für die folgende Analyse erstellen wir also zunächst eine DFM und Gruppieren dabei nach Account, sodass alle Tweets eines Accounts ein einziges Dokument darstellen. Anschließend gewichten wir proportional und wenden dann unser Diktionär erneut mit dem `dfm()`-Befehl auf die gewichtete DFM an:
+
+```{r}
+dfm(tweets_corpus, groups = "account") %>% 
+  dfm_weight(scheme = "prop") %>% 
+  dfm(dictionary = trumpisms_dictionary)
+```
+
+Das Ergebnis lässt sich einfach interpretieren: rund 2,8 Prozent aller Wörter in Trumps Tweets sind eines der 90 Trumpisms in unserem Wörterbuch, bei Joe Biden sind dies nur rund 0,8 Prozent -- auch proportional verwendet Trump also deutlich mehr Trumpisms als Biden.
+
+Häufig werden diktionärsbasierte Ansätze genutzt, um Veränderungen im (Zeit-)Verlauf aufzuzeigen (z. B.: Wie hat sich etwa der Populismusgehalt in den Reden im Bundestag über die Zeit geändert?). Auch dies ist in Quanteda sehr simpel umzusetzen -- wir ziehen einfach eine weitere Variable, die die Zeitebene repräsentiert, beim Gruppieren hinzu. So erhalten wir schnell eine DFM, in der für jeden Account und jeden Tag der Anteil der Trumpisms angegeben ist.
+
+```{r}
+trumpisms_per_day <- dfm(tweets_corpus, groups = c("account", "day")) %>% 
+  dfm_weight(scheme = "prop") %>% 
+  dfm(dictionary = trumpisms_dictionary)
+trumpisms_per_day
+```
+
+Um dies grafisch darzustellen, konvertieren wir die DFM mit der `tidy()`-Funktion aus dem `tidytext`-Package in ein Tibble und können dann auf das uns bekannte Visualisierungspackage `ggplot2` (siehe Kapitel \@ref(ggplot2)) zurückgreifen. Vorab konvertieren wir die Variable `day` noch von einer `character`- in eine `date`-Variable; ich nutze zum Verschönern des Plots zudem ein paar Funktionen aus dem `ggplot2`-Package, die uns noch nicht bekannt sind -- im Idealfall erschließt sich deren Funktion bereits aus dem Namen und Verwendungszusammenhang.
+
+```{r}
+trumpisms_per_day %>% 
+  tidy() %>% 
+  separate(document, c("account", "day"), sep = "\\.") %>% 
+  mutate(day = as.Date(day)) %>% 
+  ggplot(aes(x = day, y = count, color = account, group = account)) +
+  geom_line() +
+  scale_color_manual(values = c("blue", "red")) +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b %Y") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  labs(x = "Datum", y = "Anteil Trumpisms", color = "Twitter-Account")
+```
+
+Zwar ist Trump fast immer _trumpiger_ als Biden unterwegs, bei beiden variiert der Anteil der Trumpisms aber deutlich. In einem nächsten Schritt könnten wir nun also versuchen, die Ausschläge nach oben auf bestimmte Ereignisse am jeweiligen Datum zurückzuführen.
+
+## Beispiel-Anwendung: Sentiment-Analyse
+
+Da der wissenschaftliche Gehalt des vorherigen Beispiels eher gering ist, wenden wir uns nun einem gebräuchlicherem Anwendungsfall zu: Sentiment-Analysen, also die Bestimmung der (emotionalen) Valenz bzw. Polarität von Texten, greifen sehr häufig auf Diktionäre zurück. Ein bekanntes und weitverbreitetes Sentiment-Dictionary für englischsprachige Texte ist das [Sentiment Lexicon von Bing Liu](https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html#lexicon), das aus zwei Wortlisten, einmal positive Begriffe, einmal negative Begriffe, besteht. Es wird nicht zuletzt häufig für Social-Media-Sentiment-Analysen herangezogen, da es auch weitverbreitete _misspellings_ enthält. Insgesamt sind knapp 6800 Wörter (2006 positive, 4783 negative) enthalten.
+
+Das *Sentiment Lexicon* kann unter obigem Link kostenfrei heruntergeladen werden und muss zunächst entpackt werden.^[Hierfür ist ein Kompressionsprogramm, das mit `.rar`-Dateien umgehen kann, etwa [WinRar](https://www.winrar.de/) oder [7Zip](https://www.7-zip.de/), nötig.] Beide Wortlisten sind jeweils als Textdatei (`positive-words.txt` bzw. `negative-words.txt`) vorhanden, wobei -- nach einem Einführungstext -- jedes Wort in einer eigenen Zeile steht. 
+
+Um die Wortlisten zu verwenden, nutzen wir die Basis-Funktion `scan()`, mit der Textdateien in einen Vektor eingelesen werden können. Neben dem Dateipfad geben wir mit dem Argument `what` den Objekttypen des Ziel-Vektors an, in unserem Fall also `character()`. `scan()` trennt automatisch bei Whitespace und Zeilenumbrüchen, sodass wir in diesem Fall kein weiteres Trennzeichen definieren müssen. Mit dem Argument `skip` geben wir zudem an, dass die ersten 30 bzw. 31 Zeilen übersprungen werden sollen, da diese in den jeweiligen Dateien den Einführungstext beinhalten (Tipp: öffnet man die Textdateien in RStudio, werden diese mit Zeilennummerierung angezeigt).
+
+```{r}
+positive_words <- scan("data/positive-words.txt", what = character(), skip = 30)
+negative_words <- scan("data/negative-words.txt", what = character(), skip = 31)
+```
+
+Nun erstellen wir auch schon das entsprechende Dictionary-Objekt. Nachdem wir vorher nur eine Kategorie (Trumpisms) definiert haben, sind nun zwei Kategorien nötig -- eine für positives Sentiment, eine für die negatives --, die entsprechend die jeweilige Wortliste zugeordnet bekommen. Prinzipiell ist die Anzahl der Kategorien in `dictionary()` nicht beschränkt und auch verschachtelte Kategorien sind möglich:
+
+```{r}
+sentiment_dictionary <- dictionary(list(
+  positive = positive_words,
+  negative = negative_words
+))
+sentiment_dictionary
+```
+
+Der Rest erfolgt wie gehabt. Zunächst zählen wir wieder die absoluten Häufigkeiten, gruppiert nach Account, aus:
+
+```{r}
+dfm(tweets_corpus, dictionary = sentiment_dictionary, groups = "account")
+```
+
+Joe Biden verwendet also ca. 1,6-mal so viele positive Wörter wie negative Wörter, Donald Trump 1,5-mal so viele. Wir können dieses Verhältnis auch darstellen, indem wir die DFM nachträglich gewichten:
+
+```{r}
+dfm(tweets_corpus, dictionary = sentiment_dictionary, groups = "account") %>% 
+  dfm_weight(scheme = "prop")
+```
+
+In beiden Fällen lassen also rund 60% aller in den Tweets verwendeten _und_ im Sentiment Lexicon enthaltenen Begriffe auf positives Sentiment schließen. Zu beachten ist, dass es durchaus eine Rolle spielt, wann wir die DFM gewichten; führen wir die Gewichtung, wie oben, vor der Anwendung des Diktionärs durch, erhalten wir den Anteil, den positive bzw. negative Begriffe am gesamten Text aller Tweets der beiden Kandidaten enthalten.
+
+```{r}
+dfm(tweets_corpus, groups = "account") %>% 
+  dfm_weight(scheme = "prop") %>% 
+  dfm(dictionary = sentiment_dictionary)
+```
+
+Wir sehen: Trumps Tweets enthalten anteilig sowohl mehr positive als auch mehr negative Begriffe; dies deutet darauf hin, dass Trump insgesamt eine emotionalere Sprache verwendet (natürlich sind auch einige beliebte Trumpisms wie "great" und "sad" im Sentiment Lexicon enthalten).
+
+Betrachten wir erneut den Zeitverlauf. Auch hier ergeben sich kaum Änderungen gegenüber dem Vorgehen bei den Trumpisms -- wir gruppieren erneut zusätzlich nach `day`, gewichten aber dieses Mal erst im Anschluss an die Diktionär-Auszählung, um das Verhältnis von positivem zu negativem Sentiment zu erhalten.
+
+```{r}
+sentiment_ratio_per_day <- dfm(tweets_corpus, groups = c("account", "day"), dictionary = sentiment_dictionary) %>% 
+  dfm_weight(scheme = "prop")
+sentiment_ratio_per_day
+```
+
+Zur grafischen Darstellung konviertieren wir das Ergebnis wieder in *tidy data*. Zu beachten ist, dass `tidy()` direkt in _long data_ konvertiert, die Werte für positiv/negativ (bzw. allgemeiner gesprochen: die Kategorien des Diktionärs) stehen nun nicht mehr in eigenen Spalten, sondern sind Ausprägungen der Variablen `term`, wobei der jeweilige Wert in der Variable `count` steht.
+
+```{r}
+sentiment_ratio_per_day %>% 
+  tidy()
+```
+
+Wie oben können wir nun einen Plot erzeugen. Da sich aus dem Anteil des positiven Sentiments automatisch Anteil des negativen Sentiments (da sich beide Werte zu `1` bzw. `100%` aufsummieren) ergibt, ist es hier wenig sinnvoll, beide Werte zu plotten; wir filtern daher nur eine der beiden Kategorien an. Ich zeichne außerdem eine horizontale Linie bei 50% ein, um den Übergang von mehrheitlich positivem zu mehrheitlich negativen Sentiment zu kennzeichnen.
+
+```{r}
+sentiment_ratio_per_day %>% 
+  tidy() %>% 
+  separate(document, c("account", "day"), sep = "\\.") %>% 
+  mutate(day = as.Date(day)) %>% 
+  filter(term == "positive") %>% 
+  ggplot(aes(x = day, y = count, color = account, group = account)) +
+  geom_line() +
+  geom_hline(aes(yintercept = 0.5), linetype = "dashed") +
+  scale_color_manual(values = c("blue", "red")) +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b %Y") +
+  scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  labs(x = "Datum", y = "Anteil positives Sentiment", color = "Twitter-Account")
+```
+
+Wir sehen, dass beide Kandidaten mehrheitlich _positiv_ twittern, es aber durchaus auch negative Ausschläge gibt; auch hier könnten wir nun im nächsten Schritt versuchen, diese Ausschläge auf bestimmte Ereignisse zurückzuführen.
+
+## Gewichtete Lexika
+
+Bisher haben wir mit kategorialen Lexika gearbeitet, die alle Begriffe einer Kategorie gleichermaßen gewichten. Für manche Anwendungen ist das aber eine zu simplifizierende Annahme, da man davon ausgehen kann, dass bestimmte Begriffe stärker mit einem Konstrukt in Verbindung stehen als andere; so dürfte beispielsweise das Wort "hate" auf einen stärkeren negativen Affekt hinweisen als das Wort "dislike". In gewichteten Lexika wird dies versucht zu berücksichtigen, indem jeder Begriff einen numerischen Wert zugeteilt bekommt, der die Stärke der Assoziation mit dem übergeordneten Konstrukt ausdrückt.
+
+Quanteda bietet aktuell (noch) keine einfache Möglichkeit, mit gewichteten Lexika zu arbeiten. Dies ist daher ein guter Zeitpunkt, uns den bisher bekannten Workflow in Quanteda in einem anderen Package, dem `tidytext`-Package anzusehen. Praktischerweise enthält `tidytext` eines der bekanntesten gewichteten Lexika, das [AFINN von Finn Årup Nielsen](https://github.com/fnielsen/afinn), mit dem ebenfalls positives bzw. negatives Sentiment erfasst werden soll. Wir können uns dieses Lexikon mit der Funktion `get_sentiments("afinn")` anzeigen lassen:^[Falls eine Fehlermeldung auftritt, muss zunächst noch das `textdata`-Package installiert werden: `install.packages("textdata")` und das Lexikon anschließend heruntergeladen werden.]
+
+```{r}
+get_sentiments("afinn")
+```
+
+Wie wir sehen, ist das Lexikon als Tibble mit zwei Spalten hinterlegt: `word` enthält die einzelnen Begriffe (2477 an der Zahl, also deutlich weniger umfangreich als das Sentiment Lexicon), `value` den zugehörigen numerischen Wert, wobei das Sentiment von `-5` (stark negativ) bis `+5` (stark positiv) skaliert ist.
+
+```{r}
+tidy_tweets <- tweets %>% 
+  unnest_tokens(word, content) %>% 
+  select(id, account, day, word)   # Auswahl der für uns relevanten Variablen
+tidy_tweets
+```
+
+```{r}
+tidy_sentiments <- tidy_tweets %>% 
+  inner_join(get_sentiments("afinn"))
+tidy_sentiments
+```
+
+```{r}
+afinn_per_day <- tidy_sentiments %>% 
+  group_by(account, day) %>% 
+  summarise(mean_sentiment = mean(value), .groups = "drop")
+
+afinn_per_day
+```
+
+```{r}
+afinn_per_day%>% 
+  mutate(day = as.Date(day)) %>%
+  ggplot(aes(x = day, y = mean_sentiment, color = account, group = account)) +
+  geom_line() +
+  geom_hline(aes(yintercept = 0), linetype = "dashed") +
+  scale_color_manual(values = c("blue", "red")) +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b %Y") +
+  scale_y_continuous(limits = c(-2,2)) +
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  labs(x = "Datum", y = "AFINN-Sentiment", color = "Twitter-Account")
+```
+

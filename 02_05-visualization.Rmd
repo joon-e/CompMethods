@@ -36,7 +36,7 @@ Ziehen wir noch eine zweite Visualisierung aus derselben _tagesthemen_-Ausgabe h
 
 Diese drei Schritte -- _Encoding_, _Geometrics_, _Scales_ -- stellen also die wesentliche Entscheidungen der Datenvisualisierung dar. Schauen wir uns nun an, wir diese Schritte in R umsetzen können.
 
-## Datenvisualisierung mit `ggplot2`
+## Datenvisualisierung mit `ggplot2` {#ggplot2}
 
 Das Package `ggplot2` -- das zu den Kernpackages des Tidyverse gehört und entsprechend mit `library(tidyverse)` direkt mitgeladen wird -- orientiert sich an dieser schrittweisen Erstellung von Datenvisualisierungen. Vorab aber der Hinweis, dass es sich bei `ggplot2` um ein sehr umfangreiches und mächtiges Package handelt, das zudem mit einer eigenen Logik aufwartet und das man daher kaum an einem Nachmittag verinnerlichen wird. Es geht also zunächst darum, einige Grundprinzipien zu verstehen. Nicht zuletzt findet man online zahlreiche Vorlagen bzw. Code-Beispiele, sodass man in der Regel nach etwas herumprobieren zur gewünschten Darstellung kommt.
 
