@@ -174,13 +174,15 @@ Wir sehen, dass beide Kandidaten mehrheitlich _positiv_ twittern, es aber durcha
 
 Bisher haben wir mit kategorialen Lexika gearbeitet, die alle Begriffe einer Kategorie gleichermaßen gewichten. Für manche Anwendungen ist das aber eine zu simplifizierende Annahme, da man davon ausgehen kann, dass bestimmte Begriffe stärker mit einem Konstrukt in Verbindung stehen als andere; so dürfte beispielsweise das Wort "hate" auf einen stärkeren negativen Affekt hinweisen als das Wort "dislike". In gewichteten Lexika wird dies versucht zu berücksichtigen, indem jeder Begriff einen numerischen Wert zugeteilt bekommt, der die Stärke der Assoziation mit dem übergeordneten Konstrukt ausdrückt.
 
-Quanteda bietet aktuell (noch) keine einfache Möglichkeit, mit gewichteten Lexika zu arbeiten. Dies ist daher ein guter Zeitpunkt, uns den bisher bekannten Workflow in Quanteda in einem anderen Package, dem `tidytext`-Package anzusehen. Praktischerweise enthält `tidytext` eines der bekanntesten gewichteten Lexika, das [AFINN von Finn Årup Nielsen](https://github.com/fnielsen/afinn), mit dem ebenfalls positives bzw. negatives Sentiment erfasst werden soll. Wir können uns dieses Lexikon mit der Funktion `get_sentiments("afinn")` anzeigen lassen:^[Falls eine Fehlermeldung auftritt, muss zunächst noch das `textdata`-Package installiert werden: `install.packages("textdata")` und das Lexikon anschließend heruntergeladen werden.]
+Quanteda bietet aktuell (noch) keine einfache Möglichkeit, mit gewichteten Lexika zu arbeiten. Dies ist daher ein guter Zeitpunkt, uns den bisher bekannten Workflow in einem anderen Package, dem `tidytext`-Package anzusehen. Praktischerweise enthält `tidytext` eines der bekanntesten gewichteten Lexika, das [AFINN von Finn Årup Nielsen](https://github.com/fnielsen/afinn), mit dem ebenfalls positives bzw. negatives Sentiment erfasst werden soll. Wir können uns dieses Lexikon mit der Funktion `get_sentiments("afinn")` anzeigen lassen:^[Falls eine Fehlermeldung auftritt, muss zunächst noch das `textdata`-Package installiert werden: `install.packages("textdata")` und das Lexikon anschließend heruntergeladen werden.]
 
 ```{r}
 get_sentiments("afinn")
 ```
 
 Wie wir sehen, ist das Lexikon als Tibble mit zwei Spalten hinterlegt: `word` enthält die einzelnen Begriffe (2477 an der Zahl, also deutlich weniger umfangreich als das Sentiment Lexicon), `value` den zugehörigen numerischen Wert, wobei das Sentiment von `-5` (stark negativ) bis `+5` (stark positiv) skaliert ist.
+
+Der Textkorpus wird in Tidytext durch ein Tibble, in dem je Zeile ein Dokument hinterlegt ist, repräsentiert -- in unserem Fall also durch das Objekt `tweets`, das wir ganz zu Beginn des Kapitels eingelesen haben. Die Tokenisierung erfolgt durch die Funktion `unnest_tokens()`, wobei der Name der neu zu erstellenden Token-Variable (in diesem Fall `word`) und der Name der Textvariable im Ausgangsdatensatz (in diesem Fall `output`) angegeben werden muss. Das Resultat ist ein Tibble, in dem nun jede Zeile für ein Wort eines Dokuments steht -- aus ursprünglich 4153 Zeilen (= Dokumente bzw. Tweets) sind nun 119.956 Zeilen (= einzelne Wörter) geworden:
 
 ```{r}
 tidy_tweets <- tweets %>% 
@@ -189,12 +191,18 @@ tidy_tweets <- tweets %>%
 tidy_tweets
 ```
 
+Im Gegensatz zu Quanteda müssen wir für die Sentiment-Analyse keine DFM erstellen.^[Dies geht in Tidytext mit der Funktion `cast_dfm()`.] Sowohl unsere Tokens als auch das AFINN-Dictionary liegen uns ans Tibbles vor. Diese sollen nun miteinander verbunden werden, sodass wir die Werte aus dem AFINN-Dictionary mit dem Inhalt der Tweets verknüpfen können. Zwei Tibbles miteinander verbinden -- das ruft nach Join-Operationen (siehe Kapitel \@ref(joins)). 
+
+In diesem Fall ist ein `inner_join()` angebracht. Wir gleichen also für jede Zeile im Tokens-Tibble ab, ob sich ein passender Eintrag dafür im AFINN-Dictionary findet; falls ja, wird der zugehörige Wert angefügt, falls nein, fliegt die Zeile aus dem Datensatz. Das Resultat ist ein verbundenes Tibble mit nun 10.132 Zeilen -- unter den rund 120,000 Tokens insgesamt sind also 10.132, für die eine entsprechende emotionale Polarität im 2.477 Einträge umfassenden AFINN-Dictionary gefunden wurde.
+
 ```{r}
 tidy_sentiments <- tidy_tweets %>% 
   inner_join(get_sentiments("afinn"))
 tidy_sentiments
 ```
 
+Von hier an können wir Auswertungen mit den uns bekannten Tidyverse-Funktionen vornehmen. Um etwa pro Account und Tag das durchschnittliche Sentiment der Tweets zu berechnen, gruppieren wir zunächst mittels `group_by()` nach `account` und `day` und berechnen anschließend den Mittelwert des Sentiments mit `summarise()`.^[Das uns noch unbekannte Argument `.groups` ist ein neues Argument ab der `dplyr`-Version `1.0.0`, das es ermöglicht, vorhandene Gruppierungen nach dem Zusammenfassen mit dem Wert `"drop"` auch ohne anschließendes `ungroup()` aufzuheben oder mit dem Wert `"keep"` beizubehalten.]
+ 
 ```{r}
 afinn_per_day <- tidy_sentiments %>% 
   group_by(account, day) %>% 
@@ -202,6 +210,8 @@ afinn_per_day <- tidy_sentiments %>%
 
 afinn_per_day
 ```
+
+Auch hier bietet sich natürlich wieder eine grafische Darstellung an:
 
 ```{r}
 afinn_per_day%>% 
@@ -217,3 +227,48 @@ afinn_per_day%>%
   labs(x = "Datum", y = "AFINN-Sentiment", color = "Twitter-Account")
 ```
 
+Das berechnete Sentiment der Tweets mittels AFINN-Dictionary ist also durchaus mit der vorherigen Sentiment-Analyse, basierend auf Bing Lius Sentiment Lexicon, vergleichbar: auch hier überwiegt bei beiden Kandidaten positives Sentiment, die Ausschläge nach unten kommen zu denselben Zeitpunkten, wenn auch die absoluten Wertausprägungen natürlich unterschiedlich (und auch unterschiedlich skaliert) sind. 
+
+## Übungsaufgaben
+
+Erstellen Sie für die folgenden Übungsaufgaben eine eigene Skriptdatei oder eine R-Markdown-Datei und speichern diese als `ue19_nachname.R` bzw. `ue19_nachname.Rmd` ab.
+
+Laden Sie den Datensatz `facebook_europawahl.csv` und filtern Sie lediglich Posts der im Bundestag vertretenen Parteien. 
+
+Für diese Übungsaufgaben wechseln wir also die Sprache. Entsprechend benötigen wir auch ein neues Lexikon: Der [SentimentWortSchatz (kurz SentiWS)](https://wortschatz.uni-leipzig.de/de/download) von Robert Remus, Uwe Quasthoff und Gerhard Heyer enthält die positive bzw. negative Polarität (skaliert von `-1` bis `1`) von rund 3.500 deutschen Wörtern + zugehörige Flexionsformen, zusammen also rund 34.000 Wörter. Die aktuelle Version (v2.0) lässt sich auf der oben verlinkten Seite kostenfrei herunterladen.
+
+Positive und negative Wörter liegen in zwei Textdateien ab, deren Import nicht ganz trivial ist. Mit folgendem Code (Dateipfad natürlich eventuell anpassen) werden beide Wörterbücher geladen und in einem Tibble `sentiws` vereint. Natürlich schadet es nicht, die einzelnen Schritte selbst nachzuvollziehen.
+
+```{r, eval=FALSE}
+sentiws_pos <- read_delim("data/SentiWS_v2.0_Positive.txt", col_names = c("word", "value", "flections"), delim = "\t") %>% 
+  mutate(sentiment = "positive")
+sentiws_neg <- read_delim("data/SentiWS_v2.0_Negative.txt", col_names = c("word", "value", "flections"), delim = "\t") %>% 
+  mutate(sentiment = "negative")
+
+sentiws <- sentiws_pos %>% 
+  bind_rows(sentiws_neg) %>% 
+  separate(word, c("word", "type"), sep = "\\|") %>% 
+  mutate(word = str_c(word, flections, sep = ",")) %>% 
+  select(-flections, -type) %>% 
+  separate_rows(word, sep = ",") %>% 
+  na.omit()
+```
+
+---
+
+```{exercise, label="ue19a1"}
+Sentiment-Analyse mit Quanteda:
+```
+
+Erstellen Sie ein Quanteda-Dictionary mit den Kategorien `positiv` und `negativ` aus den SentiWS-Lexikon. Gibt es Unterschiede zwischen den Parteien hinsichtlich des Sentiments ihrer Posts zur Europawahl?
+
+- Um die beiden Wortlisten aus dem Tibble als Vektoren zu extrahieren, können Sie mit den Tidyverse-Funktionen `filter()` und `pull()` arbeiten.
+- (Wann) Ist es sinnvoll, die Wortlisten in Kleinschreibung zu konvertieren?
+
+---
+
+```{exercise, label="ue19a2"}
+Sentiment-Analyse mit Tidytext:
+```
+
+Berechnen Sie das durchschnittliche Sentiment pro Partei auf Basis der Polaritäts-Werte (`value`) in SentiWS. Unterscheiden sich die Ergebnisse von der obigen Variante, bei der nur die Kategorien verwendet werden?

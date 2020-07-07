@@ -732,3 +732,85 @@ topfeatures(dfm_hashtags) # allgemein
 topfeatures(dfm_hashtags, groups = "party") # getrennt nach Partei
 ```
 
+## Kapitel 18: Textdeskription und einfache Textvergleiche {-}
+
+Auch hier benötigen wir Quanteda und müssen den Facebook-Datensatz wie gewohnt filtern. Zudem laden wir auch Tidytext_
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(tidytext)
+library(quanteda)
+
+bt_parteien <- c("alternativefuerde", "B90DieGruenen", "CDU", "CSU", "FDP", "linkspartei", "SPD")
+
+facebook_europawahl <- read_csv("data/facebook_europawahl.csv") %>% 
+  filter(party %in% bt_parteien)
+```
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue18a1)__:
+
+Wir erzeugen zunächst wie gehabt Korpus-, Tokens- und DFM-Objekte:
+
+```{r}
+fb_corpus <- corpus(facebook_europawahl, docid_field = "id", text_field = "message")
+
+fb_tokens <- tokens(fb_corpus, 
+                    remove_punct = TRUE,  
+                    remove_numbers = TRUE, 
+                    remove_symbols = TRUE,
+                    remove_url = TRUE) %>% 
+  tokens_tolower() %>% 
+  tokens_remove(stopwords("german"))
+
+fb_dfm <- dfm(fb_tokens)
+```
+
+Zunächst ein Blick auf die einfachen Worthäufigkeiten:
+
+```{r, warning=FALSE}
+featfreq(fb_dfm) %>% 
+  tidy() %>%      
+  arrange(desc(x))
+```
+
+Wenig überraschend fallen Begriffe wie "Europa", "Deutschland" und "Europawahl" sehr häufig. Es zeigen sich aber auch bereits ein paar Probleme, die wir bereits von der vorherigen Übung kennen, z. B. dass Stoppwörter wie "dass" weiterhin im Datensatz verbleiben. Auch das Europaflaggen-Emoji wird offenbar sehr häufig verwendet. 
+
+Wir können uns die wichtigsten Begriffe auch als Wordcloud anzeigen lassen:
+
+```{r}
+textplot_wordcloud(fb_dfm, max_words = 100)
+```
+
+Kollokationen verweisen vor allem auf die Namen der Kandidat*innen sowie beliebte Hashtag-Kombinationen:
+
+```{r}
+textstat_collocations(fb_tokens) %>% 
+  as_tibble() %>% 
+  arrange(desc(count))
+```
+
+Kookkurenzen zeigen, dass wohl vor allem die AfD thematisiert wurde (ob durch sich selbst oder andere Parteien, ergeht hieraus nicht). Auch hier sehen wir, dass noch URL-Bestandteile (`"https"`) im Datensatz verbleiben; diese sollten also noch manuell gefiltert werden.
+
+```{r}
+fcm(fb_tokens) %>% 
+  tidy() %>% 
+  arrange(desc(count))
+```
+
+Für Keyness-Analysen benötigen wir zunächst eine nach Parteien gruppierte DFM:
+
+```{r}
+fb_dfm_grouped <- dfm(fb_tokens, groups = "party")
+```
+
+Wir können uns nun die Keywords je Partei ausgeben lassen -- im Beispiel für SPD und Grüne:
+
+```{r}
+textstat_keyness(fb_dfm_grouped, target = "SPD") %>% 
+  as_tibble()
+
+textstat_keyness(fb_dfm_grouped, target = "B90DieGruenen") %>% 
+  as_tibble()
+```
+
+Neben wenigen inhaltlichen Begriffe (`"soziales"`, `"zusammenhalt"`) werden die Listen dominiert durch Eigennamen; um tatsächliche inhaltliche Keywords zu bestimmen, würde es sich daher lohnen, Namen von Kandidat*innen, Parteien etc. aus der DFM zu löschen.
