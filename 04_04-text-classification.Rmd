@@ -1,0 +1,281 @@
+# Textklassifikation durch überwachtes maschinelles Lernen {#textclassification}
+
+In diesem Kapitel wenden wir uns der Textklassifikation zu, also der automatisierten Einteilung von Textdokumenten in Klassen, die uns interessierende Kategorien repräsentieren. Zugleich ist dieses Kapitel unser Einstieg in das [maschinelle Lernen](https://de.wikipedia.org/wiki/Maschinelles_Lernen), bei dem mittels Algorithmen und statistischen Modellen Muster in Daten "erlernt" werden, um z. B. auf Basis dieser Muster Fälle zu gruppieren oder zuzuordnen.
+
+Genauer gesagt steigen wir in Verfahren des _überwachten_ maschinellen Lernens (*supervised machine learning*) ein. Dies bedeutet, dass wir einen bereits annotierten Datensatz verwenden, um Modelle zu trainieren; wir geben also vor, welche Klassen in den Daten existieren und versuchen Muster zu finden, die die Zuordnung zu diesen Klassen ermöglichen. Anschließend kann das trainierte Modell auf einen nicht annotierten Datensatz angewendet werden, um dort die Klassenzugehörigkeit vorherzusagen. Bei Verfahren des _unüberwachten_ maschinellen Lernens (*unsupervised machine learning*) sind diese Klassen hingegen nicht vorgeben und die Modelle sollen die Daten selbst einteilen.
+
+Im Kontext der automatisierten Inhaltsanalyse wird überwachtes maschinelles Lernen vor allem dann eingesetzt, wenn ein Teildatensatz eines großen Textkorpus in einer manuellen Inhaltsanalyse annotiert wurde (z. B. ob ein Text populistisch ist oder nicht, ob er Hassrede enthält, oder ob er zu einem von zuvor festgelegten Themen gehört); auf Basis dieses Teildatensatzes wird nun ein Modell trainiert, das anschließend den gesamten Datensatz möglichst reliabel codieren kann. Zudem können die trainierten Modelle genutzt werden, um ein Verständnis über die erlernten Muster zu erhalten -- welche _Features_ (bei Textdaten also vor allem N-Gramme) tragen auf welche Art dazu bei, dass das Modell zu einem bestimmten Klassfikationsergebnis kommt, welche Wörter sind also beispielsweise besonders gut dazu geeignet, den Populismusgehalt von Texten vorherzusagen.
+
+Im Folgenden trainieren wir Modelle, die Anhand des bekannten Tweet-Datensatzes die Account-Zugehörigkeit vorhersagen sollen. Der Datensatz ist bereits annotiert, da wir für jeden Tweet auch den Account angeben haben. Zudem handelt es sich um die einfachst mögliche Klassfikation, da nur zwei verschiedene (Account-)Klassen im Datensatz vorkommen: Donald Trump ("realDonaldTrump") oder Joe Biden ("JoeBiden"). Natürlich ist es aber auch möglich, Modelle zur Klassifikation in mehr als zwei Klassen zu trainieren. 
+
+Wir beginnen wie immer damit, unsere bekannten Packages sowie den Datensatz zu laden. Während eine Zeit lang Verfahren zur Textklassifikation in Quanteda von Haus aus enthalten waren, sind diese inzwischen in ein eigenes Package, `quanteda.textmodels`, ausgelagert. Wir müssen dieses also vorab noch einmalig mit `install.packages("quanteda.textmodels")` installieren.
+
+```{r, warning=FALSE, message=FALSE}
+library(quanteda)
+library(quanteda.textmodels)
+library(tidyverse)
+
+
+tweets <- read_csv("data/trump_biden_tweets_2020.csv")
+```
+
+Nochmals ein kurzer Überblick über unseren Datensatz -- zentral sind hier die Variablen `account` und `content`. Wir werden also versuchen, ein Modell zu trainieren, das auf Basis von `content`, dem Inhalt der Tweets, den `account` hinreichend zuverlässig vorhersagen kann.
+
+```{r}
+tweets
+```
+
+Auch die nächsten Schritte sind uns bereits bekannt -- wir erstellen eine Korpus, Tokens und abschließend eine DFM. Wir fügen mit dem Befehl `docvars(tweet_corpus, "tweet_id") <- docid(tweet_corpus)` außerdem unserem Korpus eine zusätzliche Docvar `"tweet_id"` hinzu, in der wir die ID des jeweiligen Tweets festhalten. Dies erleichert uns nachher die Auswahl einzelner Dokumente im Korpus.
+
+```{r}
+# Korpus
+
+tweet_corpus <- corpus(tweets, docid_field = "id", text_field = "content")
+docvars(tweet_corpus, "tweet_id") <- docid(tweet_corpus)
+
+# Tokens
+
+tweet_tokens <- tokens(tweet_corpus,
+                       remove_punct = TRUE,
+                       remove_numbers = TRUE,
+                       remove_symbols = TRUE,
+                       remove_url = TRUE) %>% 
+  tokens_tolower() %>% 
+  tokens_remove(stopwords("english"))
+
+
+# DFM
+
+tweet_dfm <- dfm(tweet_tokens)
+```
+
+Im Übrigen: Wenn wir bisher von _Features_ gesprochen haben, dann haben wir den Begriff weitestgehend synonym mit N-Grammen, bzw. im Falle von Unigrammen auf Wortebene, mit Wörtern verwendet. Das ist bei der automatisierten Inhaltsanalyse auch die häufigste Art von Feature, tatsächlich kann ein Feature aber jede beliebige Eigenschaft eines Dokuments sein; wir könnten unsere aktuell rein aus Wörtern bestehende Feature-Liste also problemlos um weitere Texteigenschaften (z. B. Länge in Zeichen, Anzahl Substantive, Anzahl Großbuchstaben etc.) oder weitere Dokumenteigenschaften (z. B. Anzahl der Retweets) erweitern. 
+
+## Training- und Test-Datensätze
+
+Eines der häufigsten Probleme beim Einsatz von überwachtem maschinellen Lernen ist [*Overfitting*](https://de.wikipedia.org/wiki/%C3%9Cberanpassung: das Modell wird sehr gut an den annotierten Datensatz angepasst, performt aber bei neuen Datensätzen schlecht, da es beispielsweise nicht zwischen allgemeingültigen und datensatzspezifischen Mustern unterscheiden kann. In der Regel sollten wir beim überwachten maschinellen Lernen ein Klassifikationsmodell daher nicht nur trainieren, sondern auch dessen Güte testen. 
+
+Hierzu wird der annotierte Datensatz einem *Train-Test-Split* unterzogen: man teilt den Datensatz in zwei Teildatensätze, einen *Trainings*-Datensatz sowie einen *Test*-Datensatz auf. Das Modell wird anschließend nur anhand des Trainings-Datensatzes trainiert. Zum Überprüfen der Klassifikationsgüte werden dann die Klassen des Test-Datensatzes mit dem trainierten Modell vorhergesagt und anschließend mit den tatsächlichen, annotierten Klassen verglichen. So sehen wir, ob unser trainiertes Modell auch außerhalb des Trainings-Datensatzes zufriedenstellend performt.
+
+Das richtige Verhältnis von Trainings- zu Test-Datensatz ist eine Wissenschaft für sich. Als Faustregel gilt jedoch, dass man meistens mit einem 80/20-Split (80% der Fälle in den Trainings-, 20% der Fälle in den Test-Datensatz) ganz ordentlich fährt. Im Folgenden wählen wir daher zunächst 80% der Tweet-IDs zufällig aus unserem Ursprungsdatensatz aus.
+
+- Mit der Tidyverse-Funktion `slice_sample()` wählen wir zufällige Zeilen eines Datensatzes aus. Mit dem Argument `prop` legen wir fest, welchen Anteil der Zeilen wir auswählen möchten, in unserem Fall also 80% bzw. `.8`.^[Alternativ lässt sich mit dem Argument `n` eine genaue Anzahl an auszuwählenden Zeilen angeben]
+- Anschließend extrahieren wir mit der `pull()`-Funktion die Variable `id` als Vektor
+- Zuvor wird mit der Funktion `set.seed()` ein [Seed](https://de.wikipedia.org/wiki/Seed_key) für den Zufallsgenerator festgelegt. Das führt dazu, dass die nachfolgende Zufallsauswahl reproduzierbar wird -- wenn Sie zu Hause den Code ausfällen, werden also _zufällig_ exakt die gleichen IDs ausgewählt wir hier im Beispiel. Führen Sie den Code ohne `set.seed()` aus, erhalten Sie andere zufällig ausgewählte IDs. Die Zahl `667` als Seed ist dabei völlig willkürlich gewählt; geben Sie eine andere Zahl als Seed ein, lässt sich eine andere Zufallsauswahl reproduzieren.
+
+```{r}
+set.seed(667)
+train_ids <- slice_sample(tweets, prop = .8) %>% 
+  pull(id)
+```
+
+Das Resultat ist ein Vektor `train_ids`, der zufällig ausgewählte Tweet-IDs in unserem Datensatz enthält. Er umfasst 3322 Elemente (zur Erinnerung: der Ausgangsdatensatz enthält 4143 Zeilen; `3322 / 4143 = 0.802`).
+
+```{r, results='hold'}
+head(train_ids)
+length(train_ids)
+```
+
+Mit der Quanteda-Funktion `dfm_subset()` können wir unsere DFM `tweet_dfm` nun anhand dieser IDs in einen Trainings- und einen Testdatensatz aufteilen. Hierzu wählen wir für die Trainings-DFM alle Tweet-IDs aus, die in unserem neu erzeugten Vektor `train_ids` enthalten sind, und für Test-DFM alle Tweet-IDs, die darin _nicht_ enthalten sind:
+ 
+```{r}
+train_dfm <- dfm_subset(tweet_dfm, tweet_id %in% train_ids)
+test_dfm <- dfm_subset(tweet_dfm, !tweet_id %in% train_ids)
+```
+
+Wie wir sehen, enthält die Trainings-DFM `train_dfm` wie gewünscht 3322 Zeilen:
+
+```{r}
+train_dfm
+```
+
+Die Test-DFM `test_dfm` enthält die verbleibenden 831 Tweets:
+
+```{r}
+test_dfm
+```
+
+Die Anzahl der Features ist bei beiden DFMs weiterhin gleich; das ist wichtig, da wir ein Modell, das mit bestimmten Features trainiert wurde, nur auf Daten anwenden können, die ebenfalls Informationen zu exakt diesen Features enthalten.
+
+## Naive Bayes-Klassifikation
+
+Wir sind nun bereit, unser erstes Klassifikationsmodell zu trainieren. Hierzu nutzen wir einen sogenannten [Naïve Bayes classifier](https://en.wikipedia.org/wiki/Naive_Bayes_classifier). Der Name ergibt sich zum einen aus [Satz von Bayes](https://de.wikipedia.org/wiki/Satz_von_Bayes), den sich das Klassifikationsmodell zu Nutze macht, zum anderen von der "naiven" Annahme, dass alle Features voneinander unabhängig sind. Dass dies bei Textdaten in der Regel nicht der Fall ist, haben wir bereits daran gesehen, dass die Auftrittswahrscheinlichkeit von bestimmten Begriffen (z. B. "oval") durchaus vom Auftreten anderer Begriffe (z. B. "office") beeinflusst wird; dennoch liefert der naive Bayes-Klassifikator häufig gute Ergebnisse, die mit anderen, deutlich komplexeren Klassifikationsmodellen mithalten können. Zugleich hat naive Bayes-Klassifikation die Vorteile, dass sie nicht sehr rechenaufwändig ist und oft auch bereits mit geringen Datenmengen ganz passable Ergebnisse liefert.
+
+Ich erspare an dieser Stelle detaillierte Formeln, aber grob gesagt funktioniert der Klassifikator wie folgt:
+
+- für jede Klasse wird eine Grundwahrscheinlichkeit (*Prior*) angenommen; in der Regel nutzt man hierfür die relative Häufigkeit der Klassen im Korpus. In unserem Fall liegt die Grundwahrscheinlichkeit der Klasse `realDonaldTrump` über der Grundwahrscheinlichkeit der Klasse `JoeBiden`, da wir mehr Tweets von Trump als von Biden im Datensatz haben.
+- nun wird für jedes Feature und jede Klasse eine Wahrscheinlichkeit zur Klassenzugehörig berechnet. In unserem Fall wird also für jedes Wort, das in unserem Korpus vorkommt, die Wahrscheinlichkeit berechnet, dass es in Tweets von Trump bzw. Biden vorkommt.^[Das könnten wir, viel Zeit vorausgesetzt, problemlos von Hand machen: wir zählen, wie häufig das jeweilige Wort in den Dokumenten einer Klasse vorkommt, und teilen dies durch die Anzahl aller Wörter in der jeweiligen Klasse. Anschließend wird noch eine [Korrektur](https://en.wikipedia.org/wiki/Additive_smoothing) vorgenommen, um 0-Wahrscheinlichkeiten (wenn ein Wort in einer Klasse gar nicht vorkommt) zu vermeiden.]
+- schließlich wird für jedes Dokument (hier also jeden Tweet) und für jede Klasse die Zugehörigkeitswahrscheinlichkeit berechnet. Hierzu werden je Klasse die Wortwahscheinlichkeiten miteinander und schließlich mit der Grundwahrscheinlichkeit multipliziert; der Klassifikator entscheidet sich sodann je Dokument für diejenige Klasse, die die höchste Zugehörigkeitswahrscheinlichkeit erhält.
+
+Wir _fitten_ ein naives Bayes-Klassifikations-Modell in Quanteda mit der Funktion `textmodel_nb()`. Als Input benötigen wir als erstes Argument eine DFM, anhand das Modell trainiert werden soll (also unsere `train_dfm`), und als zweites Argument die annotierten Klassenzugehörigkeiten, die in unserem Fall in der Docvar `account`, die sich auch über die `$`-Notation aufrufen lässt. Mit dem Argument `prior` geben wir außerdem die Grundwahrscheinlichkeit an; Default-Wert ist hier `uniform`, also die gleiche Wahrscheinlichkeit für alle Klassen (bei zwei Klassen als jeweils 50%), aber wie oben angegeben, nutzen wir hier die relative Dokumenthäufigkeit mit dem Wert `"docfreq"`.
+
+```{r}
+tweets_nbc <- textmodel_nb(train_dfm, train_dfm$account, prior = "docfreq")
+```
+
+Das Resultat ist ein `textmodel_nb`-Objekt, das sämtliche Informationen über unser trainiertes Modell enthält. Wir können uns die einzelnen "Bestandteile" mit `str()` anzeigen lassen. Besonders relevant ist für uns der Eintrag `param`, der die Parameterschätzer des Modells -- also die Klassenzugehörigkeitswahrscheinlichkeiten für jedes Feature -- enthält.
+
+```{r}
+str(tweets_nbc, max.level = 1)
+```
+
+### Vorhersagen und Klassifikationsgüte
+
+Wie gut funtkioniert unser Modell nun? Wir haben bewusst einen Teil der Tweets als `test_dfm` zurückgehalten und nicht in das Modelltraining einbezogen. Wir können nun die `predict()`-Funktion nutzen, um Vorhersagen auf Basis unseres Klassifikationsmodells zu treffen. Hier benötigen wir als erstes Argument das Modell, mit dem wir unsere Vorhersagen treffen wollen, und geben mit dem Argument `newdata` einen Datensatz an, auf den wir unser Modell nun anwenden möchten.^[Die `predict()`-Funktion ist eine Funktion aus der Basisversion von R, die auf unterschiedlichste Modellobjekte angewendet werden kann.] 
+
+```{r}
+predicted_account <- predict(tweets_nbc, newdata = test_dfm)
+```
+
+Das Resultat ist ein Vektor mit den vorhersagten Klassen, in unserem Fall also Twitter-Accounts, für jeden Fall im Test-Datensatz:
+
+```{r}
+head(predicted_account)
+```
+
+Um diesen auszuzählen, nutzen wir wir die `table()`-Funktion:
+
+```{r}
+table(predicted_account)
+```
+
+Unser Modell klassifiziert 307 der 831 Tweets in `test_dfm` als von Joe Biden stammend, 524 werden Donald Trump zugeschrieben.
+
+Wie verhält sich das zu den _tatsächlichen_ Accounts? 
+
+```{r}
+true_account <- test_dfm$account
+table(true_account)
+```
+
+Hier gibt es also Unterschiede und somit auch Fehlklassifikationen. Weitaus aussagekräftiger wird die Tabelle, wenn wir _wahre_ Accounts und _vorhergesagte_ Accounts gegeneinander abtragen. Eine solche Darstellung wird auch [Confusion Matrix](https://en.wikipedia.org/wiki/Confusion_matrix) genannt:
+
+```{r}
+conf_tab <- table(predicted_account, true_account)
+conf_tab
+```
+
+Wir sehen: von den Tweets, die von Joe Biden stammen, wurden 280 auch Joe Biden zugeordnet , 14 hingegen wurden als von Donald Trump stammend klassifiziert. Ebenso wurden 510 Tweets von Donald Trump korrekt klassifiziert, wohingegen 27 fälschlicherweise Joe Biden zugeordnet wurden. 
+
+Aus den Verhältnissen in der Confusion Matrix lassen sich unterschiedliche Kennwerte zur Beurteilung der Klassifikationsgüte berechnen. Das `caret`-Package beinhaltet eine Funktion `confusionMatrix()`, die uns diese Kennwerte zusätzlich berechnet. Hierzu installieren wir zunächst das Package:
+
+```{r, eval=FALSE}
+install.packages("caret")
+```
+
+Anschließend wird die erweiterte `confusionMatrix()` angefordert:
+
+```{r}
+caret::confusionMatrix(conf_tab)
+```
+
+Die Maße wurden vor allem im Kontext diagnostischer Klassifikation, z. B. in der Medizin (z. B. krank/nicht krank), entwickelt, daher arbeitet die Terminologie mit den Begriffen positiv (Merkmal vorhanden) vs. negativ (Merkmal nicht vorhanden). Im Falle binärer Klassifikation wird also eine Klasse als positiv bezeichnet, die andere als negativ. In diesem Falle gibt uns die Tabelle an, dass "JoeBiden" als positive Klasse dient.
+
+Von besonderer Bedeutung sind für uns folgende Werte:
+
+- _Accuracy_: wie hoch ist der Anteil korrekt klassifizierter Fälle insgesamt. In unserem Fall werden rund 95% aller Tweets korrekt klassifiziert (`(280 + 510) / 831 = 0.9507`).
+- _Sensitivity_ (auch _Recall_): wie hoch ist der Anteil als positiv klassifizierter Fälle an allen _tatsächlich_ positiven Fällen. In unserem Fall werden ebenfalls rund 95% aller Tweets, die tatsächlich von Biden stammen, auch als "JoeBiden" klassifiziert (`280 / (280 + 14) = 0.9524`).
+- _Specificity_: wie hoch ist der Anteil als negativ klassifizierter Fälle an allen _tatsächlich_ negativen Fällen. In unserem Fall werden erneut rund 95% aller Tweets, die tatsächlich von Trump stammen, auch als "realDonaldTrump" klassifiziert (`280 / (280 + 14) = 0.9524`).  
+- _Positive Predictive Value_ (PPV; auch _Precision_): wie hoch ist der Anteil positiver Fälle an allen als positiv _klassifizierten_ Fällen. In unserem Fall stammen rund 91% aller Tweets, die als von Biden stammend klassifiziert wurden, auch tatsächlich von Biden (`280 / (280 + 27) = 0.9121`).
+- _Negative Predictive Value_ (NPV): wie hoch ist der Anteil negativer Fälle an allen als negativ _klassifizierten_ Fällen. In unserem Fall stammen rund 97% aller Tweets, die als von Trump stammend klassifiziert wurden, auch tatsächlich von Trump (`510 / (510 + 14) = 0.9733`).
+
+Insgesamt klassifiziert unser Classifier also rund 19 von 20 Tweets als korrekt; zugleich gibt es aber durchaus Klassenunterschiede, da fast alle Tweets, die als von Trump stammend klassifiziert werden, auch tatsächlich von Trump sind, wohingegen in etwa jeder zehnte Tweet, der als von Biden stammend klassifiziert wird, ebenfalls von Trump stammt.
+
+### Parameter extrahieren
+
+Welche Features sind nun besonders wichtig für die Klassifikation? Hierzu können wir auf die berechneten Parameter des Modells zurückgreifen, die für jedes Feature die Zugehörigkeitswahrscheinlichkeiten pro Klasse (also in unserem Fall für beide Twitter-Accounts) umfassen. Diese sind als Matrix `"param"` im Modellobjekt hinterlegt und können leicht über die `$`-Notation abgerufen werden.
+
+```{r}
+tweets_nbc$param[, 1:5] # Anzeige der ersten fünf Spalten
+```
+
+Wir können also die Features mit dem höchsten Wert pro Klasse heraussuchen, um so ein Gefühl dafür zu bekommen, welche Features besonders wichtig für die jeweiligen Klassen sind. Hier bietet sich eine grafische Darstellung an:
+
+```{r}
+tweets_nbc$param %>% 
+  t() %>%  # Transponiert die Matrix, vertauscht also Zeilen und Spalten
+  as_tibble(rownames = "Word") %>% 
+  pivot_longer(c("JoeBiden", "realDonaldTrump"), names_to = "Account", values_to = "Estimate") %>% 
+  group_by(Account) %>% 
+  top_n(20, Estimate) %>% 
+  mutate(Word = tidytext::reorder_within(Word, Estimate, Account)) %>% 
+  ggplot(aes(x = Word, y = Estimate, fill = Account)) +
+  facet_wrap(~ Account, scales = "free_y") +
+  geom_col(show.legend = FALSE) +
+  scale_fill_manual(values = c("blue", "red")) +
+  tidytext::scale_x_reordered() + 
+  coord_flip()
+```
+
+Die Ergebnisse sind vergleichbar mit den wichtigsten Begriffen, die wir über andere Verfahren, beispielsweise Keyness-Analysen erhalten haben (siehe Kapitel \@ref(keyness)). Zu beachten ist, dass bei naiver Bayes-Klassifikation Features für beide Klassen eine hohe Bedeutung haben können, da die Parameter schlichtweg anhand der relativen Häufigkeit berechnet werden, in diesem Fall z. B. "trump". Andere Klassifikationsverfahren suchen hier stärker nach Features, die besonders distinkt für die jeweiligen Klassen sind.
+
+### Klassifikation unannotierter Texte
+
+Da unser Modell eine hohe Klassifikationsgüte aufweist, können wir es nun auch guten Gewissens bei unannotierten Daten einsetzen. Natürlich wissen im Falle von Tweets stets, von wem dieser Tweet stammt, weshalb die Vorhersage unannotierter Daten in diesem Beispiel eher eine Spielerei ist. In Anwendungsfällen, in denen wir einen Teil-Datensatz manuell annotiert haben, um dann den Klassifikator auf den gesamten Datensatz anzuwenden, wäre dies aber das eigentliche Ziel. Wir gehen daher die dafür notwendigen Schritte anhand des Tweet-Beispiels durch.
+
+Hierzu benötigen wir zunächst natürlich unannotierte Tweets, also ohne Account-Zuordnung. Bei den folgenden beiden aktuellen Tweets dürfte es uns leicht fallen, zu erahnen, ob sie von Biden oder Trump stammen. Ob unser Klassifikator das auch schafft?
+
+```{r}
+new_tweets <- c("Big Senate Race in Alabama on Tuesday. Vote for @TTuberville, he is a winner who will never let you down. Jeff Sessions is a disaster who has let us all down. We don’t want him back in Washington!",
+                "I want every single American to know: If you're sick, struggling, or worried about how you're going to get throug the day, I will not abandon you. We're all in this together. And together, we'll emerge stronger than before.")
+```
+
+Unser Klassifikationsmodell benötigt als Input eine DFM; entsprechend konvertieren wir unsere neuen Text-Dokumente ebenfalls in eine DFM:
+
+```{r}
+new_dfm <- dfm(new_tweets)
+new_dfm
+```
+
+Allerdings enthält diese DFM natürlich andere (und deutlich weniger) Features als die DFM, anhand das Modell trainiert wurde. Nutzen wir nun die `predict()`-Funktion, erzeugt dies eine Fehlermeldung, da das Modell alle ihm bekannten Features erwartet:
+
+```{r, error=TRUE}
+predict(tweets_nbc, newdata = new_dfm)
+```
+
+Um dieses Problem zu beheben, nutzen wir die Quanteda-Funktion `dfm_match()`, mit der wir eine bestehende DFM an eine vorgegebene Struktur anpassen können. Mit dem Argument `features` geben wir an, welche Features unsere neue DFM beinhalten soll -- nämlich alle, die in der ursprünglichen Trainings-DFM enthalten sind:
+
+```{r}
+new_dfm_matched <- dfm_match(new_dfm, features = featnames(train_dfm))
+new_dfm_matched
+```
+
+Unsere neue DFM enthält nun alle Features der ursprünglichen DFM -- Wörter, die in unseren beiden neuen Tweets nicht vorkommen, haben eine 0 erhalten, Wörter in unseren neuen Tweets, die nicht in der alten DFM enthalten waren, wurden gelöscht.
+
+Sehen wir uns nun an, zu welchem Ergebnis unser Klassifikator kommt:
+
+```{r}
+predict(tweets_nbc, newdata = new_dfm_matched)
+```
+
+Tatsächlich wurden beide Tweets korrekt klassifiziert. Unser Modell hat also offensichtlich "erlernt", auch unannotierte Tweets von Trump und Biden zu unterscheiden.
+
+Falls Sie das erneut mit anderen Tweets der beiden Kandidaten ausprobieren möchten -- hier ist das Verfahren in eine Funktion verpackt, die Sie mit `trump_or_biden()` aufrufen und anschließend den Text eines beliebigen Tweets der beiden Kandidaten einfügen können, um den Urheber vorherzusagen:
+
+```{r}
+trump_or_biden <- function(model = tweets_nbc) {
+  text <- rstudioapi::showPrompt("Tweet-Text", "Text des Tweets:")
+  new_dfm <- dfm(text)
+  new_dfm_matched <- dfm_match(new_dfm, features = featnames(model))
+  prediction <- predict(model, newdata = new_dfm_matched) %>% 
+    as.character()
+  print(paste("Dieser Tweet stammt wahrscheinlich von", prediction))
+}
+```
+
+## Ausblick
+
+Dies war ein erster Einblick in Textklassifikation durch überwachtes maschinelles Lernen. Unser Klassifikator funktioniert hier sehr gut, es handelt sich aber auch um ein eher einfaches Klassifikationsproblem, da wir nur binär zwischen zwei Klassen unterscheiden und diese auch sehr verschieden sind, da beide Kandidaten einen jeweils distinkten Tweet-Stil pflegen. Im Forschungsalltag ist in der Regel deutlich mehr Aufwand erforderlich, um zufriedenstellende Ergebnisse zu erhalten.
+
+Textklassifikation ist -- neben den Ausgangsdaten -- inbesondere von zwei Schritten abhängig:
+
+1. __Preprocessing des Textmaterials__: Durch eine sorgsame Aufbereitung und Bereinigung des Textmaterials, also Schritte wie Stemming und Lemmatisierung, die Verwendung von Bi-Grammen, Tri-Grammen etc. sowie die Entfernung von Stoppwörtern (siehe Kapitel \@ref(preprocessing)) lässt sich die Klassifikationsgüte oft deutlich verbessern. Zusätzlich können Transformationen der DFM, z. B. durch [tf-idf](https://de.wikipedia.org/wiki/Tf-idf-Ma%C3%9F), helfen, die Performance von Klassifikationsmodellen zu steigern. Auch unbalancierte Klassen stellen Klassifikatoren oft vor Probleme, die z. B. durch [Over- und Undersampling](https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis) angegangen werden können.
+2. __Wahl des Klassifikationsmodells__: Wir haben mit einem denkbar simplen Klassifikationsmodell, dem naiven Bayes-Klassifikator, gearbeitet. Oftmals müssen komplexere Modelle und Algorithmen wie (logistische) Regressionen, [Support Vector Machines](https://de.wikipedia.org/wiki/Support_Vector_Machine) oder [Random Forests](https://de.wikipedia.org/wiki/Random_Forest), kombiniert mit Verfahren der  [Regularization](https://en.wikipedia.org/wiki/Regularization_(mathematics)), [Kreuzvalidierung](https://de.wikipedia.org/wiki/Kreuzvalidierungsverfahren), [Techniken der automatisierten Feature-Auswahl](https://en.wikipedia.org/wiki/Feature_selection) und/oder der Kombination von verschiedenen Klassifikationsalgorithmen durch [Boosting](https://en.wikipedia.org/wiki/Boosting_(machine_learning)), ausprobiert werden. Je nach zur Verfügung stehender Rechenleistung und Umfang des Datenmaterials kann die Berechnung eines einzelnen solchen Modells einige Stunden bis mehrere Tage beanspruchen.
+
+Sollte sich aus den Forschungsprojekten die Notwendigkeit von Textklassifikation ergeben, werden wir uns in der zweiten Hälfte des Masterprojekts eingehender mit solch komplexeren Verfahren beschäftigen. Zudem folgen noch Verfahren des unüberwachten maschinellen Lernens, insbesondere Topic Modeling, sowie die manuelle Validierung von automatisierten Inhaltsanalysen. 
+
+Nun aber erst einmal: schöne Semesterferien :)
+
+![Illustration von \@allison_horst: https://twitter.com/allison_horst](img/horst/r_first_then.png)
+
+

@@ -145,7 +145,7 @@ um die Komplexität von Texten zu quantifizieren, gibt es mehrere Herangehenswei
 textstat_lexdiv(tweets_dfm_grouped)
 ```
 
-## Keyness
+## Keyness {#keyness}
 
 Während die bisherigen Auswertungen und Maße auch zur Beschreibung von einzelnen Texten bzw. Dokumenten oder gesamten Korpora verwendet werden können, lernen wir nun ein erstes Vergleichsmaß kennen. Mit _Keyness_ wird quantifiziert, wie distinkt ein Begriff für einen Text im Vergleich zu allen anderen Texten im Korpus ist. Es geht also nicht nur darum, dass ein Wort häufig in einem Text vorkommt, sondern zugleich eher selten in den Vergleichstexten ist und somit besonders gut geeignet ist, um den Zieltext zu identifzieren. Wörter mit hoher Keyness können entsprechend als _Keyword_ für diesen Text bezeichnet werden.
 

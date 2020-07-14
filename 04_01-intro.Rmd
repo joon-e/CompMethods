@@ -54,7 +54,7 @@ summary(tweets_corpus, n = 5) %>% # Anzeige auf die ersten 5 Dokumente beschrän
 
 Wir bereiten unseren Textkorpus nun für weitere Analysen vor; die folgenden Schritte werden dabei auch als *Preprocessing* bezeichnet.
 
-## Tokenization, Stopwords und n-Gramme
+## Tokenization, Stopwords und n-Gramme {#preprocessing}
 
 Unter _Tokenization_ versteht man die Aufspaltung eines Textstrings in kleinere Bestandteile. In den meisten Fällen wird als Token das einzelne Wort gewählt, wir können aber beispielsweise Texte auch in Sätze oder einzelne Zeichen aufteilen. Sehen wir uns die obige Ausgabe nochmals an, so sehen wir, dass für jeden Tweet bereits die Anzahl der Tokens (in diesem Fall also Wörter) sowie der Types (einzigartige Wörter) und Sentences (Sätze) angegeben ist.
 

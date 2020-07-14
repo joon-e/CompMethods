@@ -1,6 +1,6 @@
 # Diktionärbasierte Ansätze {#dictionaries}
 
-Diktionärsbasierte Ansätze verfolgen das Ziel, latente Konstrukte in (Teilmengen von) Textkorpora durch das (vermehrte) Auftreten bestimmter, dem jeweiligen Konstrukt zugeordneter Begriffe zu messen. Kurz gesagt, wird ein Textkorpus anhand einer Liste von Begriffen (Diktionär oder Lexikon), die ein oder mehrere Konstrukte (z. B. die emotionale Polarität, den Populismusgrad etc.) abbilden sollen, ausgezählt -- je höher die Anzahl bzw. der Anteil der einem Konstrukt zugeordneten Begriffe, desto stärker ist das jeweilige Konstrukt ausgeprägt. 
+Diktionärbasierte Ansätze verfolgen das Ziel, latente Konstrukte in (Teilmengen von) Textkorpora durch das (vermehrte) Auftreten bestimmter, dem jeweiligen Konstrukt zugeordneter Begriffe zu messen. Kurz gesagt, wird ein Textkorpus anhand einer Liste von Begriffen (Diktionär oder Lexikon), die ein oder mehrere Konstrukte (z. B. die emotionale Polarität, den Populismusgrad etc.) abbilden sollen, ausgezählt -- je höher die Anzahl bzw. der Anteil der einem Konstrukt zugeordneten Begriffe, desto stärker ist das jeweilige Konstrukt ausgeprägt. 
 
 In den einfachsten (aber auch häufigsten) Fällen handelt es sich bei den verwendeten Diktionären um aus Unigrammen zusammengestellte _kategoriale Lexika_, die also einzelne Wörter einem bestimmten Konstrukt zuordnen (z. B. "Volk" zum Konstrukt "Populismus"), wobei alle enthaltenen Wörter gleich gewichtet werden. Entsprechend handelt es sich um ein relativ simples Verfahren, das Kontext und Grammatik ausblendet; die Klassifikation einzelner, kurzer Text-Dokumente ist daher recht fehleranfällig, etwa wenn eine Negation nicht als solche erkannt wird (taucht beispielsweise in unserem Lexikon zum Konstrukt "Zufriedenheit" das Wort "glücklich" auf, werden "Ich bin glücklich" als auch "Ich bin nicht glücklich" den gleichen Zufriedenheits-Score erhalten). Gute, etablierte Lexika erzielen jedoch trotz dieser Einschränkungen in der Regel und gerade bei größeren Textmengen zufriedenstellende Ergebnisse. Zudem können und sollten die im Folgenden vorgestellten Techniken für die jeweilige Umsetzung noch verfeinert und verbessert werden, beispielsweise durch Gewichtung, der Berücksichtigung von Bigrammen (um beispielsweise Negationen zu erfassen) etc.
 
@@ -50,7 +50,7 @@ Das Resultat ist eine sehr überschaubare 2x1-DFM: Joe Biden nutzt in seinen Twe
 
 Allerdings ist die absolute Häufigkeitsauszählung an dieser Stelle nur bedingt für einen Vergleich geeignet, da Trump auch insgesamt deutlich mehr twittert -- von Trump liegen uns 2654, von Biden lediglich 1499 Tweets für das erste Halbjahr 2020 vor. Hier ist es also sinnvoll, die DFM vor der Auszählung zu gewichten. Dies erledigen wir mit der Funktion `dfm_weight()`, wobei unterschiedliche Gewichtungsvarianten mit dem Argument `scheme` (siehe Funktionsdokumentation) gewählt werden können. Mit `scheme = "prop"` gewichten wir jedes Feature nach der Gesamtzahl aller Features in einem Dokument. 
 
-Für die folgende Analyse erstellen wir also zunächst eine DFM und Gruppieren dabei nach Account, sodass alle Tweets eines Accounts ein einziges Dokument darstellen. Anschließend gewichten wir proportional und wenden dann unser Diktionär erneut mit dem `dfm()`-Befehl auf die gewichtete DFM an:
+Für die folgende Analyse erstellen wir also zunächst eine DFM und gruppieren dabei nach Account, sodass alle Tweets eines Accounts ein einziges Dokument darstellen. Anschließend gewichten wir proportional und wenden dann unser Diktionär erneut mit dem `dfm()`-Befehl auf die gewichtete DFM an:
 
 ```{r}
 dfm(tweets_corpus, groups = "account") %>% 
@@ -101,7 +101,7 @@ positive_words <- scan("data/positive-words.txt", what = character(), skip = 30)
 negative_words <- scan("data/negative-words.txt", what = character(), skip = 31)
 ```
 
-Nun erstellen wir auch schon das entsprechende Dictionary-Objekt. Nachdem wir vorher nur eine Kategorie (Trumpisms) definiert haben, sind nun zwei Kategorien nötig -- eine für positives Sentiment, eine für die negatives --, die entsprechend die jeweilige Wortliste zugeordnet bekommen. Prinzipiell ist die Anzahl der Kategorien in `dictionary()` nicht beschränkt und auch verschachtelte Kategorien sind möglich:
+Nun erstellen wir auch schon das entsprechende Dictionary-Objekt. Nachdem wir vorher nur eine Kategorie (Trumpisms) definiert haben, sind nun zwei Kategorien nötig -- eine für positives Sentiment, eine für negatives --, die entsprechend die jeweilige Wortliste zugeordnet bekommen. Prinzipiell ist die Anzahl der Kategorien in `dictionary()` nicht beschränkt und auch verschachtelte Kategorien sind möglich:
 
 ```{r}
 sentiment_dictionary <- dictionary(list(
@@ -124,7 +124,7 @@ dfm(tweets_corpus, dictionary = sentiment_dictionary, groups = "account") %>%
   dfm_weight(scheme = "prop")
 ```
 
-In beiden Fällen lassen also rund 60% aller in den Tweets verwendeten _und_ im Sentiment Lexicon enthaltenen Begriffe auf positives Sentiment schließen. Zu beachten ist, dass es durchaus eine Rolle spielt, wann wir die DFM gewichten; führen wir die Gewichtung, wie oben, vor der Anwendung des Diktionärs durch, erhalten wir den Anteil, den positive bzw. negative Begriffe am gesamten Text aller Tweets der beiden Kandidaten enthalten.
+In beiden Fällen lassen also rund 60% aller in den Tweets verwendeten _und_ im Sentiment Lexicon enthaltenen Begriffe auf positives Sentiment schließen. Zu beachten ist, dass es durchaus eine Rolle spielt, wann wir die DFM gewichten; führen wir die Gewichtung, wie oben, vor der Anwendung des Diktionärs durch, erhalten wir den Anteil, den positive bzw. negative Begriffe am gesamten Text aller Tweets der beiden Kandidaten ausmachen.
 
 ```{r}
 dfm(tweets_corpus, groups = "account") %>% 
@@ -182,7 +182,7 @@ get_sentiments("afinn")
 
 Wie wir sehen, ist das Lexikon als Tibble mit zwei Spalten hinterlegt: `word` enthält die einzelnen Begriffe (2477 an der Zahl, also deutlich weniger umfangreich als das Sentiment Lexicon), `value` den zugehörigen numerischen Wert, wobei das Sentiment von `-5` (stark negativ) bis `+5` (stark positiv) skaliert ist.
 
-Der Textkorpus wird in Tidytext durch ein Tibble, in dem je Zeile ein Dokument hinterlegt ist, repräsentiert -- in unserem Fall also durch das Objekt `tweets`, das wir ganz zu Beginn des Kapitels eingelesen haben. Die Tokenisierung erfolgt durch die Funktion `unnest_tokens()`, wobei der Name der neu zu erstellenden Token-Variable (in diesem Fall `word`) und der Name der Textvariable im Ausgangsdatensatz (in diesem Fall `output`) angegeben werden muss. Das Resultat ist ein Tibble, in dem nun jede Zeile für ein Wort eines Dokuments steht -- aus ursprünglich 4153 Zeilen (= Dokumente bzw. Tweets) sind nun 119.956 Zeilen (= einzelne Wörter) geworden:
+Der Textkorpus wird in Tidytext durch ein Tibble, in dem je Zeile ein Dokument hinterlegt ist, repräsentiert -- in unserem Fall also durch das Objekt `tweets`, das wir ganz zu Beginn des Kapitels eingelesen haben. Die Tokenisierung erfolgt durch die Funktion `unnest_tokens()`, wobei der Name der neu zu erstellenden Token-Variable (in diesem Fall `word`) und der Name der Textvariable im Ausgangsdatensatz (in diesem Fall `content`) angegeben werden muss. Das Resultat ist ein Tibble, in dem nun jede Zeile für ein Wort eines Dokuments steht -- aus ursprünglich 4153 Zeilen (= Dokumente bzw. Tweets) sind nun 119.956 Zeilen (= einzelne Wörter) geworden:
 
 ```{r}
 tidy_tweets <- tweets %>% 
@@ -191,7 +191,7 @@ tidy_tweets <- tweets %>%
 tidy_tweets
 ```
 
-Im Gegensatz zu Quanteda müssen wir für die Sentiment-Analyse keine DFM erstellen.^[Dies geht in Tidytext mit der Funktion `cast_dfm()`.] Sowohl unsere Tokens als auch das AFINN-Dictionary liegen uns ans Tibbles vor. Diese sollen nun miteinander verbunden werden, sodass wir die Werte aus dem AFINN-Dictionary mit dem Inhalt der Tweets verknüpfen können. Zwei Tibbles miteinander verbinden -- das ruft nach Join-Operationen (siehe Kapitel \@ref(joins)). 
+Im Gegensatz zu Quanteda müssen wir für die Sentiment-Analyse keine DFM erstellen.^[Dies geht in Tidytext mit der Funktion `cast_dfm()`.] Sowohl unsere Tokens als auch das AFINN-Dictionary liegen uns als Tibbles vor. Diese sollen nun miteinander verbunden werden, sodass wir die Werte aus dem AFINN-Dictionary mit dem Inhalt der Tweets verknüpfen können. Zwei Tibbles miteinander verbinden -- das ruft nach Join-Operationen (siehe Kapitel \@ref(joins)). 
 
 In diesem Fall ist ein `inner_join()` angebracht. Wir gleichen also für jede Zeile im Tokens-Tibble ab, ob sich ein passender Eintrag dafür im AFINN-Dictionary findet; falls ja, wird der zugehörige Wert angefügt, falls nein, fliegt die Zeile aus dem Datensatz. Das Resultat ist ein verbundenes Tibble mit nun 10.132 Zeilen -- unter den rund 120,000 Tokens insgesamt sind also 10.132, für die eine entsprechende emotionale Polarität im 2.477 Einträge umfassenden AFINN-Dictionary gefunden wurde.
 
@@ -214,7 +214,7 @@ afinn_per_day
 Auch hier bietet sich natürlich wieder eine grafische Darstellung an:
 
 ```{r}
-afinn_per_day%>% 
+afinn_per_day %>% 
   mutate(day = as.Date(day)) %>%
   ggplot(aes(x = day, y = mean_sentiment, color = account, group = account)) +
   geom_line() +

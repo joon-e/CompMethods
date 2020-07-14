@@ -48,7 +48,7 @@ Im Übrigen bedeutet dies auch, dass wir, wenn ein Backslash in einem String vor
 writeLines("\\")
 ```
 
-## Einfache String-Operationen mit `stringr`
+## Einfache String-Operationen mit `stringr` {#stringr}
 
 Das Tidyverse enthält das Package `stringr`, das auf den Umgang mit Strings spezalisiert ist. Alle relevanten Funktionen beginnen mit dem Suffix `str_`.^[Viele der Funktionen aus `stringr` sind unter anderem Namen auch bereits in der Basisversion von R enthalten. Wir nutzen dennoch vorrangig die Funktionen aus `stringr`, da diese neben der einheitlichen Benennung auch eine einheitlichere Syntax aufweisen sowie viele kleine Detailkorrekturen und Hilfsfeatures beinhalten, die man in den Basis-Äquivalenten vermisst.]
 
