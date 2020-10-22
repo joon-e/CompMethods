@@ -1,0 +1,347 @@
+# Topic Modeling
+
+Topic Modeling ist das aktuell wohl am häufigsten eingesetzte Verfahren (bzw. genauer: Gruppe von Verfahren) der automatisierten Inhaltsanalyse in der kommunikationswissenschaftlichen Forschung. Im Gegensatz zur vorab beschriebenen Textklassifikation (siehe Kapitel \@ref(textclassification)) handelt es sich um Verfahren des _unüberwachten maschinellen Lernens_ -- also Verfahren, die ohne Vorabwissen in Form annotierter Klassen und mit oft nur minimalem (aber bedeutsamen) Input des Forschenden _selbstständig_ Muster in Dokumenten erkennen. Topic Modeling eignet sich daher insbesondere zur Exploration und Deskription großer Textmengen.
+
+In diesem Kapitel setzen wir uns zunächst mit den Grundlagen dieser Verfahrensgruppe auseinander und setzen dann ein eigenes Topic Model in R um. Im Vergleich zu den bisher besprochenen Verfahren sind Topic-Modeling-Verfahren sowohl mathematisch als auch interpretatorisch deutlich komplexer; wir müssen zudem auf einige Konzepte und Techniken zurückgreifen, die im Kurs schon einige Wochen zurückliegen. Es ist daher sehr sinnvoll, alle beschriebenen Schritte selbst am eigenen Rechner nachzuvollziehen und längere Pipes nach und nach auszuführen.
+
+## Grundlagen
+
+Wer schon einmal in einer (manuellen) Inhaltsanalyse Themen in einem Textkorpus untersucht hat, weiß, wie schwierig es sein kann, den Begriff _Thema_ zu definieren und operationalisieren und eine trennscharfe und eindeutige Codierung vorzunehmen. Handelt es sich bei einem Artikel zu den Corona-Maßnahmen bei Bundesligaspielen um einen Artikel aus dem Themenbereich Gesundheit, Innenpolitik oder Sport? Entsprechend finden sich in Codebüchern zum Thema oft lange Codieranweisungen mit vielen (Negativ-)Beispielen und es steht in der Regel eine lange Schulung der Codierer*innen an, bevor die Codierung auch nur annähernd reliabel verläuft.
+
+Topic Modeling bietet hier eine reizvolle Alternative: Themen werden strikt auf Basis von Worthäufigkeiten in den einzelnen Dokumenten vermeintlich objektiv berechnet, ganz ohne subjektive Einschätzungen und damit einhergehenden etwaigen Verzerrungen. Wie wir aber sehen werden, ist die Sache bei weitem nicht so _straightforward_ -- und menschlicher Input und Intepretation letztlich ebenso relevant wie bei der manuellen Themencodierung.
+
+Wie oben bereits angeprochen, handelt es sich bei Topic Modeling um eine Gruppe von Verfahren, die ähnlichen Grundprinzipien folgen, sich aber in der genauen mathematischen Ausführung unterscheiden. Die bekanntesten dieser Verfahren sind _LDA_ (Latent Dirichlet Allocation) sowie die darauf aufbauenden _CTM_ (Correlated Topic Models) und _STM_ (Structural Topic Models). All diesen Verfahren sind wesentliche Annahmen und Schritte gemein:
+
+- Ein Textkorpus besteht aus $D$ Dokumenten (z. B. Artikel oder Posts, wobei die einzelnen Dokumente als $d_1, d_2, ...$ bezeichnet werden) und $V$ Wörtern bzw. Terms (d.h. alle Wörter, die im gesamten Korpus vorkommen, wobei die einzelnen Wörter als $w_1, w_2, ...$ bezeichnet werden). Dabei wird dem _Bag-of-Words_-Modell (siehe Kapitel \@ref(preprocessing)) gefolgt, das heißt es zählt lediglich die Worthäufigkeit je Dokument, die syntaktischen und grammatikalischen Zusammenhänge zwischen einzelnen Wörtern werden ignoriert.
+- Es wird nun angenommen, dass latente Themen $K$ zu unterschiedlichen Anteilen in den Dokumenten $D$ vorkommen und alle Wörter $V$ mit unterschiedlicher Wahrscheinlichkeit zu den $K$ Themen gehören. $K$ muss dabei vorab vom Forschenden festgelegt werden.
+- Ziel der Verfahren ist die Berechnung zweier Matrizen $D \times K$ und $V \times K$. Die erste Matrix $D \times K$ enthält für jedes einzelne Dokument $d$ und jedes einzelne Thema $k$ die Wahrscheinlichkeit, dass das Thema in diesem Dokument vorkommt. Analog enthält $V \times K$ für jedes einzelne Wort $w$ und jedes einzelne Thema $k$ die Wahrscheinlichkeit, dass das jeweilige Wort in diesem Thema vorkommt. 
+- Mit Hilfe dieser Matrizen können die Themen dann beschrieben und interpretiert werden. So können aus $V \times K$ die wichtigsten Wörter je Thema (d.h., die Wörter mit der höchsten konditionalen Wahrscheinlichkeit, zu einem bestimmten Thema $k$ zu gehören) abgelesen werden; mittels $D \times K$ können Themen Dokumenten und umgekehrt zugeordnet werden, z. B. in dem für jedes Dokument $d$ das Thema $k$ mit der höchsten konditionalen Wahrscheinlichkeit identifiziert wird.
+- Zur Berechnung dieser Matrizen wird sozusagen der umgekehrte Weg gegangen und die Erzeugung der Dokumente als statistischer Prozess beschrieben: ein Dokument wird demnach erzeugt, in dem zufällig Themen aus der zum Dokument zugehörigen Themenverteilung und Wörter aus der den Themen zugehörigen Wortverteilungen gezogen werden. Hierzu wird das Topic Model zunächst mit zufälligen Themen- und Wortverteilungen initialisiert und dann in einem iterativen, algorithmischen Verfahren nach und nach adaptiert, bis es möglichst gut zu den Daten (dem Textkorpus) passt (d.h. die gemeinsame Likelihood der Themen- und Wortverteilungen maximiert wird).^[Die einzelnen Topic-Modeling-Verfahren unterscheiden sich u.a. in den verwendeten Wahrscheinlichkeitsverteilungen. So wird bei der LDA die namensgebende [Dirichlet-Verteilung](https://de.wikipedia.org/wiki/Dirichlet-Verteilung) verwendet, die mit einer Unabhängigkeitsannahme einhergeht; entsprechend sind die Themen in der LDA unabhängig voneinander, die Wahrscheinlichkeit eines Themas beeinflusst also nicht die Wahrscheinlichkeit der anderen Themen. Beim CTM hingegen wird die [Logit-Normalverteilung](https://en.wikipedia.org/wiki/Logit-normal_distribution) verwendet, die korrelierte Themenverteilungen erlaubt. Entsprechend können sich hier Themenwahrscheinlichkeiten gegenseitig beeinflussen, z. B. indem das Thema "Sport" mit einer höheren Wahrscheinlichkeit für das Thema "Gesundheit" einhergeht als das Thema "Außenhandel".]
+
+Daraus ergeben sich einige Konsequenzen für die Interpretation und Unterschiede zum gewöhnlichen Vorgehen bei einer manuellen Themenanalyse:
+
+- Der im Topic Modeling verwendete _algorithmische_ Themenbegriff unterscheidet sich von dem, was wir im intuitiven, alltäglichen Begriffsverständnis meinen, wenn wir von "Themen" besprechen (wobei wir dieses alltägliche Begriffsverständnis auch nur sehr schwer operational definieren können) und beschreibt letztlich semantische Wortgruppierungen. Das _können_ je nach Textkorpus und verwendetem Verfahren _Themen_ sein, die wir klassisch als Themen der Berichterstattung beschreiben würden, also z. B. Wortgruppierungen, die auf Berichterstattung zu Sport, zu Politik oder zu bestimmten Nachrichtenereignissen verweisen, aber eben auch andere Arten von Wortgruppierungen, die der Algorithmus im Textkorpus identifziert und die z. B. auf Handlungsstränge, wiederkehrende sprachliche Stilmittel etc. verweisen.
+- Wo es bei der manuellen Themencodierung in der Regel darum geht, Artikel Themen eindeutig und trennscharf zuzuweisen, gehen Topic-Modeling-Verfahren von sogenannter _Mixed Membership_ aus, d.h. Dokumente können in wechselnden Anteilen zu verschiedenen Themen gehören. Um Dokumenten Themen und umgekehrt zuzuordnen, müssen also manuell Entscheidungen getroffen werden, z. B. indem jedes Dokument das Thema bzw. die Themen zugeordnet bekommt, das für das jeweilige Dokument die höchste Wahrscheinlichkeit aufweist bzw. die über einem bestimmten Cutoff-Wert (z. B. 30%, 50%) liegen.
+- Topic Modeling führt _immer_ zu der vorgegebenen Anzahl an Themen. Ob es sich dabei auch um sinnvoll interpretierbare Themen handelt, muss manuell erörtert werden.
+
+Wenn dies bis hierher sehr abstrakt klang, keine Sorge: Wir werden uns all diese Schritte nun an einem konkreten Beispiel genauer ansehen.
+
+## Topic Modeling mit `stm`
+
+Für das Beispiel berechnen wir ein _Structural Topic Model_ mit dem Package `stm`. Falls noch nicht geschehen, muss dieses wie gewohnt installiert werden:
+
+```{r eval=FALSE}
+install.packages("stm")
+```
+
+Neben diesem Package benötigen wir außerdem einige bereits bekannte Packages: das `tidyverse` zum allgemeinen Datenhandling und für Grafiken sowie `tidytext` und `quanteda` für die Arbeit mit Textdaten:
+
+```{r warning=FALSE, message=FALSE}
+library(tidyverse)
+library(tidytext)
+library(quanteda)
+library(stm)
+```
+
+Im Folgenden replizieren wir Teile der Analyse des Papers [Whose ideas are worth spreading? The representation of women and ethnic groups in TED talks](https://www.tandfonline.com/doi/full/10.1080/2474736X.2019.1646102) von Carsten Schwemmer und Sebastian Jungkunz, in dem Zusammenhänge von Ethnie und Geschlecht der Sprecher*innen aller [TED Talks](https://www.ted.com/) zwischen 2006 und 2017 mit den Themen der Talks untersucht werden. Der Datensatz für die Analyse wurde dankenswerterweise im [Harvard Dataverse](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/EUDWP3) öffentlich zugänglich gemacht -- wir benötigen lediglich die Datei `
+ted_main_dataset.tab`, die die Transkripte aller Talks enthält.^[Beim Download als "Original File Format" sollte die Datei mit der Endung `.tsv` heruntergeladen werden.]
+
+### Vorbereitung: Daten laden und Preprocessing
+
+Die Dateiendung `.tsv` dürfte vielen noch unbekannt sein, es handelt sich jedoch um ein Dateiformat, das dem bereits bekannten CSV-Format sehr ähnlich ist -- nur werden die Werte nicht durch Kommas, sondern durch Tabstopps voneinander getrennt. Auch für dieses Dateiformat gibt es eine passende `read_`-Funktion:
+
+```{r message=FALSE}
+ted_talks <- read_tsv("data/ted_main_dataset.tsv")
+```
+
+Wir nehmen zudem einige kurze Modifikationen an dem Originaldatensatz vor:
+
+- Wir entfernen alle Talks, zu denen keine Speaker-Daten vorliegen, um dieselbe Datenbasis wie das Paper zu haben.
+- Wir erzeugen eine numerische `id` für jeden Talk.
+- Wir wandeln die Variable `date` von einem Character- zu einem Datumsobjekt um. Hierzu nutzen wir die Funktion `ymd()` aus dem `lubridate`-Package; da im Originaldatensatz lediglich Jahr und Monat, nicht aber Tag, des jeweiligen Talks festgehalten ist (z. B. `2006-06`), geben wir mit dem Argument `truncated = 1` an, dass auf ein Datumsbestandteil (hier also der Tag) verzichtet werden kann. Das Datum wird dann automatisch auf den Monatsersten gesetzt.
+- Schließlich entfernen wir der Übersicht halber alle Variablen außer dem Datum des Talks (`date`), dem `title` des Talks und dem Transkript des Talks `text`.
+
+```{r}
+ted_talks <- ted_talks %>% 
+  filter(!is.na(speaker_image_nr_faces)) %>% 
+  mutate(id = 1:n(),
+         date = lubridate::ymd(date, truncated = 1)) %>% 
+  select(id, date, title, text)
+
+ted_talks
+```
+Insgesamt haben wir also 2333 Talks vorliegen. Als nächstes folgen die schon bekannten Schritte zur Textvorbereitung. Zunächst überführen wir unseren Datensatz in ein Quanteda-Corpus-Objekt:
+
+```{r}
+ted_corpus <- corpus(ted_talks, text_field = "text")
+```
+
+Als nächstes erzeugen wir eine Document-Feature-Matrix und führen dabei auch einige Preprocessing-Schritte wie Konvertierung in Kleinschreibung, das Entfernen von Stopwords, Ziffern, Satzzeichen, Symbolen und URLs sowie Stemming durch -- das Argument `verbose = TRUE` sorgt dafür, dass wir etwas zusätzlichen Output für die einzelnen Preprocessing-Schritte erhalten:
+
+```{r}
+ted_dfm <- dfm(ted_corpus,
+               stem = TRUE,
+               tolower = TRUE,
+               remove_punct = TRUE,
+               remove_url = FALSE,
+               remove_numbers = TRUE,
+               remove_symbols = TRUE,
+               remove = stopwords('english'),
+               verbose = TRUE)
+```
+
+Das Ergebnis ist eine sehr große DFM mit über Einhundertmillionen Zellen (2333 Dokumente mal 44692 Features). Da Topic Modeling an sich schon sehr rechenaufwändig ist, kann eine solche DFM so manchen Heimrechner in die Knie zwingen. Um die Berechnung zu vereinfachen und zu beschleunigen, lohnt es sich daher die DFM zu reduzieren. Hierzu können wir die Funktion `dfm_trim()` verwenden, mit der wir Features ausschließen können, die besonders häufig oder selten vorkommen und somit entweder zu generisch oder zu spezifisch für eine sinnvolle Interpretation sein könnten.
+
+Zu beachten ist, dass diese Reduktion der DFM einen großen Einfluss auf das Ergebnis des Topic Modelings haben kann. Die verwendeten Werte sollten also wohlüberlegt sein und im Idealfall mit einigen alternative Berechnungen mit anderen Werten verglichen werden. Für unser Beispiel folgen wir der Analyse aus dem Paper und schließen alle Wörter bzw. Features aus, die in mehr als der Hälfte oder in weniger als einem Prozent aller Talks vorkommen:
+
+```{r}
+ted_dfm <- dfm_trim(ted_dfm, 
+                    max_docfreq = 0.50,
+                    min_docfreq = 0.01,
+                    docfreq_type = 'prop')
+
+ted_dfm
+```
+
+Die resultierende DFM umfasst "nur" noch rund 11 Millionen Zellen, da wir die Feature-Zahl auf rund 4800 reduziert haben. Zu sehen ist außerdem, dass das Stemming erfolgreich war.
+
+Das `stm`-Package arbeitet mit einem etwas anderen Dateiformat als Quanteda. Praktischerweise gibt es aber in Quanteda die Funktion `convert`, mit der Quanteda-Objekte für andere gängige Textanalyse-Packages umgewandelt werden können:
+
+```{r}
+stm_dfm <- convert(ted_dfm, to = "stm")
+
+str(stm_dfm, max.level = 1)
+```
+
+### Ein erstes Topic Model
+
+Wir können nun unser erstes Modell berechnen. Der zentrale Input-Parameter ist wie oben beschrieben $K$, die Anzahl der Themen. Zu Demonstrationszwecken wählen wir -- vollkommen willkürlich -- `20`, möchten also 20 Themen berechnen lassen; wir setzen uns gleich damit auseinander, wie man $K$ sinnvoller bestimmt, aber dafür lohnt es sich, schon etwas Erfahrung mit der Modellierung und Modell-Kennwerten zu haben. 
+
+Die Modellierung erfolgt über die Funktion `stm()`. Zentrale Input-Paramter sind `documents` und `vocab`, die jeweils unter diesem Namen in unserem neu erzeugten `stm_dfm`-Objekt enhalten sind, sowie `K`, mit der wir die Anzahl der Themen bestimmen. Mit `verbose = FALSE` lasse ich für die Darstellung im Kurs den Zusatzoutput während der Berechnung ausblenden. Lassen Sie sich diesen aber gerne anzeigen, wenn Sie das Modell an Ihrem eigenen Rechner berechnen (also `verbose = TRUE`, was auch die Default-Einstellung ist), um so die Berechnungsschritte verfolgen zu -- nicht zuletzt, da die Berechnung durchaus ein paar Minuten dauern kann:^[Die Modellspezifikation bietet noch deutlich mehr Einstellungsmöglichkeiten. Insbesondere lassen wir hier einen großen Vorteil von STMs gegenüber anderen Topic-Modeling-Verfahren außer Acht: wir könnten auch Kovariaten modellieren, um z. B. den Einfluss anderer Variablen im Datensatz -- in der Originalstudie werden hier Ethnie und Geschlecht des Speakers sowie das Datum verwendet -- auf die Prävalenz von einzelnen Themen zu untersuchen. Aus Gründen der Einfachkeit belassen wir es aber vorerst bei einem simplen Topic Model ohne Kovariaten.]
+
+```{r eval=FALSE}
+first_model <- stm(documents = stm_dfm$documents,
+                   vocab = stm_dfm$vocab,
+                   K = 20,
+                   verbose = FALSE)
+```
+
+```{r echo=FALSE}
+first_model <- readRDS("data/stm_first_model.rds")
+```
+
+Das erzeugte Objekt enthält alle relevanten Modellparameter, die wir uns in Kürze noch genauer ansehen. Wir können uns Themenverteilung und wichtigste Begriffe direkt plotten lassen:
+
+```{r}
+plot(first_model)
+```
+
+Auch verfügt das Objekt über eine eigene `summary()`-Funktion mit den wichtigsten Wörtern je Thema, die Sie gerne am eigenen Rechner ausprobieren können (`summary(first_model)`), deren umfassender Output hier aber das Format sprengen würde.
+
+Stattdessen wenden wir uns zunächst der Frage zu, anhand welcher Metriken wir ein Topic Model beurteilen können. Eine der zentralen Metriken nennt sich hierbei _Semantic Coherence_, die, vereinfacht gesagt, angibt, wie häufig Wörter, die eine hohe Wahrscheinlichkeit für ein bestimmtes Thema aufweisen, auch gemeinsam in einem Dokument (*Kookkurrenz*, siehe Kapitel \@ref(cooccurences)) auftreten -- je höher der Wert, desto häufiger ist dies der Fall. Es hat sich gezeigt, dass es menschlichen Codierer*innen mit steigender Semantic Coherence einfacher fällt, die generierten Themen auch sinnvoll zu interpretieren. Mit der Funktion `semanticCoherence()` erhalten wir diesen Wert für jedes einzelne Thema:
+
+```{r}
+semanticCoherence(first_model, stm_dfm$documents)
+```
+
+Der absolute Wert lässt sich hierbei kaum interpretieren, stattdessen bietet sich der Vergleich zwischen unterschiedlichen Themen (und vor allem: unterschiedlichen Themenmodellen an). Wir würden hier also erwarten, dass sich z. B. Thema 7 (mit dem Maximalwert von `-40.03670`) leichter interpretieren lässt als Thema 20 (mit dem Minimalwert von `-81.62830`). 
+
+Zugleich ist es vergleichsweise simpel, die Semantic Coherence zu steigern, indem eine relativ geringe Themenanzahl spezifiziert wird. Daher ist es sinnvoll, Semantic Coherence gemeinsam mit einer zweiten Messgröße zu betrachten, der _Exclusivity_. Diese gibt an, wie exklusiv die Wörter, die eine hohe Wahrscheinlichkeit für ein bestimmtes Thema aufweisen, für dieses Thema sind, zugleich also bei allen anderen Themen eine möglichst geringe Wahrscheinlichkeit aufweisen. Diese können wir mit der Funktion `exclusivity()` anfordern, wobei es sinnvoll ist, Semantic Coherence und Exclusivity gegeneinander zu plotten, um einen schnellen Vergleich zu ermöglichen:
+
+```{r}
+tibble(
+  topic = 1:20,
+  exclusivity = exclusivity(first_model),
+  semantic_coherence = semanticCoherence(first_model, stm_dfm$documents)
+  ) %>% 
+  ggplot(aes(semantic_coherence, exclusivity, label = topic)) +
+  geom_point() +
+  geom_text(nudge_y = .01) +
+  theme_bw()
+```
+
+"Gute" Themen finden wir rechts oben in der Grafik (z. B. Thema 16), diese weisen - im Vergleich zu den anderen Themen - sowohl eine hohe Semantic Coherence als auch eine hohe Exklusivität auf. Thema 1 weist zwar eine hohe Semantic Coherence auf (Wörter, die eine hohe Wahrscheinlichkeit für das Thema aufweisen, treten also auch vergleichsweise häufig gemeinsam in einem Dokument auf), hat aber zugleich eine geringe Exclusivity (Wörter, die eine hohe Wahrscheinlichkeit für das Thema aufweisen, weisen tendeziell also auch bei anderen Themen eine hohe Wahrscheinlichkeit auf). Problematisch zu interpretieren könnten entsprechend vor allem die Themen 8, 14 und 20 werden.
+
+### Modellvergleiche und Bestimmung von $K$
+
+Nachdem wir nun einige Metriken zur Modellbeurteilung kennengelernt haben, wenden wir uns der vielleicht gewichtigsten Entscheidung bei der Berechnung von Topic Models zu: der Bestimmung einer geeigneten Themenanzahl $K$. Anstatt wie oben eine willkürliche Themenanzahl zu verwenden, ist es sinnvoll, bereits für das erste berechnete Modell eine begründete Wahl zu treffen:
+
+- Ist der Untersuchungsgegenstand bzw. der Textkorpus schon bekannt (wurde z. B. an einem Teilkorpus bereits eine manuelle Inhaltsanalyse durchgeführt), kann man sich daran orientieren. Auch vergleichbare Studien bieten Anhaltspunkte -- untersucht man z. B. die Berichterstattung zu einer bestimmten Wahl, hat vielleicht schon einmal jemand eine Inhaltsanalyse zu einer der vorherigen Wahlen durchgeführt und dort ebenfalls Themen ausgewertet.
+- Ss existieren einige Faustregeln, die aber allenfalls grobe Anhaltspunkte darstellen. So empfehlen beispielsweise die Package-Autoren von `stm` 3-10 Themen für kleine Korpora mit sehr spezifischen Untersuchungsgegenständen (z. B. offene Antworten in einer Befragung von wenigen Hundert Personen), 5-50 Themen für Korpora mit einigen Hundert bis einigen Tausend Dokumenten, und 60-100 Themen für Korpora mit einigen Zehn- bis Hundertausend Dokumenten sowie 100 Themen für noch größere Korpora.
+- Ist man völlig blank, kann man die `stm()` mit dem Argument `K = 0` ausführen; es wird dann ein Algorithmus genutzt, der eine "geeignete" Themenzahl bestimmt. Diese ist aber keinesfalls mit der "wahren" oder "besten" Themenanzahl gleichzusetzen, sondern versucht lediglich, einige Modellanpassungswerte zu maximieren. 
+
+In jedem Fall muss das Themenmodell auch manuell interpretiert werden und auf seine Sinnhaftigkeit geprüft werden. Ist eine genaue Themenanzahl vorab nicht festgelegt -- was in den allermeisten Anwendungsfällen zutreffen dürfte --, sollten mehrere Modelle mit unterschiedlicher Themenanzahl gerechnet und verglichen werden (sowohl auf Basis von Kennwerten als auch manuell über die Intepretation von Themen).
+
+R macht es uns zum Glück einfach, mehrere Modelle auf einen Schlag zu berechnen. Hierzu nutzen wir Funktionen zur Iteration und die Fähigkeit von Tibbles, so gut wie jedes Objekt -- also auch Topic-Modelle -- in Listen verpackt als Werte speichern zu können. Das mag auf den ersten Blick nun etwas unüblich wirken, aber erklärt sich schnell:
+
+- Wir erzeugen zunächst ein Tibble, das in einer Variablen `K` alle unterschiedlichen Werte von $K$ enthält, die wir nutzen möchten. In unserem Fall berechen wir insgesamt vier Modelle mit 20, 30, 40 und 50 Themen. 
+- Nun erzeugen wir mittels `mutate()` eine neue Variable `model`, in der die zugehörigen Modelle berechnet und gespeichert werden sollen. Hierzu nutzen wir die Funktion `map()` (siehe Kapitel \@ref(tidyiteration)), mit der wir über einen Vektor iterieren und die einzelnen Vektorwerte als Argument in einer Funktion verwenden können. Wir iterieren also über `K` und setzen den jeweiligen Wert von `K` an der entsprechend Stelle der `stm()`-Funktion, symbolisiert durch den `.`, ein. 
+
+Das Resultat ist ein Tibble, das all unsere Modelle enthält. Achtung: die folgende Berechnung kann, je nach vorhandener Hardware, eine ganze Zeit dauern^[auf meinem relativ modernen Heimrechner in etwa eine Viertelstunde.] -- machen Sie also ruhig einen Spaziergang o.ä., während der Rechner arbeitet.^[Eine Möglichkeit, die Berechnungszeit zu verkürzen, ist -- entsprechend leistungsfähige Hardware, d.h. vor allem schnelle Mehrkernprozessoren und viel Arbeitsspeicher, vorausgesetzt -- die Modelle nicht nacheinander, sondern parallel über mehrere Prozessorkerne verteilt berechnen zu lassen. Das wird natürlich umso relevanter, je größer die Textkorpora werden und je mehr unterschiedliche Modelle berechnet werden sollen. Eine genaue Erklärung würde hier zu weit führen, aber wer mag, darf sich gerne mit dem Package [`furrr`](https://davisvaughan.github.io/furrr/) auseinandersetzen.]
+
+```{r eval=FALSE}
+many_models <- tibble(K = c(20, 30, 40, 50)) %>% 
+  mutate(model = map(K, ~ stm(stm_dfm$documents, 
+                              stm_dfm$vocab, 
+                              K = .,
+                              verbose = FALSE)))
+
+many_models
+```
+
+```{r echo=FALSE}
+many_models <- read_rds("data/stm_many_models.rds")
+many_models
+```
+
+Das praktische ist nun, dass wir ähnlich auch über die Modelle iterieren können, um beispielsweise schnell für alle Modelle Semantic Coherence und Exclusivity zu berechnen:
+
+```{r}
+model_scores <- many_models %>% 
+  mutate(exclusivity = map(model, exclusivity),
+         semantic_coherence = map(model, semanticCoherence, stm_dfm$documents)) %>% 
+  select(K, exclusivity, semantic_coherence)
+
+model_scores
+```
+
+Die jeweiligen Modell-Kennwerte stehen nun jeweils als Listen verpackt in den Zellen - für das Modell mit `K = 20` entsprechend 20 Werte für Semantic Coherence und Exclusivity, für das Modell mit `K = 30` 30 Werte etc. 
+
+Zum Modellvergleich müssen wir diese Werte nun mit der Funktion `unnest()` aus den Listen "entpacken" und können diese anschließend plotten:
+
+```{r}
+model_scores %>% 
+  unnest(c(exclusivity, semantic_coherence)) %>% 
+  ggplot(aes(x = semantic_coherence, y = exclusivity, color = as.factor(K))) +
+  geom_point() +
+  theme_bw()
+```
+
+Auf den ersten Blick unterscheiden sich die Modelle nicht sonderlich -- lediglich für das Modell mit `K = 50` können wir ein klares Ausreißer-Thema mit deutlich geringerer Semantic Coherence erkennen; auch scheint es bei allen Modellen einige Themen mit verhältnismäßig geringerer Exclusivity zu geben.
+
+Um die Modelle schneller miteinander vergleichen zu können, berechnen wir den Mittelwert der jeweiligen Kennwerte:
+
+```{r message=FALSE}
+model_scores %>% 
+  unnest(c(exclusivity, semantic_coherence)) %>% 
+  group_by(K) %>% 
+  summarize(exclusivity = mean(exclusivity),
+            semantic_coherence = mean(semantic_coherence)) %>% 
+  ggplot(aes(x = semantic_coherence, y = exclusivity, color = as.factor(K))) +
+  geom_point() +
+  theme_bw()
+```
+
+Hier zeigt sich nun recht deutlich der typische Tradeoff von Semantic Coherence und Exclusivity -- das Modell mit der höchsten Semantic Coherence hat die geringste Exclusivity (`K = 20`), umgekehrt weisen sowohl `K = 40` und `K = 50` die höchste Exclusivity und geringste Semantic Coherence auf, unterscheiden sich von einander aber kaum auf den beiden Dimensionen. Als Mittelweg empfiehlt sich das Modell mit `K = 30`, das wir nun -- ebenso wie die Autoren der Originalstudie -- auswählen werden.
+
+Hierzu "ziehen" wir das Modell aus dem Tibble heraus -- wir filtern zunächst die entsprechende Zeile an und extrahieren den Zelleninhalt der Spalte `model` dann mittels `pull()`. Da das Modell noch in einer Liste verpackt ist, extrahieren wir danach noch das (erste und einzige) Listenelement mit `[[1]]` (der vorangestellte Punkt `.` bedeutet in etwa so viel wie "setze hier das aktuelle Objekt in der Pipe ein" -- das wirkt zunächst auch etwas unüblich, ist aber die einzige Möglichkeit, Listenelemente direkt in Pipes zu anzusteuern). 
+
+```{r}
+final_model <- many_models %>% 
+  filter(K == 30) %>% 
+  pull(model) %>% 
+  .[[1]]
+
+final_model
+```
+
+### Modellinterpretation
+
+Wenden wir uns nun der Modellinterpretation zu. Wie bereits oben geschildert, sind zur Beschreibung und Interpretation eines Topic Models die Wortwahrscheinlichkeiten je Thema und die Themenwahrscheinlichkeiten je Dokument zentral. Aus ersteren können wir die gefundenen Themen inhaltlich interpretieren, zweitere geben uns Auskunft über die Prävalenz von Themen.
+
+Einen ersten Überblick gibt uns die Funktion `labelTopics()` aus dem `stm`-Package, das uns die wichtigsten Wörter je Thema (Default-Wert: 7) anhand von vier Metriken angibt. Um die Übersichtlichkeit zu wahren, werden in der Kursansicht nur die ersten fünf Themen angezeigt; führen Sie den Code zu Hause aus, sollten Sie eine lange Ausgabe mit allen 30 Themen erhalten:
+
+```{r eval=FALSE}
+terms <- labelTopics(final_model)
+terms
+```
+
+```{r echo=FALSE}
+terms <- labelTopics(final_model)
+labelTopics(final_model, topics = 1:5)
+```
+
+Zunächst zu den Metriken: `Highest Prob` bezieht sich auf die oben angesprochene Wortwahrscheinlichkeit je Thema (bezeichnet als $\beta$), angegeben sind also die sieben Wörter, die das höchste $\beta$ je Thema erhalten haben. Bei den anderen drei Metriken handelt es sich um alternative Berechnungen der bedeutsamsten Wörter je Thema; so ist `FREX` (für *Frequency-Exclusivity*) die Worthäufigkeit und -exklusivität ins Verhältnis, versucht also diejenigen Wörter zu identifzieren, die für ein bestimmtes Thema besonders distinkt sind, da sie sowohl häufig im betrachteten Thema als auch in anderen Themen selten vorkommen (ein Wort kann nämlich auch bei verschiedenen Themen ein hohes $\beta$ aufweisen). Auch `Score` und `Lift` nehmen zusätzliche Gewichtungen vor. Im Idealfall stützt sich die Interpretation daher auf mehrere bzw. alle vier Metriken.
+
+Inhaltlich sehen wir sowohl Themen, die sich relativ eindeutig einem _thematischen_ Überbegriff zuordnen lassen -- Talks, die Thema 2 enthalten, beschäftigen sich augenscheinlich mit Musik, bei Thema 4 mit Gender- und Sexualitätsfragen, bei Thema 5 mit Armut, vorrangig in Entwicklungsländern im globalen Süden -- wie auch Themen, die offenbar gängige Sprachmuster aufgreifen (Thema 1 und 3, die in der Originalpublikation als "Miscellaneous" und "Stopwords" bezeichnet werden). Zu beachten ist außerdem, dass wir die _gestemmten_ Wörter sehen -- das erschwert die Interpretation bei bestimmten Wörtern wie `"ca"` und `"la"` etwas, sodass wir hier in den ungestemmten Originaldaten nachsehen könnten, auf was sich diese Wortfragmente beziehen. 
+
+Zwar können wir die gesamten Wahrscheinlichkeitsmatrizen auch direkt aus dem Modellobjekt erhalten, der Output wird jedoch besser weiterverarbeitbar, wenn wir wieder die bereits bekannte `tidy()`-Funktion aus dem `tidytext`-Package nutzen. Standardmäßig gibt uns diese die Wortwahrscheinlichkeiten je Thema $\beta $aus:
+
+```{r}
+terms_probs <- tidy(final_model)
+terms_probs
+```
+
+Das Resultat ist eine lange Tabelle, in der für jedes der 4803 Wörter in unserer DFM und jedes Thema ein Wahrscheinlichkeitswert zwischen 0 und 1 angegeben wird. Alle $\beta$-Werte je Thema summieren sich zu 1 auf:
+
+```{r message=FALSE}
+terms_probs %>% 
+  group_by(topic) %>% 
+  summarise(sum_beta = sum(beta))
+```
+
+Ebenfalls mit der `tidy()`-Funktion können wir die Themenwahrscheinlichkeiten je Dokument (bezeichnet als $\gamma$) abrufen. Hierfür müssen wir lediglich mit dem Argument `matrix = "gamma"` angeben, dass wir nun eben die $\gamma$-Werte abrufen möchten. Mit dem Argument `document_names` können wir zudem einen Vektor angeben, der die Namen der Dokumente enthält -- hier bietet sich beispielsweise der Titel der Vorträge an.
+
+```{r}
+doc_probs <- tidy(final_model, matrix = "gamma", document_names = stm_dfm$meta$title)
+doc_probs
+```
+Auch hier erhalten wir nun eine lange Tabelle, in der für jedes Dokument (in unserem Fall für jeden Vortrag) für alle identifizierten Themen eine Themenwahrscheinlichkeit angegeben ist. Auch die $\gamma$-Werte summieren sich je Dokument zu 1:
+
+```{r message=FALSE}
+doc_probs %>% 
+  group_by(document) %>% 
+  summarise(sum_gamma = sum(gamma))
+```
+Natürlich können wir die Daten nun auch miteinander verbinden und beispielsweise Topic-Prävalenz und bedeutsamste Wörter gemeinsam plotten:
+
+```{r message=FALSE}
+top_terms <- tibble(topic = terms$topicnums,
+                    prob = apply(terms$prob, 1, paste, collapse = ", "),
+                    frex = apply(terms$frex, 1, paste, collapse = ", "))
+
+gamma_by_topic <- doc_probs %>% 
+  group_by(topic) %>%
+  summarise(gamma = mean(gamma)) %>%
+  arrange(desc(gamma)) %>%
+  left_join(top_terms, by = "topic") %>%
+  mutate(topic = paste0("Topic ", topic),
+         topic = reorder(topic, gamma))
+
+gamma_by_topic %>% 
+  ggplot(aes(topic, gamma, label = frex, fill = topic)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(hjust = 0, nudge_y = 0.0005, size = 3) +
+  coord_flip() +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 0.11), labels = scales::percent) +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank()) +
+  labs(x = NULL, y = expression(gamma))
+```
+Auch können wir andere Informationen, die wie über unsere Dokumente haben, nun hinzuziehen und beispielsweise uns die Prävalenz einzelner Topics im Zeitverlauf ansehen:
+
+```{r}
+doc_probs %>% 
+  left_join(ted_talks, by = c("document" = "title")) %>% 
+  group_by(topic, date) %>% 
+  summarise(n = n(),
+            gamma = mean(gamma), 
+            .groups = "drop") %>% 
+  mutate(ci_ll = gamma - qnorm(0.975) * gamma/sqrt(n),
+         ci_ul = gamma + qnorm(0.975) * gamma/sqrt(n),
+         ci_ll = if_else(ci_ll < 0, 0, ci_ll),
+         topic = as_factor(topic)) %>% 
+  filter(topic %in% c(7, 4)) %>% 
+  ggplot(aes(x = date, y = gamma, ymin = ci_ll, ymax = ci_ul, color = topic, fill = topic)) +
+  geom_line(size = 1) +
+  geom_ribbon(alpha = .2, linetype = 0) +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank(),
+        panel.grid.major.x = element_blank(),
+        legend.position = "bottom") +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 0.35), labels = scales::percent) +
+  labs(x = "Date", y = expression(gamma), color = "Topic", fill = "Topic")
+```
+
+## Übungsaufgaben

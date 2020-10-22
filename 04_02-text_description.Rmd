@@ -118,7 +118,7 @@ textstat_collocations(tweets_tokens, size = 4) %>%
   arrange(desc(count))
 ```
 
-## Kookkurenzen
+## Kookkurenzen {#cooccurences}
 
 Während bei Kollokationen zwei oder mehr Wörter genau in dieser Wortfolge gemeinsam auftreten müssen, untersucht man mittels Kookkurenzen das gemeinsame Auftreten von Wörtern (oder anderen lexikalischen Einheiten) innerhalb einer höher geordneten Einheit, z. B. in einem Dokument. Hierfür wird zunächst eine Co-occurence-Matrix aufgestellt, die für jeden Token prüft, wie oft dieser mit jeweils allen anderen Tokens im Korpus gemeinsam in einem Dokument auftritt. Das Ergebnis ist also eine Matrix, die genausoviele Zeilen wie Spalten (= alle Tokens im Korpus) aufweist. Wir können diese Matrix mit der Funktion `fcm()` (für *f*eature *c*o-occurence *m*atrix) erstellen:
 

@@ -349,7 +349,7 @@ munich_facts <- list(
 )
 munich_facts
 ```
-Mit ihrer Flexibilität stellen Listen in R die Basis für nahezu alle komplexeren Datenstrukturen -- auch bei Datensätze, Regressionsmodellen etc. handelt es sich um Listen, die mit bestimmten Attributen versehen wurden.
+Mit ihrer Flexibilität stellen Listen in R die Basis für nahezu alle komplexeren Datenstrukturen -- auch bei Datensätzen, Regressionsmodellen etc. handelt es sich um Listen, die mit bestimmten Attributen versehen wurden.
 
 #### Listenelemente auswählen
 

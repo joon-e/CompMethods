@@ -4,4 +4,4 @@ Kursmaterialien für das Master-Projekt "Computational Methods in der politische
 
 ## Kurs aufrufen
 
-Der Kurs ist unter [https://bookdown.org/joone/ComputationalMethods/](https://bookdown.org/joone/ComputationalMethods/) erreichbar und wird regelmäßig aktualisiert.
+Der Kurs ist unter [https://bookdown.org/joone/ComputationalMethods/](https://bookdown.org/joone/ComputationalMethods/) erreichbar und wird regelmäßig aktualisiert.s
