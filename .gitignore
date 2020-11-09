@@ -17,3 +17,6 @@ rsconnect
 # Knitr
 *.log
 *.tex
+
+# Test files
+tests

@@ -7,7 +7,7 @@ rmd_files: ["index.Rmd", "01_00-intro-to-R.Rmd", "01_01-installation.Rmd", "01_0
             "02_04-restructure-and-combine.Rmd", "02_05-visualization.Rmd", "02_06-strings.Rmd", "02_07-tidy-iteration.Rmd",
             "03_00-web-data.Rmd", "03_01-intro.Rmd", "03_02-web-scraping.Rmd", "03_03_apis.Rmd",
             "04_00-aca.Rmd", "04_01-intro.Rmd", "04_02-text_description.Rmd", "04_03-dictionaries.Rmd",
-            "04_04-text-classification.Rmd", "04_05-topic-modeling.Rmd",
+            "04_04-text-classification.Rmd", "04_05-topic-modeling.Rmd", "04_06-keyatm.Rmd",
             "99_00-appendix.Rmd", "99_01-solutions.Rmd"]
 language:
   label:
