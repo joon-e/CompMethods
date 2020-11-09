@@ -265,7 +265,7 @@ Zunächst zu den Metriken: `Highest Prob` bezieht sich auf die oben angesprochen
 
 Inhaltlich sehen wir sowohl Themen, die sich relativ eindeutig einem _thematischen_ Überbegriff zuordnen lassen -- Talks, die Thema 2 enthalten, beschäftigen sich augenscheinlich mit Musik, bei Thema 4 mit Gender- und Sexualitätsfragen, bei Thema 5 mit Armut, vorrangig in Entwicklungsländern im globalen Süden -- wie auch Themen, die offenbar gängige Sprachmuster aufgreifen (Thema 1 und 3, die in der Originalpublikation als "Miscellaneous" und "Stopwords" bezeichnet werden). Zu beachten ist außerdem, dass wir die _gestemmten_ Wörter sehen -- das erschwert die Interpretation bei bestimmten Wörtern wie `"ca"` und `"la"` etwas, sodass wir hier in den ungestemmten Originaldaten nachsehen könnten, auf was sich diese Wortfragmente beziehen. 
 
-Zwar können wir die gesamten Wahrscheinlichkeitsmatrizen auch direkt aus dem Modellobjekt erhalten, der Output wird jedoch besser weiterverarbeitbar, wenn wir wieder die bereits bekannte `tidy()`-Funktion aus dem `tidytext`-Package nutzen. Standardmäßig gibt uns diese die Wortwahrscheinlichkeiten je Thema $\beta $aus:
+Zwar können wir die gesamten Wahrscheinlichkeitsmatrizen auch direkt aus dem Modellobjekt erhalten, der Output wird jedoch besser weiterverarbeitbar, wenn wir wieder die bereits bekannte `tidy()`-Funktion aus dem `tidytext`-Package nutzen. Standardmäßig gibt uns diese die Wortwahrscheinlichkeiten je Thema $\beta$ aus:
 
 ```{r}
 terms_probs <- tidy(final_model)
@@ -345,3 +345,33 @@ doc_probs %>%
 ```
 
 ## Übungsaufgaben
+
+Erstellen Sie für die folgende Übungsaufgabe eine eigene Skriptdatei oder eine R-Markdown-Datei und speichern diese als `ue20_nachname.R` bzw. `ue20_nachname.Rmd` ab.
+
+Für die Übungsaufgabe verwenden wir einen Korpus aus Artikeln des [Guardian](https://www.theguardian.com/international). Dieser ist in einem Zusatzpaket zu Quanteda enthalten, das einige Beispielkorpora enthält: `quanteda.corpora`. Wir können dieses Package mit folgendem Befehl installieren:
+
+```{r eval=FALSE}
+remotes::install_github("quanteda/quanteda.corpora")
+```
+
+Anschließend lässt sich der gewünschte Korpus über den `download()`-Befehl des Pakets herunterladen:
+
+```{r}
+guardian_corpus <- quanteda.corpora::download("data_corpus_guardian")
+
+guardian_corpus
+```
+
+Wie wir sehen, handelt es sich bereits um ein Korpus-Objekt, dieser erste Konvertierungsschritt entfällt also. Enthalten sind 6,000 Artikel als Volltext.
+
+---
+
+```{exercise, label="ue21a1"}
+Topic Modeling:
+```
+
+Rechnen Sie ein Topic Model mit 20 Themen. Führen Sie daher zunächst die notwendigen Preprocessing-Schritte durch. 
+
+Interpretieren Sie das vorgeschlagene Themenmodell anhand der Funktion `labelTopics()`. Können Sie die einzelnen Themen sinnvoll benennen? Gibt es Problemfälle?
+
+Bonus: Wie verteilen sich die Themen über den Korpus? Besteht die Möglichkeit, sich die Themenprävalenz auch im Zeitverlauf anzusehen?

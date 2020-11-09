@@ -897,6 +897,7 @@ dfm(fb_corpus, groups = "party") %>%
   dfm_weight(scheme = "prop") %>% 
   dfm(dictionary = sentiment_dictionary)
 ```
+
 __Lösung zur Übungsaufgabe \@ref(exr:ue19a2)__:
 
 Um den SentiWS als gewichtetes Lexikon zu nutzen und die Polaritätswerte zu berücksichtigen, benutzen wir Tidytext. Zunächst Tokenisieren wir unseren Datensatz. Auch dabei wird direkt in Kleinschreibung konvertiert:
@@ -926,3 +927,65 @@ tidy_sentiments %>%
 ```
 
 Auch hier weist die AfD das negativste Sentiment auf. Allerdings erscheint die Kommunikation der Linkspartei auf diesem Wege deulich positiver als zuvor.
+
+## Kapitel 21: Topic Modeling {-}
+
+Wie in der Aufgabenstellung geschrieben, laden wir die Daten dieses Mal aus dem `quanteda.corpora`-Package. Wir laden außerdem die bereits bekannten Packages zum `tidyverse` zum Datenhandling, `quanteda` zur Vorbereitung der Textdaten, sowie `stm` für das Topic Modeling.
+
+```{r eval=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(stm)
+library(quanteda)
+
+guardian_corpus <- quanteda.corpora::download("data_corpus_guardian")
+
+guardian_corpus
+```
+
+```{r include=FALSE}
+library(stm)
+```
+
+
+__Lösung zur Übungsaufgabe \@ref(exr:ue21a1)__:
+
+Die Preprocessing-Schritte führen wir wie gehabt mit Quanteda durch. Wir erzeugen zunächst eine DFM mit `dfm()` und können dabei irrelevante Token wie Satzzeichen, Zahlen, Symbole und Stoppwörter entfernen. Um die Berechnung zu erleichtern, trimmen wir die DFM zusätzlich um besonders seltene und häufige Wörter mit `dfm_trim()` (ich habe mich hier für alle Wörter die in mehr als 50% der Artikel sowie in weniger als 2% der Artikel vorkommen entschieden). Schließlich muss die DFM noch mit `convert()` in ein Format konvertiert werden, das das `stm`-Package erwartet.
+
+```{r eval=FALSE}
+# DFM Erzeugen
+guardian_dfm <- dfm(guardian_corpus, 
+                    remove_punct = TRUE, 
+                    remove_numbers = TRUE, 
+                    remove_symbols = TRUE,
+                    remove_url = TRUE,
+                    remove = stopwords("english"))
+
+
+# Trimmen
+trimmed_dfm <- dfm_trim(guardian_dfm,
+                        min_docfreq = 0.02, 
+                        max_docfreq = 0.50,
+                        docfreq_type = "prop")
+
+
+# Konvertieren
+stm_dfm <- convert(trimmed_dfm, to = "stm")
+```
+
+Nun berechnen wir das Modell mit `K = 20` Themen. Da die Berechnung eine Zeit dauern kann, ist es sinnvoll, das Modellobjekt im Anschluss abzuspeichern.
+
+```{r eval=FALSE}
+guardian_model <- stm(stm_dfm$documents, stm_dfm$vocab, K = 20)
+saveRDS(guardian_model, "data/stm_guardian_model.rds")
+```
+
+```{r include=FALSE}
+guardian_model <- read_rds("data/stm_guardian_model.rds")
+```
+
+Anschließend können wir uns eine Übersicht der wichtigsten Wörter je Thema mittels `labelTopics()` ausgeben lassen:
+
+```{r}
+labelTopics(guardian_model)
+```
+
