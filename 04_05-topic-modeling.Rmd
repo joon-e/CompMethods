@@ -1,4 +1,4 @@
-# Topic Modeling
+# Topic Modeling {#topicmodeling}
 
 Topic Modeling ist das aktuell wohl am häufigsten eingesetzte Verfahren (bzw. genauer: Gruppe von Verfahren) der automatisierten Inhaltsanalyse in der kommunikationswissenschaftlichen Forschung. Im Gegensatz zur vorab beschriebenen Textklassifikation (siehe Kapitel \@ref(textclassification)) handelt es sich um Verfahren des _unüberwachten maschinellen Lernens_ -- also Verfahren, die ohne Vorabwissen in Form annotierter Klassen und mit oft nur minimalem (aber bedeutsamen) Input des Forschenden _selbstständig_ Muster in Dokumenten erkennen. Topic Modeling eignet sich daher insbesondere zur Exploration und Deskription großer Textmengen.
 
@@ -346,7 +346,7 @@ doc_probs %>%
 
 ## Übungsaufgaben
 
-Erstellen Sie für die folgende Übungsaufgabe eine eigene Skriptdatei oder eine R-Markdown-Datei und speichern diese als `ue20_nachname.R` bzw. `ue20_nachname.Rmd` ab.
+Erstellen Sie für die folgende Übungsaufgabe eine eigene Skriptdatei oder eine R-Markdown-Datei und speichern diese als `ue21_nachname.R` bzw. `ue21_nachname.Rmd` ab.
 
 Für die Übungsaufgabe verwenden wir einen Korpus aus Artikeln des [Guardian](https://www.theguardian.com/international). Dieser ist in einem Zusatzpaket zu Quanteda enthalten, das einige Beispielkorpora enthält: `quanteda.corpora`. Wir können dieses Package mit folgendem Befehl installieren:
 

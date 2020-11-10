@@ -1,1 +1,190 @@
 # Keyword Assisted Topic Models
+
+Wie bereits im vorherigen Kapitel \@ref(topicmodeling) geschrieben, handelt es sich bei Topic Modeling um eine ganze Klasse an ähnlichen, aber in Details auch recht unterschiedlichen Verfahren zum Ergründen von 'Themen' in Textkorpora. Eine noch sehr neue, aber besonders vielversprechende Weiterentwicklung des wegweisenden LDA-Ansatzes nennt sich _Keyword Assisted Topic Models_.
+
+Das besondere an diesem Verfahren ist, dass es gewissermaßen die Unterscheidung zwischen überwachten und unüberwachtem maschinellen Lernen auflöst. Es können zum einen, wie auch bei anderen Topic-Modeling-Verfahren, Themen ganz automatisch in einem Textkorpus ermittelt werden; es können jedoch auch zudem -- und darauf verweist der Name -- auch vorab bereits Themen anhand von einigen Schlüsselwörtern definiert werden.
+
+## Keyword Assisted Topic Models in R mit `keyATM`
+
+Durch das Package `keyATM` ist das Verfahren bereits in R implementiert. Wir installieren also zunächst das Package:
+
+```{r eval=FALSE}
+install.packages("keyATM")
+```
+
+Wie gehabt laden wir unsere wichtigsten Packages:^[wir verzichten an dieser Stelle auf das `tidytext`-Package, da dieses (noch) keine `tidy()`-Funktion für Themenmodelle aufweist, die mit `keyATM` gerechnet werden. Das dürfte sich jedoch bald ändern.]
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(quanteda)
+library(keyATM)
+```
+
+Da das Anwendungsbeispiel in der [offiziellen Dokumentation](https://keyatm.github.io/keyATM/index.html) von `keyATM` -- Themen in der "Inaugural Address", also der Antrittsrede bei der [Amtseinführung des Präsidenten der Vereinigten Staaten](Amtseinführung des Präsidenten der Vereinigten Staaten) -- so schön in die Zeit passt, sehen wir uns die Funktionsweise des Packages ebenfalls an diesem Beispiel an. Das hat den zusätzlichen Vorteil, dass ein entsprechender Textkorpus bereits zum Umfang von Quanteda gehört -- wir können einen entsprechenden Korpus mit den 58 Antrittsreden aller 45 US-Präsidenten bis einschließlich Donald Trump also direkt über das Objekt `data_corpus_inaugural` verwenden, ohne Daten selbst einlesen zu müssen:
+
+```{r}
+data_corpus_inaugural
+```
+
+### Preprocessing
+
+Wie gehabt setzen wir alle Preprocesing-Schritte mit Quanteda um: Wir erstellen eine DFM und entfernen dabei Satzzeichen, Zahlen sowie Symbole und URLs (die in den Reden vermutlich nicht vorkommen dürften, aber da die Text-Daten von einer Website gescraped wurden, ist es dennoch sinnvoll, sicher zu gehen); außerdem entfernen wir Stoppwörter sowie einige zusätzliche häufig vorkommenden Wörter:
+
+```{r}
+inaug_dfm <- dfm(data_corpus_inaugural,
+                 remove_punct = TRUE,
+                 remove_url = FALSE,
+                 remove_numbers = TRUE,
+                 remove_symbols = TRUE,
+                 remove = c(stopwords('english'),
+                            "may", "shall", "can", "must", "upon", "with", "without"),
+                 verbose = TRUE)
+```
+
+Wie auch bei den anderen Modellen und Verfahren, die wir uns bisher angesehen haben, ist es erneut sinnvoll, die DFM um Wörter mit geringem Informationsgehalt (also Wörter, die sehr selten oder sehr häufig vorkommen) zu 'trimmen', um die Rechenzeit zu senken und Interpretierbarkeit zu erhöhen. Bisher haben wir anhand prozentualer Anteile gemacht; in einem vergleichsweise kleinen Korpus mit nur 58 Dokumenten können wir dies aber auch anhand absoluter Häufigkeiten machen:
+
+```{r}
+trimmed_dfm <- dfm_trim(inaug_dfm,
+                        min_termfreq = 5, 
+                        min_docfreq = 2,
+                        termfreq_type = "count",
+                        docfreq_type = "count")
+```
+
+Entfernt wurden also alle Wörter, die nicht mindestens 5 mal insgesamt und nicht in mindestens 2 verschiedenen Reden vorkommen. Mit `termfreq_type = "count"` und `docfreq_type = "count"` legen wir fest, dass diese Zahlen nun als absolute Häufigkeiten (anstatt wie bisher `prop`, also prozentualer Anteile) interpretiert werden sollen (hierbei handelt es sich auch um die Standardeinstellung, allerdings ist es sinnvoll, dies dennoch im Code zu explizieren, damit andere schneller erfassen können, was hier geschieht).
+
+Abschließend müssen wir die DFM in ein Format konvertieren, mit dem `keyATM` umgehen kann. Bisher haben wir dies mit der Funktion `convert()` von Quanteda erledigt; da das keyATM-Package noch sehr neu ist, bietet Quanteda aber noch keine Konvertierungsmöglichkeit. Allerdings bietet keyATM selbst eine Konvertierungsfunktion namens `keyATM_read()`:
+
+```{r}
+keyATM_docs <- keyATM_read(texts = trimmed_dfm)
+```
+
+### A-priori-Themen und zugehörige Schlüsselwörter definieren
+
+Die große Neuerung ist wie bereits erwähnt, dass wir nun bereits vorab einige Themen und zugehörige Schlüsselwörter definieren können. Bei den Antrittsreden würden wir erwarten, dass immer wieder echte Dauerbrenner wie Regierungs- und Kongressbezüge, Verweise auf die Verfassung, aber auch auf Friedensbemühungen und Außenpolitik vorkommen. Wir definieren diese als Liste, wobei wir der Themenbezeichnung jeweils einen Vektor an Schlüsselwörtern zuorden (diese Vektoren können auch unterschiedlich lang sein, also eine unterschiedliche Anzahl an Schlüsselwörtern aufweisen):
+
+```{r}
+keywords <- list("Government" = c("laws", "law", "executive"),
+                 "Congress" = c("congress", "party"),
+                 "Peace" = c("peace", "world", "freedom"),
+                 "Constitution" = c("constitution", "rights"),
+                 "ForeignAffairs" = c("foreign", "war"))
+```
+
+Das Package bietet uns zudem eine Funktion, mit der wir vorab überprüfen können, ob es sich um sinnvolle Schlüsselwörter handelt. Mit `visualize_keywords()` erzeugen wir eine Grafik, die den prozentualen Anteil aller vorab definierten Schlüsselwörter ausgibt. Die Autoren des Packages empfehlen, dass jedes Schlüsselwort einen Anteil von über 0,1% aufweisen sollte -- dies ist hier bei allen definierten Schlüsselwörtern der Fall:
+
+```{r}
+visualize_keywords(keyATM_docs, keywords)
+```
+
+Außerdem würde die Funktion eine Warnung ausgeben, sollte ein Schlüsselwort gar nicht im Korpus vorkommen -- auch dies ist hier nicht der Fall, wir können also gut mit diesen Schlüsselwörtern arbeiten. Wichtig ist: ob diese Wörter die vorab definierten Themen auch inhaltlich sinnvoll beschreiben, ist eine inhaltliche, menschliche Beurteilung, die keine Statistik ersetzen kann.
+
+### Modell berechnen und interpretieren
+
+Nun können wir das Modell mit der Funktion `keyATM()` berechnen. Hier sind folgende Argumente relevant:
+
+- `docs`: unsere konvertierte DFM, anhand der das Modell berechnet werden soll.
+- `no_keyword_topics`: die Anzahl an weiteren Topics, die das Modell _zusätzlich_ zu den vorab definierten Themen beinhalten soll.
+- `keywords`: die Liste der vorab definierten Topics mit zugehörigen Schlüsselwörtern.
+- `model`: hier geben wir `"base"` an, um das Standard-keyATM zu rechnen. Weitere Modellvarianten können, ebenso wie bei STM, beispielsweise auch Kovariaten enthalten, mit denen die Prävalenz der Themen geschätzt werden kann. Dies könnte im Beispiel dazu genutzt werden, um die Prävalenz bestimmter Themen etwa durch den Zeitverlauf oder die Parteizugehörigkeit der Präsidenten zu erklären. Wir blenden dies der Einfachheit halber an dieser Stelle aus, die [offizielle Dokumentation](https://keyatm.github.io/keyATM/articles/pkgdown_files/keyATM_cov.html) verfügt jedoch über lange, gute Erklärungen der weiteren Modellvarianten.
+- `options`: hier können wir weitere Optionen festlegen; da die initiale Themenlösung zufällig erzeugt wird, können wir mit der Angabe eines  [Seeds](https://de.wikipedia.org/wiki/Seed_key) sichern, dass unser Modell exakt replizierbar ist. 
+
+```{r eval=FALSE}
+inaug_model <- keyATM(docs = keyATM_docs,
+                      no_keyword_topics = 5,
+                      keywords = keywords,
+                      model = "base",
+                      options = list(seed = 667))
+```
+
+```{r include=FALSE}
+inaug_model <- readRDS("data/keyatm_model.rds")
+```
+
+Zunächst sollten wir den Modelfit überprüfen. keyATM bietet hierfür die Funktion `plot_modelfit()`, die zwei Kennwerte -- Log-Likelihood und Perplexity -- im Verlauf der Modelliterationen darstellt. Bei einem Modell, das gut zu den Daten passt, sollte sich im Verlauf der Iterationen die Log-Likelihood auf einem höheren, die Perplexity auf einem geringeren Wert einpendeln. Beides ist hier der Fall (erneut gilt jedoch: ob das Modell auch inhaltlich sinnvoll ist, muss manuell und inhaltlich interpretiert werden): 
+
+```{r}
+plot_modelfit(inaug_model)
+```
+
+Die inhaltliche Interpretation des Modells erfolgt vor allem anhand der Funktionen `top_words()` und `top_docs()`. Erstere stellt uns die -- per Standardeinstellung 10 -- wichtigsten Wörter je Thema dar:
+
+```{r}
+top_words(inaug_model, n = 5)
+```
+
+Bei einigen Wörtern fallen Ihnen hinter den Wörtern zusätzliche Zeichenketten auf. Die Zeichenkette `"<U+2713>"` sollte eigentlich ein ✓-Zeichen darstellen (es handelt sich bei der kryptischen Nummernfolge um den zugehörigen [Unicode](https://www.compart.com/de/unicode/U+2713)); führen Sie den Code _nicht_ an einem deutschen Windows-Rechner aus, sollter dies auch bereits funktionieren. In jedem Fall signalisiert Ihnen das, dass es sich um ein vorab definiertes Schlüsselwort handelt. Das vorab definierte Thema 3, Peace, enthält beispielsweise als drittwichtigstes Schlüsselwort "peace", ebenfalls gehören jedoch auch neue Wörter wie "us", "nation" etc. dazu. Eine Zahl in eckigen Klammern signalisiert hingegen, dass das betreffende vorab definierte Schlüsselwort auch einem anderen Thema zugeordnet wurde. Das Schlüsselwort "war" im neuen Thema "Other_5" entstammt beispielsweise dem vorab definierten Thema 5, "ForeignAffairs".
+
+`top_docs()` wiederum reiht uns pro Thema die wichtigsten Dokumente auf, also diejenigen Dokumente, in denen das jeweilige Thema den größten Anteil hat. 
+
+```{r}
+top_docs(inaug_model, n = 5)
+```
+
+Thema 1, "Government", ist also am stärksten in Antrittrede 31 enthalten, gefolgt von Antrittsrede 19 usw.
+
+Ansonsten gestaltet sich die Interpretation analog zu den im vorigen Kapitel berechneten Themenmodellen mit STM. Zentral sind erneut die Matrizen mit den Themenwahrscheinlichkeiten je Dokument, bei keyATM als $\theta$ bezeichnet, und die Wortwahrscheinlichkeiten je Thema, hier als $\phi$ bezeichnet, die wir über das Modellobjekt mit `inaug_model$theta` bzw. `inaug_model$phi` abrufen können.
+
+Mit etwas Umformung erhalten wir beispielsweise wieder einen Datensatz, der uns pro Thema die 7 wichtigste Wörter in einem String verbindet:
+
+```{r}
+top_terms <- inaug_model$phi %>% 
+  t() %>% 
+  as_tibble(rownames = "word") %>% 
+  pivot_longer(-word, names_to = "topic", values_to = "phi") %>% 
+  group_by(topic) %>% 
+  top_n(7, phi) %>% 
+  arrange(topic, desc(phi)) %>% 
+  group_by(topic) %>% 
+  summarise(top_words = paste(word, collapse = ", "), .groups = "drop")
+
+top_terms
+```
+
+Ebenso können wir die Themen mit ihrem durchschnittlichen Anteil in den Dokumenten nach Wichtigkeit sortieren:
+
+```{r}
+top_topics <- inaug_model$theta %>% 
+  as_tibble(rownames = "speech") %>% 
+  pivot_longer(-speech, names_to = "topic", values_to = "theta") %>% 
+  group_by(topic) %>% 
+  summarise(mean_theta = mean(theta), .groups = "drop") %>% 
+  arrange(desc(mean_theta))
+
+top_topics
+```
+
+Und wenn wir beides verbinden, erhalten wir wieder die bereits bekannte Grafik, die uns Themenprävalenz und wichtigste Wörter zusammen darstelle:
+
+```{r}
+top_topics %>% 
+  left_join(top_terms, by = "topic") %>%
+  mutate(topic = reorder(topic, mean_theta)) %>% 
+  ggplot(aes(topic, mean_theta, label = top_words, fill = topic)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(hjust = 0, nudge_y = 0.0005, size = 3) +
+  coord_flip() +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 0.35), labels = scales::percent) +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank()) +
+  labs(x = NULL, y = expression(theta))
+```
+
+## Übungsaufgaben
+
+Erstellen Sie für die folgende Übungsaufgabe eine eigene Skriptdatei oder eine R-Markdown-Datei und speichern diese als `ue22_nachname.R` bzw. `ue22_nachname.Rmd` ab.
+
+Für die Übungsaufgabe verwenden wir erneut den Korpus aus Artikeln des [Guardian](https://www.theguardian.com/international) (siehe Übungsaufgabe \@ref(exr:exr:ue21a1). 
+
+```{r eval=FALSE}
+guardian_corpus <- quanteda.corpora::download("data_corpus_guardian")
+```
+
+---
+
+```{exercise, label="ue22a1"}
+Keyword Assisted Topic Models:
+```
+
+Rechnen Sie ein Keyword Assisted Topic Model mit mindestens 3 vorab definierten Themen und 20 Themen insgesamt. Orientieren Sie sich bei den vorab definierten Themen an den Ergebnissen der vorherigen Übungsaufgabe. 
